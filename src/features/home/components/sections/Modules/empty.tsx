@@ -1,15 +1,28 @@
+"use client";
+
+import { useTranslations } from "next-intl";
+
 export default function ModulesEmpty() {
+  const t = useTranslations("modules");
+
   return (
-    <div className="grid grid-cols-4 gap-3 sm:grid-cols-5 md:grid-cols-6">
-      {Array.from({ length: 4 }).map((_, i) => (
-        <div
-          key={i}
-          className="flex flex-col items-center gap-2 rounded-xl border border-dashed border-muted-foreground/30 bg-muted/30 p-2"
-        >
-          <div className="h-14 w-14 rounded-2xl bg-muted/70" />
-          <div className="h-3 w-12 rounded bg-muted/70" />
-        </div>
-      ))}
+    <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-muted-foreground/30 bg-muted/30 p-6 text-center text-sm text-muted-foreground">
+      <svg
+        className="h-6 w-6"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={1.75}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <rect x="3" y="3" width="7" height="7" rx="1.5" />
+        <rect x="14" y="3" width="7" height="7" rx="1.5" />
+        <rect x="3" y="14" width="7" height="7" rx="1.5" />
+        <rect x="14" y="14" width="7" height="7" rx="1.5" />
+      </svg>
+      {t("noModules")}
     </div>
   );
 }

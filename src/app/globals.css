@@ -13,10 +13,17 @@
   --primary: #2563eb;
   --primary-foreground: #ffffff;
 
+  --danger: #dc2626;
+  --danger-foreground: #ffffff;
+
   --card: #ffffff;
   --card-foreground: #171717;
 
   --radius: 0.75rem;
+
+  /* Lets native form controls, scrollbars, and the browser UI pick a
+     matching light/dark rendering instead of defaulting to light. */
+  color-scheme: light;
 
   /* Fixed-element heights, used by Topbar / Navbar / HomeShell so
      spacing always matches regardless of breakpoint. */
@@ -37,8 +44,13 @@
   --primary: #60a5fa;
   --primary-foreground: #0a0a0a;
 
+  --danger: #f87171;
+  --danger-foreground: #450a0a;
+
   --card: #111113;
   --card-foreground: #ededed;
+
+  color-scheme: dark;
 }
 
 @theme inline {
@@ -51,6 +63,9 @@
 
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+
+  --color-danger: var(--danger);
+  --color-danger-foreground: var(--danger-foreground);
 
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
@@ -69,8 +84,13 @@
 
 html {
   scroll-behavior: smooth;
+  /* Reserves scrollbar space up front so content doesn't shift width
+     when a page toggles between scrollable/not. */
+  scrollbar-gutter: stable;
   /* Prevents the mobile bottom nav / iOS bounce from causing horizontal scroll */
   overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--muted-foreground) transparent;
 }
 
 body {
@@ -88,6 +108,26 @@ body {
   border-radius: 4px;
 }
 
+::selection {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+/* Themed, unobtrusive scrollbars (WebKit browsers) */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: var(--muted-foreground);
+  background-clip: padding-box;
+  border: 2px solid transparent;
+  border-radius: 999px;
+}
+
 /* Utility: hide scrollbars on horizontally-scrolling rows (chips, tabs…) */
 .scrollbar-hide {
   -ms-overflow-style: none;
@@ -95,6 +135,35 @@ body {
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+/* Shared page container — keeps content width consistent with the nav's
+   --container-max, so feature pages don't each reinvent this. */
+.container-app {
+  margin-inline: auto;
+  max-width: var(--container-max);
+  padding-inline: 1rem;
+}
+@media (min-width: 640px) {
+  .container-app {
+    padding-inline: 1.5rem;
+  }
+}
+
+/* Swiper pagination tuned to the design tokens — the active bullet
+   elongates into a pill instead of just changing color. */
+.swiper-pagination-bullet {
+  width: 6px;
+  height: 6px;
+  background: var(--muted-foreground);
+  opacity: 0.35;
+  transition: all 0.3s ease;
+}
+.swiper-pagination-bullet-active {
+  width: 18px;
+  border-radius: 999px;
+  background: var(--primary);
+  opacity: 1;
 }
 
 @media (prefers-reduced-motion: reduce) {

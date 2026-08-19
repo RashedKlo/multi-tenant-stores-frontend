@@ -1,15 +1,27 @@
- {
-    "nav": {
-      "home": "Home",
-      "cart": "Cart",
-      "favorites": "Favorites",
-      "orders": "Orders",
-      "profile": "Profile"
-    },
-    "banners": {
-      "noBanners": "No banners available"
-    },
-    "modules": {
-      "noModules": "No categories available"
+{
+  "nav": {
+    "home": "Home",
+    "cart": "Cart",
+    "favorites": "Favorites",
+    "orders": "Orders",
+    "profile": "Profile"
+  },
+  "layout": {
+    "mainNav": "Main navigation",
+    "actions": {
+      "search": "Search",
+      "searchPlaceholder": "Search stores, products…",
+      "toLight": "Switch to light mode",
+      "toDark": "Switch to dark mode",
+      "switchLanguage": "Switch language to"
     }
+  },
+  "banners": {
+    "noBanners": "No banners available",
+    "ariaLabel": "Promotions"
+  },
+  "modules": {
+    "title": "Categories",
+    "noModules": "No categories available"
   }
+}

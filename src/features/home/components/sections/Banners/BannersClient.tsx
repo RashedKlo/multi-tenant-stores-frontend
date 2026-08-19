@@ -1,104 +1,87 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Pagination } from "swiper/modules";
 import type { HomeBanner } from "@/features/home/types/home.types";
+
+import "swiper/css";
+import "swiper/css/pagination";
 
 interface BannersClientProps {
   banners: HomeBanner[];
 }
 
 /**
- * Infinite auto-scrolling banner slider.
- * Pure presentational – receives already-fetched data.
- * Uses CSS transform + minimal JS for a seamless loop.
+ * Auto-advancing promo carousel. Pure presentational — receives
+ * already-fetched, already-localized data. `dir` is set explicitly from
+ * the active locale so Swiper mirrors slide order and swipe direction
+ * for Arabic instead of only mirroring the surrounding layout.
  */
 export function BannersClient({ banners }: BannersClientProps) {
-  const trackRef = useRef<HTMLDivElement>(null);
-
-  // Duplicate items once for a seamless infinite loop
-  const items = [...banners, ...banners];
-
-  useEffect(() => {
-    const track = trackRef.current;
-    if (!track || banners.length <= 1) return;
-
-    let animationId: number;
-    let position = 0;
-    const speed = 0.4; // px per frame
-
-    const step = () => {
-      position += speed;
-
-      if (position >= track.scrollWidth / 2) {
-        position = 0;
-      }
-
-      track.style.transform = `translateX(-${position}px)`;
-      animationId = requestAnimationFrame(step);
-    };
-
-    animationId = requestAnimationFrame(step);
-
-    const pause = () => cancelAnimationFrame(animationId);
-    const resume = () => {
-      animationId = requestAnimationFrame(step);
-    };
-
-    track.addEventListener("mouseenter", pause);
-    track.addEventListener("mouseleave", resume);
-    track.addEventListener("touchstart", pause, { passive: true });
-    track.addEventListener("touchend", resume);
-
-    return () => {
-      cancelAnimationFrame(animationId);
-      track.removeEventListener("mouseenter", pause);
-      track.removeEventListener("mouseleave", resume);
-      track.removeEventListener("touchstart", pause);
-      track.removeEventListener("touchend", resume);
-    };
-  }, [banners.length]);
+  const locale = useLocale();
+  const t = useTranslations("banners");
+  const direction = locale === "ar" ? "rtl" : "ltr";
+  const hasMultiple = banners.length > 1;
 
   if (banners.length === 0) return null;
 
   return (
-    <section className="w-full overflow-hidden" aria-label="Promotions">
-      <div
-        ref={trackRef}
-        className="flex gap-3 will-change-transform sm:gap-4"
-        style={{ width: "max-content" }}
+    <section aria-label={t("ariaLabel")} className="w-full">
+      <Swiper
+        modules={[Autoplay, Pagination]}
+        dir={direction}
+        key={direction}
+        loop={hasMultiple}
+        autoplay={
+          hasMultiple
+            ? { delay: 4500, disableOnInteraction: false, pauseOnMouseEnter: true }
+            : false
+        }
+        pagination={hasMultiple ? { clickable: true } : false}
+        spaceBetween={12}
+        slidesPerView={1.08}
+        centeredSlides={hasMultiple}
+        breakpoints={{
+          640: { slidesPerView: 1.5, spaceBetween: 16, centeredSlides: false },
+          1024: { slidesPerView: 2.2, spaceBetween: 20 },
+        }}
+        style={{ "--swiper-theme-color": "var(--primary)" } as React.CSSProperties}
+        className="!overflow-visible pb-8"
       >
-        {items.map((banner, index) => (
-          <a
-            key={`${banner.id}-${index}`}
-            href={banner.actionUrl ?? "#"}
-            className="relative block w-[85vw] max-w-[420px] shrink-0 overflow-hidden rounded-2xl bg-muted transition-opacity hover:opacity-95 sm:w-[70vw] md:w-[480px] lg:w-[560px]"
-          >
-            <Image
-              src={banner.imageUrl}
-              alt={banner.title}
-              width={1200}
-              height={525}
-              className="aspect-[16/7] w-full object-cover"
-              sizes="(max-width: 640px) 85vw, (max-width: 1024px) 70vw, 560px"
-              priority={index === 0}
-            />
+        {banners.map((banner, index) => (
+          <SwiperSlide key={banner.id} className="!h-auto">
+            <a
+              href={banner.actionUrl ?? "#"}
+              className="group relative block h-full overflow-hidden rounded-2xl bg-muted"
+            >
+              <Image
+                src={banner.imageUrl}
+                alt={banner.title}
+                width={1200}
+                height={525}
+                className="aspect-[16/8] w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                sizes="(max-width: 640px) 92vw, (max-width: 1024px) 60vw, 45vw"
+                priority={index === 0}
+              />
 
-            {(banner.title || banner.subtitle) && (
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-4 text-white">
-                {banner.title && (
-                  <p className="font-semibold leading-tight sm:text-lg">
-                    {banner.title}
-                  </p>
-                )}
-                {banner.subtitle && (
-                  <p className="mt-0.5 text-sm opacity-90">{banner.subtitle}</p>
-                )}
-              </div>
-            )}
-          </a>
+              {(banner.title || banner.subtitle) && (
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent p-4 text-white">
+                  {banner.title && (
+                    <p className="font-semibold leading-tight sm:text-lg">
+                      {banner.title}
+                    </p>
+                  )}
+                  {banner.subtitle && (
+                    <p className="mt-0.5 text-sm text-white/85">{banner.subtitle}</p>
+                  )}
+                </div>
+              )}
+            </a>
+          </SwiperSlide>
         ))}
-      </div>
+      </Swiper>
     </section>
   );
 }

@@ -7,19 +7,19 @@ interface NavIconProps {
 }
 
 /**
- * Lightweight inline SVG icons – no external icon library required.
+ * Lightweight inline SVG icons for the primary navigation — no external
+ * icon library required, keeps the layout feature dependency-free.
  */
-export function NavIcon({ name, className = "h-5 w-5", active }: NavIconProps) {
-  const stroke = active ? "currentColor" : "currentColor";
+export function NavIcon({ name, className = "h-5 w-5" }: NavIconProps) {
   const common = {
     className,
-    fill: "none",
-    stroke,
+    fill: "none" as const,
+    stroke: "currentColor",
     strokeWidth: 1.75,
     strokeLinecap: "round" as const,
     strokeLinejoin: "round" as const,
     viewBox: "0 0 24 24",
-    "aria-hidden": true,
+    "aria-hidden": true as const,
   };
 
   switch (name) {

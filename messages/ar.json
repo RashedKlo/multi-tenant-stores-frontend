@@ -1,15 +1,27 @@
- {
-    "nav": {
-      "home": "الرئيسية",
-      "cart": "السلة",
-      "favorites": "المفضلة",
-      "orders": "الطلبات",
-      "profile": "الملف الشخصي"
-    },
-    "banners": {
-      "noBanners": "لا توجد إعلانات متاحة"
-    },
-    "modules": {
-      "noModules": "لا توجد فئات متاحة"
+{
+  "nav": {
+    "home": "الرئيسية",
+    "cart": "السلة",
+    "favorites": "المفضلة",
+    "orders": "الطلبات",
+    "profile": "الملف الشخصي"
+  },
+  "layout": {
+    "mainNav": "التنقل الرئيسي",
+    "actions": {
+      "search": "بحث",
+      "searchPlaceholder": "ابحث عن متاجر، منتجات…",
+      "toLight": "التبديل إلى الوضع الفاتح",
+      "toDark": "التبديل إلى الوضع الداكن",
+      "switchLanguage": "تبديل اللغة إلى"
     }
+  },
+  "banners": {
+    "noBanners": "لا توجد إعلانات متاحة",
+    "ariaLabel": "العروض الترويجية"
+  },
+  "modules": {
+    "title": "الفئات",
+    "noModules": "لا توجد فئات متاحة"
   }
+}

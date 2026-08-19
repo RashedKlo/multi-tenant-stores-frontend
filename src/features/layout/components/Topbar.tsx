@@ -1,52 +1,41 @@
 "use client";
 
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Logo } from "./Logo";
+import { SearchToggle } from "./SearchToggle";
+import { ThemeToggle } from "./ThemeToggle";
 
 interface TopbarProps {
-  /** Page title shown on mobile */
+  /** Overrides the brand label shown on mobile. */
   title?: string;
-  /** Optional right-side actions (search, notifications…) */
+  /** Swap in page-specific actions (e.g. a cart total) instead of the defaults. */
   actions?: React.ReactNode;
-  
 }
 
 /**
- * Mobile top bar.
- * Hidden on md+ because the desktop Navbar already provides navigation.
+ * Mobile top bar. Hidden on md+ — the desktop header in Navbar already
+ * carries branding, links and actions there.
  */
-export function Topbar({ title = "Shellafood", actions }: TopbarProps) {
-  return (
-    <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur-md md:hidden">
-      <div className="flex h-14 items-center justify-between gap-3 px-4">
-        <Link href="/home" className="flex items-center gap-2">
-          {/* Simple logo mark – replace with real logo later */}
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-sm font-bold text-primary-foreground">
-            S
-          </span>
-          <span className="text-base font-semibold tracking-tight">{title}</span>
-        </Link>
+export function Topbar({ title, actions }: TopbarProps) {
+  const t = useTranslations("layout");
 
-        {actions ? (
-          <div className="flex items-center gap-2">{actions}</div>
-        ) : (
+  return (
+    <header className="sticky top-0 z-30 border-b border-border/70 bg-background/85 backdrop-blur-md supports-[backdrop-filter]:bg-background/70 md:hidden">
+      <div className="flex h-[var(--topbar-height)] items-center justify-between gap-3 px-4">
+        <Logo label={title} />
+
+        {actions ?? (
           <div className="flex items-center gap-1">
-            {/* Placeholder search / notification buttons */}
-            <button
-              type="button"
-              aria-label="Search"
-              className="flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-            >
-              <svg
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={1.75}
-              >
-                <circle cx="11" cy="11" r="7" />
-                <path d="m20 20-3.5-3.5" strokeLinecap="round" />
-              </svg>
-            </button>
+            <SearchToggle
+              placeholder={t("actions.searchPlaceholder")}
+              ariaLabel={t("actions.search")}
+            />
+            <ThemeToggle
+              labels={{
+                toLight: t("actions.toLight"),
+                toDark: t("actions.toDark"),
+              }}
+            />
           </div>
         )}
       </div>
