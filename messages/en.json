@@ -1,0 +1,15 @@
+ {
+    "nav": {
+      "home": "Home",
+      "cart": "Cart",
+      "favorites": "Favorites",
+      "orders": "Orders",
+      "profile": "Profile"
+    },
+    "banners": {
+      "noBanners": "No banners available"
+    },
+    "modules": {
+      "noModules": "No categories available"
+    }
+  }
