@@ -2,6 +2,7 @@
 export const CACHE_TAGS = {
   homeBanners: "home-banners",
   modules: "modules",
+  cart:"cart",
   moduleDetail:(id:string)=>"modules"+id,
   moduleStores:(id:string)=>"modules"+id+"stores",
 } as const;

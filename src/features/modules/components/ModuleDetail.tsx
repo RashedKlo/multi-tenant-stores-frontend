@@ -10,34 +10,32 @@ import { MOCK_MODULE_DETAIL } from "../constants/module-detail";
 
 interface ModuleDetailProps {
   moduleId: string;
+  /** From searchParams — keeps categories/stores filter in sync */
+  categoryId?: string;
 }
 
 /**
- * Fetches ModuleDetail once and distributes the data
- * to pure presentational sections.
+ * Fetches ModuleDetail once (server) and distributes data
+ * to presentational sections. Empty states are handled per-section.
  */
-export async function ModuleDetail({ moduleId }: ModuleDetailProps) {
-    //fetch backend data
-    const module = await getModuleDetail(moduleId);
-    //fetch mock data
-    // const module=MOCK_MODULE_DETAIL;
+export async function ModuleDetail({ moduleId, categoryId }: ModuleDetailProps) {
+  // const mod = await getModuleDetail(moduleId); // returns null if not found
+  const mod=MOCK_MODULE_DETAIL;
 
-  if (!module) {
-    return <ModuleHeaderEmpty />;
-  }
+  if (!mod) return <ModuleHeaderEmpty />;
 
   return (
     <>
-      <ModuleHeaderClient module={module} />
+      <ModuleHeaderClient module={mod} />
 
-      {module.banners.length > 0 ? (
-        <ModuleBannersClient banners={module.banners} />
+      {mod.banners.length > 0 ? (
+        <ModuleBannersClient banners={mod.banners} />
       ) : (
         <ModuleBannersEmpty />
       )}
 
-      {module.categories.length > 0 ? (
-        <CategoriesClient categories={module.categories} moduleId={moduleId} />
+      {mod.categories.length > 0 ? (
+        <CategoriesClient categories={mod.categories} activeCategoryId={categoryId} />
       ) : (
         <CategoriesEmpty />
       )}

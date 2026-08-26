@@ -10,10 +10,10 @@ import { MOCK_MODULES } from "@/features/home/constants/modules";
 export const Modules = Object.assign(
   async function Modules() {
     // fetch backend data 
-    const modules = await getModules();
+    // const modules = await getModules();
     
     // fetch mock data
-    // const modules = MOCK_MODULES;
+    const modules = MOCK_MODULES;
     if (!modules.length) {
       return <ModulesEmpty />;
     }

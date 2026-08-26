@@ -1,7 +1,12 @@
+// features/stores/components/product-detail/ProductDetailClient.tsx
 "use client";
 
 import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
+
 import type { ProductDetail } from "@/features/products/types";
+// import { addToCart } from "@/features/cart/api";
+
 import { ProductGallery } from "./ProductGallery";
 import { ProductInfo } from "./ProductInfo";
 import { ProductOptions } from "./ProductOptions";
@@ -12,61 +17,67 @@ interface ProductDetailClientProps {
   storeId: string;
 }
 
-export function ProductDetailClient({
-  product,
-  storeId,
-}: ProductDetailClientProps) {
-  // Pre-select default options
-  const initialSelected = useMemo(() => {
-    const map: Record<string, string[]> = {};
-    product.optionGroups.forEach((group) => {
-      const defaults = group.options
-        .filter((o) => o.isDefault)
-        .map((o) => o.id);
-      if (defaults.length) map[group.id] = defaults;
-    });
-    return map;
-  }, [product.optionGroups]);
+export function ProductDetailClient({ product, storeId }: ProductDetailClientProps) {
+  const t = useTranslations("productDetail");
 
-  const [selected, setSelected] = useState(initialSelected);
+  // Pre-select default options — computed once, not memo-wrapped
+  const [selected, setSelected] = useState<Record<string, string[]>>(() =>
+    buildInitialSelection(product.optionGroups),
+  );
   const [quantity, setQuantity] = useState(1);
   const [isAdding, setIsAdding] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Calculate final price
+  /** First incomplete required group — used for the inline hint. */
+  const missingGroup = useMemo(
+    () =>
+      product.optionGroups.find((group) => {
+        const count = (selected[group.id] ?? []).length;
+        return count < group.minSelection;
+      })?.name,
+    [product.optionGroups, selected],
+  );
+
   const finalPrice = useMemo(() => {
     let total = product.price;
-    product.optionGroups.forEach((group) => {
-      const selectedIds = selected[group.id] ?? [];
-      selectedIds.forEach((id) => {
+    for (const group of product.optionGroups) {
+      for (const id of selected[group.id] ?? []) {
         const option = group.options.find((o) => o.id === id);
         if (option) total += option.priceAdjustment;
-      });
-    });
-    return total;
-  }, [product, selected]);
+      }
+    }
+    return total * quantity; // ← multiply by quantity at the end, once
+  }, [product.optionGroups, product.price, selected, quantity]);
 
-  // Validation
-  const canAdd = useMemo(() => {
-    return product.optionGroups.every((group) => {
+  const canAdd =
+    product.inStock &&
+    product.optionGroups.every((group) => {
       const count = (selected[group.id] ?? []).length;
       return count >= group.minSelection && count <= group.maxSelection;
     });
-  }, [product.optionGroups, selected]);
+
+  /** Clamp quantity to stock so users can't add more than available. */
+  const handleQuantityChange = (value: number) => {
+    setQuantity(Math.min(Math.max(1, value), product.stockQuantity ?? 99));
+  };
 
   const handleAddToCart = async () => {
-    if (!canAdd || !product.inStock) return;
+    if (!canAdd || isAdding) return;
 
     setIsAdding(true);
+    setError(null);
+
     try {
-      // TODO: call your cart API
-      // await addToCart({ storeId, productId: product.id, quantity, optionIds: ... })
-      console.log("Add to cart", {
-        storeId,
-        productId: product.id,
-        quantity,
-        selected,
-        finalPrice,
-      });
+      // await addToCart({
+      //   storeId,
+      //   productId: product.id,
+      //   quantity,
+      //   optionIds: Object.values(selected).flat(),
+      // });
+      // Optional success UX: toast or cart badge bump
+      // showToast(t("addedToCart")); bumpCartBadge();
+    } catch {
+      setError(t("addToCartError"));
     } finally {
       setIsAdding(false);
     }
@@ -74,9 +85,10 @@ export function ProductDetailClient({
 
   return (
     <>
-      <div className="space-y-6 pb-28">
+      <div className="space-y-6 pb-28 sm:pb-32">
         <ProductGallery images={product.images} name={product.name} />
         <ProductInfo product={product} />
+
         <ProductOptions
           groups={product.optionGroups}
           selected={selected}
@@ -84,17 +96,52 @@ export function ProductDetailClient({
             setSelected((prev) => ({ ...prev, [groupId]: optionIds }))
           }
         />
+
+        {/* Inline validation hint — tells the user WHAT is missing */}
+        {!product.inStock ? (
+          <p role="alert" className="text-sm font-medium text-danger">
+            {t("outOfStockHint")}
+          </p>
+        ) : (
+          missingGroup && (
+            <p role="status" className="flex items-center gap-2 text-sm text-danger">
+              <span aria-hidden>*</span>
+              {t("selectRequiredFor", { group: missingGroup })}
+            </p>
+          )
+        )}
+
+        {/* Network failure hint — separate from validation */}
+        {error && (
+          <p role="alert" className="text-sm text-danger">
+            {error}
+          </p>
+        )}
       </div>
 
       <AddToCartBar
         price={finalPrice}
         inStock={product.inStock}
-        canAdd={canAdd}
+        canAdd={canAdd && !isAdding}
         quantity={quantity}
-        onQuantityChange={setQuantity}
+        maxQuantity={product.stockQuantity}
+        onQuantityChange={handleQuantityChange}
         onAdd={handleAddToCart}
         isAdding={isAdding}
       />
     </>
   );
+}
+
+/* ---------- helpers ---------- */
+
+function buildInitialSelection(
+  groups: ProductDetail["optionGroups"],
+): Record<string, string[]> {
+  const map: Record<string, string[]> = {};
+  for (const group of groups) {
+    const defaults = group.options.filter((o) => o.isDefault).map((o) => o.id);
+    if (defaults.length > 0) map[group.id] = defaults;
+  }
+  return map;
 }

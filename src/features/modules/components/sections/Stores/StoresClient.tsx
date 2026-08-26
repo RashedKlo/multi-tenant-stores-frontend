@@ -1,10 +1,11 @@
-// features/modules/components/sections/Stores/StoresClient.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import type { PagedStores } from "@/features/modules/types";
 import { StoreCard } from "./StoreCard";
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { StoreCardSkeleton } from "./skeleton";
+
 interface StoresClientProps {
   initialData: PagedStores;
   moduleId: string;
@@ -12,63 +13,69 @@ interface StoresClientProps {
   search?: string;
 }
 
-/**
- * Stores grid with "Load more" support.
- * Ready for infinite scroll upgrade later.
- */
-export function StoresClient({
-  initialData,
-  moduleId,
-  categoryId,
-  search,
-}: StoresClientProps) {
-  const [data, setData] = useState(initialData);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const { replace } = useRouter();
-  const pathname = usePathname();
-  const handleLoadMore = async () => {
-    if (!data.hasNextPage || isLoadingMore) return;
+export function StoresClient({ initialData, moduleId, categoryId, search }: StoresClientProps) {
+  const t = useTranslations("stores");
+  const [data, setData] = useState<PagedStores>(initialData);
+  const [isPending, startTransition] = useTransition();
 
-    setIsLoadingMore(true);
-    
-      const params = new URLSearchParams({
-        page: String(data.page + 1),
-        pageSize: String(data.pageSize),
-      });
-      if (categoryId) params.set("categoryId", categoryId);
-      if (search) params.set("search", search);
+  const hasNext = data.items.length < data.totalCount;
 
-    setIsLoadingMore(true);
-      replace(`${pathname}?${params.toString()}`);
+  const handleLoadMore = () => {
+    if (!hasNext || isPending) return;
+
+    startTransition(async () => {
+      // const next = await getStoresByModule({
+      //   moduleId,
+      //   page: data.page + 1,
+      //   pageSize: data.pageSize,
+      //   categoryId,
+      //   search,
+      // });
+
+      // setData((prev) => ({
+      //   ...next,
+      //   items: [...prev.items, ...next.items], // dedupe server-side if needed
+      // }));
+    });
   };
 
   return (
-    <section>
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-base font-semibold">Stores</h2>
-        <span className="text-xs text-muted-foreground">
-          {data.totalCount} results
-        </span>
-      </div>
+    <section aria-labelledby="stores-heading">
+      <header className="mb-4 flex items-baseline justify-between">
+        <h2 id="stores-heading" className="text-base font-semibold tracking-tight sm:text-lg">
+          {t("title")}
+        </h2>
+        <p className="text-xs text-muted-foreground" aria-live="polite">
+          {t("resultsCount", { count: data.totalCount })}
+        </p>
+      </header>
 
-      {/* Responsive grid */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+      <ul role="list" className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
         {data.items.map((store) => (
-          <StoreCard key={store.id} store={store} />
+          <li key={store.id}>
+            <StoreCard store={store} />
+          </li>
         ))}
-      </div>
 
-      {/* Load more */}
-      {data.hasNextPage && (
-        <div className="mt-6 flex justify-center">
+        {/* Skeleton placeholders while loading more */}
+        {isPending &&
+          Array.from({ length: Math.min(data.pageSize, 5) }, (_, i) => (
+            <li key={`sk-${i}`}>
+              <StoreCardSkeleton />
+            </li>
+          ))}
+      </ul>
+
+      {hasNext && (
+        <footer className="mt-8 flex justify-center">
           <button
             onClick={handleLoadMore}
-            disabled={isLoadingMore}
-            className="rounded-full border border-border bg-background px-6 py-2.5 text-sm font-medium transition-colors hover:bg-muted disabled:opacity-50"
+            disabled={isPending}
+            className="rounded-full border border-border bg-background px-8 py-2.5 text-sm font-medium transition-colors hover:bg-muted disabled:pointer-events-none disabled:opacity-50"
           >
-            {isLoadingMore ? "Loading..." : "Load more"}
+            {isPending ? t("loading") : t("loadMore")}
           </button>
-        </div>
+        </footer>
       )}
     </section>
   );

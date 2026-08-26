@@ -1,6 +1,8 @@
 // features/stores/components/sections/Products/ProductFilters.tsx
 "use client";
 
+import { useTranslations } from "next-intl";
+
 interface ProductFiltersProps {
   inStockOnly: boolean;
   minPrice?: number;
@@ -10,6 +12,12 @@ interface ProductFiltersProps {
   onReset: () => void;
 }
 
+const PRICE_RANGES = [
+  { id: "under20", min: 0, max: 20 },
+  { id: "range20_50", min: 20, max: 50 },
+  { id: "over50", min: 50, max: undefined },
+] as const;
+
 export function ProductFilters({
   inStockOnly,
   minPrice,
@@ -18,63 +26,58 @@ export function ProductFilters({
   onPriceChange,
   onReset,
 }: ProductFiltersProps) {
+  const t = useTranslations("productFilters");
+
+  const chip = (active: boolean) =>
+    [
+      "rounded-full border px-3.5 py-1.5 text-xs font-medium whitespace-nowrap transition-all duration-200 active:scale-95",
+      active
+        ? "border-transparent bg-primary text-primary-foreground shadow-sm"
+        : "border-border bg-card hover:border-primary/40 hover:bg-muted",
+    ].join(" ");
+
   const hasActiveFilters =
     inStockOnly || minPrice !== undefined || maxPrice !== undefined;
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      {/* In stock toggle */}
+    <div
+      role="group"
+      aria-label={t("ariaLabel")}
+      className="scrollbar-hide -mx-4 flex items-center gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0"
+    >
       <button
+        type="button"
         onClick={() => onInStockChange(!inStockOnly)}
-        className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors active:scale-95 ${
-          inStockOnly
-            ? "border-primary bg-primary text-primary-foreground"
-            : "border-border bg-background hover:bg-muted"
-        }`}
+        aria-pressed={inStockOnly}
+        className={chip(inStockOnly)}
       >
-        In stock only
+        {t("inStockOnly")}
       </button>
 
-      {/* Quick price chips */}
-      <button
-        onClick={() => onPriceChange(0, 20)}
-        className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors active:scale-95 ${
-          minPrice === 0 && maxPrice === 20
-            ? "border-primary bg-primary text-primary-foreground"
-            : "border-border bg-background hover:bg-muted"
-        }`}
-      >
-        Under 20
-      </button>
-
-      <button
-        onClick={() => onPriceChange(20, 50)}
-        className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors active:scale-95 ${
-          minPrice === 20 && maxPrice === 50
-            ? "border-primary bg-primary text-primary-foreground"
-            : "border-border bg-background hover:bg-muted"
-        }`}
-      >
-        20 – 50
-      </button>
-
-      <button
-        onClick={() => onPriceChange(50, undefined)}
-        className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors active:scale-95 ${
-          minPrice === 50 && maxPrice === undefined
-            ? "border-primary bg-primary text-primary-foreground"
-            : "border-border bg-background hover:bg-muted"
-        }`}
-      >
-        50+
-      </button>
+      {PRICE_RANGES.map((range) => {
+        const isActive = minPrice === range.min && maxPrice === range.max;
+        return (
+          <button
+            key={range.id}
+            type="button"
+            onClick={() =>
+              isActive ? onReset() : onPriceChange(range.min, range.max)
+            }
+            aria-pressed={isActive}
+            className={chip(isActive)}
+          >
+            {t(`price.${range.id}`)}
+          </button>
+        );
+      })}
 
       {hasActiveFilters && (
         <button
+          type="button"
           onClick={onReset}
-          className="rounded-full px-3 py-1.5 text-xs font-medium text-muted-foreground underline-offset-2 hover:underline"
+          className="shrink-0 rounded-full px-3 py-1.5 text-xs font-medium text-muted-foreground underline-offset-2 transition-colors hover:text-foreground hover:underline"
         >
-          Reset
+          {t("reset")}
         </button>
       )}
     </div>

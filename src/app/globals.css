@@ -21,15 +21,11 @@
 
   --radius: 0.75rem;
 
-  /* Lets native form controls, scrollbars, and the browser UI pick a
-     matching light/dark rendering instead of defaulting to light. */
   color-scheme: light;
 
-  /* Fixed-element heights, used by Topbar / Navbar / HomeShell so
-     spacing always matches regardless of breakpoint. */
-  --topbar-height: 3.5rem;        /* mobile top bar */
-  --bottom-nav-height: 4rem;      /* mobile bottom tab bar */
-  --desktop-nav-height: 4rem;     /* desktop sticky header */
+  --topbar-height: 3.5rem;
+  --bottom-nav-height: 4rem;
+  --desktop-nav-height: 4rem;
   --container-max: 1280px;
 }
 
@@ -84,10 +80,7 @@
 
 html {
   scroll-behavior: smooth;
-  /* Reserves scrollbar space up front so content doesn't shift width
-     when a page toggles between scrollable/not. */
   scrollbar-gutter: stable;
-  /* Prevents the mobile bottom nav / iOS bounce from causing horizontal scroll */
   overflow-x: hidden;
   scrollbar-width: thin;
   scrollbar-color: var(--muted-foreground) transparent;
@@ -101,7 +94,6 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* Consistent, visible keyboard focus everywhere (buttons, links, inputs) */
 :focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 2px;
@@ -113,7 +105,6 @@ body {
   color: var(--primary-foreground);
 }
 
-/* Themed, unobtrusive scrollbars (WebKit browsers) */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -128,7 +119,6 @@ body {
   border-radius: 999px;
 }
 
-/* Utility: hide scrollbars on horizontally-scrolling rows (chips, tabs…) */
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -137,8 +127,6 @@ body {
   display: none;
 }
 
-/* Shared page container — keeps content width consistent with the nav's
-   --container-max, so feature pages don't each reinvent this. */
 .container-app {
   margin-inline: auto;
   max-width: var(--container-max);
@@ -150,32 +138,94 @@ body {
   }
 }
 
-/* Swiper pagination tuned to the design tokens — the active bullet
-   elongates into a pill instead of just changing color. */
-.swiper-pagination-bullet {
+/* ===== MODULES ROW - MOBILE FIRST (horizontal scroll) ===== */
+.modules-scroll {
+  -webkit-overflow-scrolling: touch;
+  scroll-padding-inline: 1rem;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.modules-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .modules-scroll {
+    scroll-padding-inline: 0;
+  }
+}
+/* ===== Banners carousel ===== */
+.banners-carousel .swiper-wrapper {
+  align-items: stretch;
+}
+
+.banners-carousel .swiper-pagination {
+  position: relative !important;
+  bottom: auto;
+  margin-top: 12px;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+.banners-carousel .swiper-pagination-bullet {
   width: 6px;
   height: 6px;
-  background: var(--muted-foreground);
-  opacity: 0.35;
-  transition: all 0.3s ease;
-}
-.swiper-pagination-bullet-active {
-  width: 18px;
+  margin: 0 !important;
   border-radius: 999px;
+  background: var(--muted-foreground);
+  opacity: 0.;
+  cursor: pointer;
+  touch-action: manipulation,
+    width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.3s ease,
+    background-color 0.3s ease;
+}
+
+.banners-carousel .swiper-pagination-bullet-active {
+  width: 24px;
   background: var(--primary);
   opacity: 1;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-    scroll-behavior: auto !important;
-  }
+@media (min-width: 1024px) {
+  .banners-carousel .swiper-pagination { gap: 8px; }
+  .banners-carousel .swiper-pagination-bullet-active { width: 32px; }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .banners-carousel .swiper-pagination-bullet { transition: none; }
+}
+
+/* ===== Marquee (module banners) ===== */
+@keyframes marquee-scroll {
+  to { transform: translateX(-100%); }
+}
+
+.marquee .marquee__track {
+  animation: marquee-scroll var(--marquee-duration, 30s) linear infinite;
+}
+
+/* RTL: scroll the opposite direction */
+[dir="rtl"] .marquee .marquee__track {
+  animation-name: marquee-scroll-rtl;
+}
+@keyframes marquee-scroll-rtl {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0); }
+}
+
+.marquee:hover .marquee__track,
+.marquee:focus-within .marquee__track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion) {
+  .marquee .marquee__track { animation: none; }
+  .marquee { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .marquee .marquee__track[aria-hidden] { display: none; }
+}
+@keyframes fade-in-up { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+.animate-fade-in-up { animation: fade-in-up 0.2s ease-out; }
+@media (prefers-reduced-motion: reduce) { .animate-fade-in-up { animation: none; } }
+

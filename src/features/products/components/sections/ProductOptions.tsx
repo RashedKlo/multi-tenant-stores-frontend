@@ -1,78 +1,105 @@
+// features/stores/components/product-detail/ProductOptions.tsx — FULL VERSION
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { ProductOptionGroup } from "@/features/products/types";
+import { formatPrice } from "@/shared/lib/format"; // shared helper, see below
+
+type Option = ProductOptionGroup["options"][number];
 
 interface ProductOptionsProps {
   groups: ProductOptionGroup[];
-  selected: Record<string, string[]>; // groupId → optionIds
+  selected: Record<string, string[]>;
   onChange: (groupId: string, optionIds: string[]) => void;
 }
 
-export function ProductOptions({
-  groups,
-  selected,
-  onChange,
-}: ProductOptionsProps) {
+export function ProductOptions({ groups, selected, onChange }: ProductOptionsProps) {
+  const t = useTranslations("productOptions");
+
+  function handleSelect(
+    group: ProductOptionGroup,
+    optionId: string,
+    isSelected: boolean,
+  ) {
+    const current = selected[group.id] ?? [];
+    const isSingle = group.selectionType === "Single";
+
+    if (isSingle) {
+      // Tapping the selected radio keeps it (min=1 usually forces a choice)
+      onChange(group.id, [optionId]);
+      return;
+    }
+    if (isSelected) {
+      onChange(group.id, current.filter((id) => id !== optionId));
+    } else if (current.length < group.maxSelection) {
+      onChange(group.id, [...current, optionId]);
+    }
+  }
+
   if (groups.length === 0) return null;
 
   return (
-    <div className="space-y-6">
+    <section aria-label={t("title")} className="space-y-6">
       {groups.map((group) => {
         const current = selected[group.id] ?? [];
         const isSingle = group.selectionType === "Single";
 
         return (
-          <div key={group.id}>
-            <div className="mb-3 flex items-center justify-between">
-              <h3 className="text-sm font-semibold">{group.name}</h3>
-              <span className="text-xs text-muted-foreground">
-                {group.minSelection > 0 ? "Required" : "Optional"}
-                {group.maxSelection > 1 && ` · Max ${group.maxSelection}`}
-              </span>
+          <fieldset key={group.id} className="border-0 p-0 m-0">
+            <legend className="sr-only">{group.name}</legend>
+
+            {/* Group header */}
+            <div className="mb-3 flex items-baseline justify-between gap-3">
+              <h3 className="text-sm font-semibold">
+                {group.name}
+                {group.minSelection > 0 && (
+                  <abbr title={t("required")} className="ms-1 text-danger no-underline">
+                    *
+                  </abbr>
+                )}
+              </h3>
+              <p className="shrink-0 text-xs text-muted-foreground">
+                {group.minSelection > 0 ? t("required") : t("optional")}
+                {!isSingle && ` · ${t("max", { count: group.maxSelection })}`}
+              </p>
             </div>
 
-            <div className="flex flex-wrap gap-2">
+            {/* Chips */}
+            <div
+              role={isSingle ? "radiogroup" : "group"}
+              aria-label={group.name}
+              className="flex flex-wrap gap-2"
+            >
               {group.options.map((option) => {
                 const isSelected = current.includes(option.id);
-
                 return (
                   <button
                     key={option.id}
-                    onClick={() => {
-                      if (isSingle) {
-                        onChange(group.id, [option.id]);
-                      } else {
-                        // Multiple
-                        if (isSelected) {
-                          onChange(
-                            group.id,
-                            current.filter((id) => id !== option.id)
-                          );
-                        } else if (current.length < group.maxSelection) {
-                          onChange(group.id, [...current, option.id]);
-                        }
-                      }
-                    }}
-                    className={`rounded-full border px-4 py-2 text-sm font-medium transition-all active:scale-95 ${
+                    type="button"
+                    role={isSingle ? "radio" : "checkbox"}
+                    aria-checked={isSelected}
+                    onClick={() => handleSelect(group, option.id, isSelected)}
+                    className={[
+                      "flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition-all duration-200 whitespace-nowrap",
+                      "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-95",
                       isSelected
-                        ? "border-primary bg-primary text-primary-foreground"
-                        : "border-border bg-background hover:bg-muted"
-                    }`}
+                        ? "border-transparent bg-primary text-primary-foreground shadow-sm"
+                        : "border-border bg-card hover:border-primary/40 hover:bg-muted",
+                    ].join(" ")}
                   >
-                    {option.name}
+                    <span>{option.name}</span>
                     {option.priceAdjustment !== 0 && (
-                      <span className="ml-1 opacity-80">
-                        {option.priceAdjustment > 0 ? "+" : ""}
-                        {option.priceAdjustment.toFixed(2)}
+                      <span className="opacity-75" dir="ltr">
+                        {formatPrice(Math.abs(option.priceAdjustment), { sign: true })}
                       </span>
                     )}
                   </button>
                 );
               })}
             </div>
-          </div>
+          </fieldset>
         );
       })}
-    </div>
+    </section>
   );
 }

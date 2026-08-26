@@ -23,5 +23,101 @@
   "modules": {
     "title": "الفئات",
     "noModules": "لا توجد فئات متاحة"
+  },
+  
+  "moduleHeader": {
+      "notFound": "لم يتم العثور على هذه الوحدة",
+  "metaTitle": "تفاصيل الوحدة",
+  "categoriesCount": "{count, plural, =0 {لا توجد فئات} =1 {فئة واحدة} =2 {فئتان} few {# فئات} other {# فئات}}"
+  },
+  "moduleBanners": { "ariaLabel": "عروض الوحدة" },
+  "categories": {
+    "title": "الفئات",
+    "ariaLabel": "تصفية حسب الفئة",
+    "all": "الكل",
+  "count": "{count} فئة",
+
+    "noCategories": "لا توجد فئات متاحة"
+  },
+  "stores": {
+    "title": "المتاجر",
+    "resultsCount": "{count} نتيجة",
+    "loadMore": "تحميل المزيد",
+    "loading": "جارٍ التحميل…",
+    "noStores": "لا توجد متاجر",
+    "noStoresHint": "جرّب فئة أخرى أو ابحث بكلمة مختلفة"
+
+  },
+  "storeCard":{
+       "addToFavorites": "أضف إلى المفضلة",
+    "removeFromFavorites": "إزالة من المفضلة",
+    "ratingLabel": "التقييم {rating} من 5"
+  },
+ "storeBanners": {
+    "ariaLabel": "عروض المتجر",
+    "bannerImageAlt": "صورة العرض"
+  },
+  "storeHeader": {
+    "addToFavorites": "أضف إلى المفضلة",
+    "removeFromFavorites": "إزالة من المفضلة",
+    "ratingLabel": "التقييم {rating} من 5"
+  },
+  "storeSections": {
+    "title": "الأقسام",
+    "count": "{count} قسم",
+    "noSections": "لا توجد أقسام متاحة"
+  },  "products": {
+    "title": "المنتجات",
+    "count": "{count} منتج",
+    "loadMore": "تحميل المزيد",
+    "loading": "جارٍ التحميل…"
+  },
+  "productCard": {
+    "outOfStock": "غير متوفر"
+  },
+  "productFilters": {
+    "ariaLabel": "تصفية المنتجات",
+    "inStockOnly": "المتوفر فقط",
+    "reset": "إعادة تعيين",
+    "price": {
+      "20": "أقل من ٢٠",
+      "range20_50": "٢٠ – ٥٠",
+      "over50": "٥٠+"
+    }},
+  "productOptions": {
+    "title": "خيارات المنتج",
+    "required": "مطلوب",
+    "optional": "اختياري",
+    "max": "حتى {count}"
+  },
+  "productInfo": {
+    "addToFavorites": "أضف إلى المفضلة",
+    "removeFromFavorites": "إزالة من المفضلة",
+    "discountLabel": "خصم بنسبة {percent}%",
+    "inStock": "متوفر",
+    "outOfStock": "غير متوفر",
+    "lowStock": "بقي {count} فقط!"
+  },
+  "productGallery": {
+    "imageOf": "{index} من {total}",
+    "previousImage": "الصورة السابقة",
+    "nextImage": "الصورة التالية",
+    "thumbnailsLabel": "معرض صور المنتج"
+  }, "productDetail": {
+    "addToCart": "أضف إلى السلة",
+    "outOfStock": "غير متوفر",
+    "outOfStockHint": "هذا المنتج غير متوفر حالياً",
+    "selectRequiredFor": "يرجى اختيار: {group}",
+    "addToCartError": "تعذّر إضافة المنتج، حاول مرة أخرى",
+    "addedToCart": "تمت الإضافة إلى السلة",
+    "quantityLabel": "الكمية",
+    "increase": "زيادة الكمية",
+    "decrease": "تقليل الكمية"
+  },  "favorites": {
+    "title": "المفضلة",
+    "subtitle": "المنتجات والمتاجر التي تعشقها",
+    "tabsLabel": "تصفح المفضلة",
+    "products": "المنتجات",
+    "stores": "المتاجر"
   }
-}
+  }

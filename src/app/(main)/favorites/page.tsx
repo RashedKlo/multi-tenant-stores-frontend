@@ -1,39 +1,53 @@
 // app/(main)/favorites/page.tsx
+import type { Metadata } from "next";
 import { Suspense } from "react";
+import { getTranslations } from "next-intl/server";
+
 import { FavoritesShell } from "@/features/favorites/components/FavoritesShell";
 import { FavoriteProducts } from "@/features/favorites/components/sections/FavoriteProducts";
 import { FavoriteStores } from "@/features/favorites/components/sections/FavoriteStores";
-import { FavoritesTabsServer } from "@/features/favorites/components/FavoritesTabs";
+import { FavoritesTabs } from "@/features/favorites/components/FavoritesTabs";
+
+type FavoritesTab = "products" | "stores";
 
 interface FavoritesPageProps {
   searchParams: Promise<{ tab?: string }>;
 }
 
+export async function generateMetadata({
+  searchParams,
+}: FavoritesPageProps): Promise<Metadata> {
+  const [{ tab }, t] = await Promise.all([
+    searchParams,
+    getTranslations("favorites"),
+  ]);
+  const activeTab: FavoritesTab = tab === "stores" ? "stores" : "products";
+
+  return {
+    title: activeTab === "stores" ? t("stores") : t("products"),
+  };
+}
+
 export default async function FavoritesPage({ searchParams }: FavoritesPageProps) {
-  const { tab } = await searchParams;
-  const activeTab = tab === "stores" ? "stores" : "products";
+  const [{ tab }, t] = await Promise.all([searchParams, getTranslations("favorites")]);
+
+  // Whitelist — anything else falls back to products
+  const activeTab: FavoritesTab = tab === "stores" ? "stores" : "products";
 
   return (
     <FavoritesShell>
       <div className="space-y-5">
-        <div>
-          <h1 className="text-xl font-bold">My Favorites</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Products and stores you love
-          </p>
-        </div>
+        {/* Page heading */}
+        <header>
+          <h1 className="text-xl font-bold tracking-tight sm:text-2xl">{t("title")}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">{t("subtitle")}</p>
+        </header>
 
-        <FavoritesTabsServer active={activeTab} />
+        {/* Segmented tabs */}
+        <FavoritesTabs active={activeTab} />
 
-        <Suspense
-          fallback={
-            activeTab === "products" ? (
-              <FavoriteProducts.skeleton />
-            ) : (
-              <FavoriteStores.skeleton />
-            )
-          }
-        >
+        {/* Active panel — independent Suspense boundary */}
+        <Suspense fallback={<FavoritesFallback active={activeTab} />}>
           {activeTab === "products" ? (
             <FavoriteProducts />
           ) : (
@@ -42,5 +56,12 @@ export default async function FavoritesPage({ searchParams }: FavoritesPageProps
         </Suspense>
       </div>
     </FavoritesShell>
+  );
+}
+
+/** Local helper keeps the JSX tidy; reuses each section's attached skeleton. */
+function FavoritesFallback({ active }: { active: FavoritesTab }) {
+  return (
+    <div aria-hidden>{active === "products" ? <FavoriteProducts.skeleton /> : <FavoriteStores.skeleton />}</div>
   );
 }

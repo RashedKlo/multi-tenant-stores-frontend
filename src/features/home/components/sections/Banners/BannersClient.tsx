@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination } from "swiper/modules";
+import { A11y, Autoplay, Keyboard, Pagination } from "swiper/modules";
 import type { HomeBanner } from "@/features/home/types/home.types";
 
 import "swiper/css";
@@ -13,75 +13,103 @@ interface BannersClientProps {
   banners: HomeBanner[];
 }
 
-/**
- * Auto-advancing promo carousel. Pure presentational — receives
- * already-fetched, already-localized data. `dir` is set explicitly from
- * the active locale so Swiper mirrors slide order and swipe direction
- * for Arabic instead of only mirroring the surrounding layout.
- */
+const SWIPER_VARS = {
+  "--swiper-theme-color": "var(--primary)",
+  "--swiper-pagination-bullet-inactive-color": "var(--muted-foreground)",
+  "--swiper-pagination-bullet-size": "6px",
+} as React.CSSProperties;
+
+const BREAKPOINTS = {
+  0: { slidesPerView: 1, spaceBetween: 0, centeredSlides: false },
+  480: { slidesPerView: 1.15, spaceBetween: 10, centeredSlides: true },
+  640: { slidesPerView: 1.3, spaceBetween: 14, centeredSlides: true },
+  1024: { slidesPerView: 2, spaceBetween: 20, centeredSlides: false },
+  1280: { slidesPerView: 2.25, spaceBetween: 24, centeredSlides: false },
+} as const;
+
 export function BannersClient({ banners }: BannersClientProps) {
   const locale = useLocale();
   const t = useTranslations("banners");
-  const direction = locale === "ar" ? "rtl" : "ltr";
+  const direction = locale === "ar" ? ("rtl" as const) : ("ltr" as const);
   const hasMultiple = banners.length > 1;
 
   if (banners.length === 0) return null;
 
   return (
     <section aria-label={t("ariaLabel")} className="w-full">
-      <Swiper
-        modules={[Autoplay, Pagination]}
-        dir={direction}
-        key={direction}
-        loop={hasMultiple}
-        autoplay={
-          hasMultiple
-            ? { delay: 4500, disableOnInteraction: false, pauseOnMouseEnter: true }
-            : false
-        }
-        pagination={hasMultiple ? { clickable: true } : false}
-        spaceBetween={12}
-        slidesPerView={1.08}
-        centeredSlides={hasMultiple}
-        breakpoints={{
-          640: { slidesPerView: 1.5, spaceBetween: 16, centeredSlides: false },
-          1024: { slidesPerView: 2.2, spaceBetween: 20 },
-        }}
-        style={{ "--swiper-theme-color": "var(--primary)" } as React.CSSProperties}
-        className="!overflow-visible pb-8"
-      >
-        {banners.map((banner, index) => (
-          <SwiperSlide key={banner.id} className="!h-auto">
-            <a
-              href={banner.actionUrl ?? "#"}
-              className="group relative block h-full overflow-hidden rounded-2xl bg-muted"
-            >
-              <Image
-                src={banner.imageUrl}
-                alt={banner.title}
-                width={1200}
-                height={525}
-                className="aspect-[16/8] w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                sizes="(max-width: 640px) 92vw, (max-width: 1024px) 60vw, 45vw"
-                priority={index === 0}
-              />
-
-              {(banner.title || banner.subtitle) && (
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent p-4 text-white">
-                  {banner.title && (
-                    <p className="font-semibold leading-tight sm:text-lg">
-                      {banner.title}
-                    </p>
-                  )}
-                  {banner.subtitle && (
-                    <p className="mt-0.5 text-sm text-white/85">{banner.subtitle}</p>
-                  )}
-                </div>
-              )}
-            </a>
-          </SwiperSlide>
-        ))}
-      </Swiper>
+      <div className="banners-carousel relative w-full">
+        <Swiper
+          modules={[A11y, Autoplay, Keyboard, Pagination]}
+          dir={direction}
+          key={direction}
+          loop={hasMultiple}
+          autoplay={hasMultiple ? { delay: 1000, disableOnInteraction: false, pauseOnMouseEnter: true } : false}
+          pagination={hasMultiple ? { clickable: true } : false}
+          keyboard={{ enabled: hasMultiple }}
+          speed={500}
+          grabCursor
+          watchSlidesProgress
+          breakpoints={{ ...BREAKPOINTS }}
+          style={SWIPER_VARS}
+        >
+          {banners.map((banner, index) => (
+            <SwiperSlide key={banner.id}>
+              <BannerCard banner={banner} priority={index === 0} imageAlt={banner.title || t("bannerImageAlt")} />
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </div>
     </section>
+  );
+}
+
+/* ---------- Presentational card (kept in-file; extract if reused) ---------- */
+
+function BannerCard({
+  banner,
+  priority,
+  imageAlt,
+}: {
+  banner: HomeBanner;
+  priority: boolean;
+  imageAlt: string;
+}) {
+  const isExternal = banner.actionUrl?.startsWith("http");
+
+  return (
+    <a
+      href={banner.actionUrl ?? "#"}
+      target={isExternal ? "_blank" : undefined}
+      rel={isExternal ? "noopener noreferrer" : undefined}
+      className="group relative block w-full overflow-hidden rounded-2xl bg-card ring-1 ring-border/60 shadow-sm transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-lg focus-visible:-translate-y-0.5"
+    >
+      {/* Fixed mobile height → fluid aspect ratio on larger screens */}
+      <div className="relative h-44 w-full overflow-hidden sm:h-56 md:h-auto md:aspect-[16/9] lg:aspect-[21/9]">
+        <Image
+          src={banner.imageUrl}
+          alt={imageAlt}
+          fill
+          priority={priority}
+          quality={85}
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 50vw"
+          className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent"
+        />
+      </div>
+
+      {(banner.title || banner.subtitle) && (
+        <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
+          <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-white drop-shadow sm:text-base md:text-lg">
+            {banner.title}
+          </h3>
+          {banner.subtitle && (
+            <p className="mt-1 line-clamp-2 text-xs text-white/90 sm:text-sm">{banner.subtitle}</p>
+          )}
+        </div>
+      )}
+    </a>
   );
 }

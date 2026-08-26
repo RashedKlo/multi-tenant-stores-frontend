@@ -13,14 +13,14 @@ interface StoresProps {
 
 export const Stores = Object.assign(
   async function Stores({ moduleId, categoryId, search }: StoresProps) {
-    const data = await getStoresByModule({
-      moduleId,
-      categoryId,
-      search,
-      page: 1,
-      pageSize: 20,
-    });
-    // const data=MOCK_STORES;
+    // const data = await getStoresByModule({
+    //   moduleId,
+    //   categoryId,
+    //   search,
+    //   page: 1,
+    //   pageSize: 20,
+    // });
+    const data=MOCK_STORES;
 
     if (!data.items.length) {
       return <StoresEmpty />;

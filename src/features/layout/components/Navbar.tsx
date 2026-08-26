@@ -63,7 +63,7 @@ export function Navbar() {
                   </span>
                   <span
                     className={cn(
-                      "text-[11px] leading-none transition-colors",
+                      "w-full truncate px-0.5 text-center text-[11px] leading-none transition-colors",
                       active ? "font-semibold text-primary" : "text-muted-foreground"
                     )}
                   >

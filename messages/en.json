@@ -18,10 +18,107 @@
   },
   "banners": {
     "noBanners": "No banners available",
-    "ariaLabel": "Promotions"
+    "ariaLabel": "Promotional offers"
   },
   "modules": {
     "title": "Categories",
     "noModules": "No categories available"
+  },
+  "moduleHeader": {
+    "notFound": "Module not found",
+    "metaTitle": "Module details",
+    "categoriesCount": "{count, plural, =0 {No categories} =1 {1 category} other {# categories}}"
+  },
+  "moduleBanners": { "ariaLabel": "Module offers" },
+  "categories": {
+    "title": "Categories",
+    "ariaLabel": "Filter by category",
+    "all": "All",
+    "noCategories": "No categories available",
+      "count": "{count} categories"
+  },
+  "stores": {
+    "title": "Stores",
+    "resultsCount": "{count} results",
+    "loadMore": "Load more",
+    "loading": "Loading…",
+    "noStores": "No stores found",
+    "noStoresHint": "Try a different category or search term"
+    
+  },
+  "storeCard":{
+"addToFavorites": "Add to favorites",
+    "removeFromFavorites": "Remove from favorites",
+    "ratingLabel": "Rated {rating} out of 5"
+  },
+
+  "storeBanners": {
+    "ariaLabel": "Store offers",
+    "bannerImageAlt": "Promo image"
+  },
+  "storeHeader": {
+    "addToFavorites": "Add to favorites",
+    "removeFromFavorites": "Remove from favorites",
+    "ratingLabel": "Rated {rating} out of 5"
+  },
+  "storeSections": {
+    "title": "Menu & Sections",
+    "count": "{count} sections",
+    "noSections": "No sections available"
+  }, "products": {
+    "title": "Products",
+    "count": "{count} products",
+    "loadMore": "Load more",
+    "loading": "Loading…"
+  },
+  "productCard": {
+    "outOfStock": "Out of stock"
+  },
+  "productFilters": {
+    "ariaLabel": "Filter products",
+    "inStockOnly": "In stock only",
+    "reset": "Reset",
+    "price": {
+      "under20": "Under 20",
+      "range20_50": "20 – 50",
+      "over50": "50+"
+    }
+  },
+  "productOptions": {
+    "title": "Product options",
+    "required": "Required",
+    "optional": "Optional",
+    "max": "Up to {count}"
+  },
+  "productInfo": {
+    "addToFavorites": "Add to favorites",
+    "removeFromFavorites": "Remove from favorites",
+    "discountLabel": "{percent}% off",
+    "inStock": "In stock",
+    "outOfStock": "Out of stock",
+    "lowStock": "Only {count} left!"
+  },
+  "productGallery": {
+    "imageOf": "{index} of {total}",
+    "previousImage": "Previous image",
+    "nextImage": "Next image",
+    "thumbnailsLabel": "Product gallery"
+  },   "productDetail": {
+    "addToCart": "Add to cart",
+    "outOfStock": "Out of stock",
+    "outOfStockHint": "This item is currently unavailable",
+    "selectRequiredFor": "Please choose: {group}",
+    "addToCartError": "Couldn't add to cart, please try again",
+    "addedToCart": "Added to cart",
+    "quantityLabel": "Quantity",
+    "increase": "Increase quantity",
+    "decrease": "Decrease quantity"
+  },  "favorites": {
+    "title": "My Favorites",
+    "subtitle": "Products and stores you love",
+    "tabsLabel": "Browse favorites",
+    "products": "Products",
+    "stores": "Stores"
   }
+
 }

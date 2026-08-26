@@ -1,8 +1,7 @@
-// features/modules/components/sections/ModuleBanners/ModuleBannersClient.tsx
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
 import type { ModuleBanner } from "@/features/modules/types";
 
 interface ModuleBannersClientProps {
@@ -10,75 +9,67 @@ interface ModuleBannersClientProps {
 }
 
 export function ModuleBannersClient({ banners }: ModuleBannersClientProps) {
-  const trackRef = useRef<HTMLDivElement>(null);
-  const items = [...banners, ...banners]; // for seamless loop
+  const t = useTranslations("moduleBanners");
 
-  useEffect(() => {
-    const track = trackRef.current;
-    if (!track || banners.length <= 1) return;
-
-    let animationId: number;
-    let position = 0;
-    const speed = 0.35;
-
-    const step = () => {
-      position += speed;
-      if (position >= track.scrollWidth / 2) position = 0;
-      track.style.transform = `translateX(-${position}px)`;
-      animationId = requestAnimationFrame(step);
-    };
-
-    animationId = requestAnimationFrame(step);
-
-    const pause = () => cancelAnimationFrame(animationId);
-    const resume = () => {
-      animationId = requestAnimationFrame(step);
-    };
-
-    track.addEventListener("mouseenter", pause);
-    track.addEventListener("mouseleave", resume);
-    track.addEventListener("touchstart", pause, { passive: true });
-    track.addEventListener("touchend", resume);
-
-    return () => {
-      cancelAnimationFrame(animationId);
-      track.removeEventListener("mouseenter", pause);
-      track.removeEventListener("mouseleave", resume);
-      track.removeEventListener("touchstart", pause);
-      track.removeEventListener("touchend", resume);
-    };
-  }, [banners.length]);
+  // Single banner → no marquee needed
+  if (banners.length <= 1) {
+    return (
+      <section aria-label={t("ariaLabel")} className="w-full">
+        <MarqueeCard banner={banners[0]} priority />
+      </section>
+    );
+  }
 
   return (
-    <section className="w-full overflow-hidden">
-      <div
-        ref={trackRef}
-        className="flex gap-3 will-change-transform"
-        style={{ width: "max-content" }}
-      >
-        {items.map((banner, index) => (
-          <a
-            key={`${banner.id}-${index}`}
-            href={banner.actionUrl ?? "#"}
-            className="relative block w-[85vw] max-w-[420px] shrink-0 overflow-hidden rounded-xl sm:w-[70vw] md:w-[480px]"
-          >
-            <Image
-              src={banner.imageUrl}
-              alt={banner.title ?? "Banner"}
-              width={1200}
-              height={420}
-              className="aspect-[16/6] w-full object-cover"
-              sizes="(max-width: 640px) 85vw, (max-width: 768px) 70vw, 480px"
-              priority={index === 0}
-            />
-            {banner.title && (
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-4 text-white">
-                <p className="font-semibold">{banner.title}</p>
-              </div>
-            )}
-          </a>
+    <section aria-label={t("ariaLabel")} className="marquee w-full overflow-hidden">
+      {/* Two identical tracks = seamless infinite loop, GPU-composited */}
+      <div className="marquee__track flex w-max gap-4 will-change-transform" aria-hidden>
+        {banners.map((b, i) => (
+          <MarqueeCard key={b.id} banner={b} priority={i === 0} tabIndex={-1} />
+        ))}
+      </div>
+      <div className="marquee__track flex w-max gap-4 will-change-transform">
+        {banners.map((b) => (
+          <MarqueeCard key={b.id} banner={b} tabIndex={-1} />
         ))}
       </div>
     </section>
+  );
+}
+
+function MarqueeCard({
+  banner,
+  priority,
+  tabIndex,
+}: {
+  banner: ModuleBanner;
+  priority?: boolean;
+  tabIndex?: number;
+}) {
+  const isExternal = banner.actionUrl?.startsWith("http");
+  return (
+    <a
+      href={banner.actionUrl ?? "#"}
+      tabIndex={tabIndex}
+      target={isExternal ? "_blank" : undefined}
+      rel={isExternal ? "noopener noreferrer" : undefined}
+      className="group relative block w-[85vw] max-w-[440px] shrink-0 overflow-hidden rounded-2xl ring-1 ring-border/60 shadow-sm transition-shadow hover:shadow-md"
+    >
+      <Image
+        src={banner.imageUrl}
+        alt={banner.title ?? ""}
+        width={1200}
+        height={420}
+        priority={priority}
+        quality={80}
+        sizes="(max-width: 640px) 85vw, 480px"
+        className="aspect-[16/6] w-full object-cover"
+      />
+      {banner.title && (
+        <p className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 to-transparent p-4 text-sm font-semibold text-white drop-shadow sm:text-base">
+          {banner.title}
+        </p>
+      )}
+    </a>
   );
 }

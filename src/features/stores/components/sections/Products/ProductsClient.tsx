@@ -1,143 +1,166 @@
 // features/stores/components/sections/Products/ProductsClient.tsx
 "use client";
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState, useTransition } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
+
 import type { PagedProducts } from "@/features/stores/types";
+// import { getProductsBySection } from "@/features/stores/api"; // accepts filters + pagination
 import { ProductCard } from "./ProductCard";
 import { ProductFilters } from "./ProductFilters";
+import { ProductCardSkeleton } from "./skeleton";
 
 interface ProductsClientProps {
   initialData: PagedProducts;
   sectionId: string;
   storeId: string;
-  initialInStockOnly?: boolean;
-  initialMinPrice?: number;
-  initialMaxPrice?: number;
 }
 
 export function ProductsClient({
   initialData,
   sectionId,
   storeId,
-  initialInStockOnly = false,
-  initialMinPrice,
-  initialMaxPrice,
 }: ProductsClientProps) {
+  const t = useTranslations("products");
   const router = useRouter();
-  const path=usePathname();
   const searchParams = useSearchParams();
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition(); // for URL updates only
 
-  const [data, setData] = useState(initialData);
+  const [data, setData] = useState<PagedProducts>(initialData);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
+  // Filters live in the URL — single source of truth
   const inStockOnly = searchParams.get("inStockOnly") === "true";
-  const minPrice = searchParams.get("minPrice")
-    ? Number(searchParams.get("minPrice"))
-    : undefined;
-  const maxPrice = searchParams.get("maxPrice")
-    ? Number(searchParams.get("maxPrice"))
-    : undefined;
+  const minPrice = numParam(searchParams.get("minPrice"));
+  const maxPrice = numParam(searchParams.get("maxPrice"));
 
+  /** Filter changes → URL → server re-renders page 1 (fresh initialData). */
   const updateFilters = (updates: {
     inStockOnly?: boolean;
     minPrice?: number;
     maxPrice?: number;
   }) => {
     const params = new URLSearchParams(searchParams.toString());
+    params.delete("page"); // any filter change resets pagination
 
-    if (updates.inStockOnly !== undefined) {
-      if (updates.inStockOnly) params.set("inStockOnly", "true");
-      else params.delete("inStockOnly");
+    if ("inStockOnly" in updates) {
+      updates.inStockOnly
+        ? params.set("inStockOnly", "true")
+        : params.delete("inStockOnly");
     }
-
     if ("minPrice" in updates) {
-      if (updates.minPrice !== undefined)
-        params.set("minPrice", String(updates.minPrice));
-      else params.delete("minPrice");
+      updates.minPrice !== undefined
+        ? params.set("minPrice", String(updates.minPrice))
+        : params.delete("minPrice");
     }
-
     if ("maxPrice" in updates) {
-      if (updates.maxPrice !== undefined)
-        params.set("maxPrice", String(updates.maxPrice));
-      else params.delete("maxPrice");
+      updates.maxPrice !== undefined
+        ? params.set("maxPrice", String(updates.maxPrice))
+        : params.delete("maxPrice");
     }
 
     startTransition(() => {
-      router.push(`?${params.toString()}`, { scroll: false });
+      router.push(`?${params}`, { scroll: false });
     });
   };
 
+  /**
+   * Load more → CLIENT fetch + append.
+   * No navigation: keeps scroll position and avoids re-fetching page 1.
+   */
   const handleLoadMore = async () => {
     if (!data.hasNextPage || isLoadingMore) return;
 
-      const params = new URLSearchParams({
-        page: String(data.page + 1),
-        pageSize: String(data.pageSize),
-      });
+    setIsLoadingMore(true);
+    try {
+      // const next = await getProductsBySection({
+      //   sectionId,
+      //   page: data.page + 1,
+      //   pageSize: data.pageSize,
+      //   inStockOnly,
+      //   minPrice,
+      //   maxPrice,
+      // });
 
-      if (inStockOnly) params.set("inStockOnly", "true");
-      if (minPrice !== undefined) params.set("minPrice", String(minPrice));
-      if (maxPrice !== undefined) params.set("maxPrice", String(maxPrice));
-      router.replace(`${path}?${params.toString()}`,{scroll:false});
-
-      
+      // setData((prev) => ({
+      //   ...next,
+      //   items: [...prev.items, ...dedupeById(prev.items, next.items)],
+      // }));
+    } catch {
+      router.refresh(); // graceful fallback: let the server retry
+    } finally {
+      setIsLoadingMore(false);
+    }
   };
 
+  const resetToFirstPage = () => setData(initialData); // cheap guard if needed
+
   return (
-    <section className="space-y-4">
-      {/* Header + count */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-base font-semibold">Products</h2>
-        <span className="text-xs text-muted-foreground">
-          {data.totalCount} items
+    <section aria-labelledby="products-heading" className="space-y-4">
+      <div className="flex items-baseline justify-between gap-3">
+        <h2 id="products-heading" className="text-base font-semibold tracking-tight sm:text-lg">
+          {t("title")}
+        </h2>
+        <span className="shrink-0 text-xs text-muted-foreground" aria-live="polite">
+          {t("count", { count: data.totalCount })}
         </span>
       </div>
 
-      {/* Filters */}
       <ProductFilters
         inStockOnly={inStockOnly}
         minPrice={minPrice}
         maxPrice={maxPrice}
-        onInStockChange={(value) => updateFilters({ inStockOnly: value })}
-        onPriceChange={(min, max) =>
-          updateFilters({ minPrice: min, maxPrice: max })
-        }
-        onReset={() => {
-          startTransition(() => {
-            router.push("?", { scroll: false });
-          });
-        }}
+        onInStockChange={(v) => updateFilters({ inStockOnly: v })}
+        onPriceChange={(min, max) => updateFilters({ minPrice: min, maxPrice: max })}
+        onReset={() => updateFilters({ inStockOnly: false, minPrice: undefined, maxPrice: undefined })}
       />
 
-      {/* Grid */}
-      <div
-        className={`grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 ${
-          isPending ? "opacity-60" : ""
+      <ul
+        role="list"
+        className={`grid grid-cols-2 gap-3 transition-opacity duration-200 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 ${
+          isLoadingMore ? "" : ""
         }`}
       >
         {data.items.map((product) => (
-          <ProductCard
-            key={product.id}
-            product={product}
-            storeId={storeId}
-          />
+          <li key={product.id}>
+            <ProductCard product={product} storeId={storeId} />
+          </li>
         ))}
-      </div>
 
-      {/* Load more */}
+        {isLoadingMore &&
+          Array.from({ length: Math.min(data.pageSize, 5) }, (_, i) => (
+            <li key={`sk-${i}`}>
+              <ProductCardSkeleton />
+            </li>
+          ))}
+      </ul>
+
       {data.hasNextPage && (
-        <div className="flex justify-center pt-2">
+        <footer className="flex justify-center pt-2">
           <button
+            type="button"
             onClick={handleLoadMore}
             disabled={isLoadingMore}
-            className="rounded-full border border-border bg-background px-6 py-2.5 text-sm font-medium transition-colors hover:bg-muted disabled:opacity-50"
+            className="rounded-full border border-border bg-card px-8 py-2.5 text-sm font-medium shadow-sm transition-all hover:bg-muted disabled:pointer-events-none disabled:opacity-50"
           >
-            {isLoadingMore ? "Loading..." : "Load more"}
+            {isLoadingMore ? t("loading") : t("loadMore")}
           </button>
-        </div>
+        </footer>
       )}
     </section>
   );
+}
+
+/* ---------- helpers ---------- */
+
+function numParam(value: string | null): number | undefined {
+  if (value === null || value === "") return undefined;
+  const n = Number(value);
+  return Number.isFinite(n) ? n : undefined;
+}
+
+function dedupeById<T extends { id: string }>(current: T[], incoming: T[]): T[] {
+  const seen = new Set(current.map((i) => i.id));
+  return incoming.filter((i) => !seen.has(i.id));
 }
