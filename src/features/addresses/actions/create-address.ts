@@ -16,7 +16,7 @@ export async function createAddressAction(
       body: JSON.stringify(input),
     });
 
-    revalidateTag(CACHE_TAGS.addresses);
+    // revalidateTag(CACHE_TAGS.addresses);
     return { success: true, data };
   } catch (error) {
     console.error("[createAddressAction]", error);

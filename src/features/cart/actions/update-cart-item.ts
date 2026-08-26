@@ -1,4 +1,4 @@
-// features/cart/actions/update-cart-item.ts
+// src/features/cart/actions/update-cart-item.ts
 "use server";
 
 import { revalidateTag } from "next/cache";
@@ -12,8 +12,8 @@ interface UpdateCartItemInput {
   notes?: string;
 }
 
-type ActionResult<T = undefined> =
-  | { success: true; data: T }
+type ActionResult =
+  | { success: true; data: undefined }
   | { success: false; error: string };
 
 export async function updateCartItemAction(
@@ -30,7 +30,7 @@ export async function updateCartItemAction(
       }),
     });
 
-    revalidateTag(CACHE_TAGS.cart);
+    // revalidateTag(CACHE_TAGS.cart);
     return { success: true, data: undefined };
   } catch (error) {
     console.error("[updateCartItemAction]", error);

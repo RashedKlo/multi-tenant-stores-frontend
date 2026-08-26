@@ -1,17 +1,17 @@
-// features/cart/components/sections/CartItems/index.tsx
+// src/features/cart/components/sections/CartItems/index.tsx
 "use client";
 
-import { useTranslations } from "next-intl";
-import type { CartItem } from "../../types";
+import type { CartItem } from "@/features/cart/types";
 import { CartItemsClient } from "./CartItemsClient";
 import { CartEmpty } from "./empty";
 import { CartItemsSkeleton } from "./skeleton";
 
-export function CartItems(props: { storeId: string; initialItems: CartItem[] }) {
-  const t = useTranslations("cart");
-
+export function CartItems(props: {
+  storeId: string;
+  initialItems: CartItem[];
+}) {
   if (props.initialItems.length === 0) return <CartEmpty />;
   return <CartItemsClient {...props} />;
 }
 
-export { CartItemsSkeleton as Skeleton };
+CartItems.Skeleton = CartItemsSkeleton;

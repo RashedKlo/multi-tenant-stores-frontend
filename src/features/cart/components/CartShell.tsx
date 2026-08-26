@@ -1,4 +1,4 @@
-// features/cart/components/CartShell.tsx
+// src/features/cart/components/CartShell.tsx
 interface CartShellProps {
   children: React.ReactNode;
 }

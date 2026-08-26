@@ -1,4 +1,4 @@
-// features/cart/actions/add-cart-item.ts
+// src/features/cart/actions/add-cart-item.ts
 "use server";
 
 import { revalidateTag } from "next/cache";
@@ -27,7 +27,7 @@ export async function addCartItemAction(
       body: JSON.stringify(input),
     });
 
-    revalidateTag(CACHE_TAGS.cart);
+    // revalidateTag(CACHE_TAGS.cart);
     return { success: true, data };
   } catch (error) {
     console.error("[addCartItemAction]", error);

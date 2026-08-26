@@ -1,9 +1,12 @@
-// features/cart/components/sections/CartItems/skeleton.tsx
+// src/features/cart/components/sections/CartItems/skeleton.tsx
 export function CartItemsSkeleton({ count = 3 }: { count?: number }) {
   return (
     <div className="space-y-3" aria-hidden>
       {Array.from({ length: count }, (_, i) => (
-        <div key={i} className="animate-pulse flex gap-3 rounded-2xl border border-border/60 bg-card p-3">
+        <div
+          key={i}
+          className="flex animate-pulse gap-3 rounded-2xl border border-border/60 bg-card p-3"
+        >
           <div className="h-20 w-20 shrink-0 rounded-xl bg-muted" />
           <div className="flex flex-1 flex-col gap-2 py-1">
             <div className="h-3.5 w-3/5 rounded bg-muted" />

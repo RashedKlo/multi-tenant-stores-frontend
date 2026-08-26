@@ -10,7 +10,7 @@ export async function deleteAddressAction(
 ): Promise<{ success: boolean; error?: string }> {
   try {
     await fetchJson(`/api/addresses/${id}`, { method: "DELETE" });
-    revalidateTag(CACHE_TAGS.addresses);
+    // revalidateTag(CACHE_TAGS.addresses);
     return { success: true };
   } catch (error) {
     console.error("[deleteAddressAction]", error);

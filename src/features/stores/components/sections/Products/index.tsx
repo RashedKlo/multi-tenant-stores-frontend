@@ -40,9 +40,7 @@ export const Products = Object.assign(
         initialData={data}
         sectionId={sectionId}
         storeId={storeId}
-        initialInStockOnly={inStockOnly}
-        initialMinPrice={minPrice}
-        initialMaxPrice={maxPrice}
+   
       />
     );
   },

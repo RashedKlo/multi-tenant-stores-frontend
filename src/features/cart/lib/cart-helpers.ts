@@ -1,15 +1,16 @@
-// features/cart/lib/cart-helpers.ts
-import type { CartItem, LocalizedCartItem, LocalizedSelectedOption } from "./types-local";
+// src/features/cart/lib/cart-helpers.ts
+import type {
+  Cart,
+  CartItem,
+  LocalizedCartItem,
+} from "../types";
 
-export interface LocalizedSelectedOption {
-  optionId: string;
-  groupName: string;
-  optionName: string;
-  priceAdjustment: number;
-}
-
-export function localizeCartItems(items: CartItem[], locale: string): LocalizedCartItem[] {
+export function localizeCartItems(
+  items: CartItem[],
+  locale: string,
+): LocalizedCartItem[] {
   const ar = locale.startsWith("ar");
+
   return items.map((item) => ({
     cartItemId: item.cartItemId,
     cartId: item.cartId,
@@ -26,4 +27,31 @@ export function localizeCartItems(items: CartItem[], locale: string): LocalizedC
     })),
     itemTotalPrice: item.itemTotalPrice,
   }));
+}
+
+export function formatCartPrice(
+  amount: number,
+  locale = "en",
+  currency = "SYP",
+): string {
+  return new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency,
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
+
+export function isCartEmpty(cart: Cart): boolean {
+  return cart.items.length === 0 || cart.totalItemCount === 0;
+}
+
+export function recalcItemTotal(
+  item: Pick<LocalizedCartItem, "basePrice" | "selectedOptions">,
+  quantity: number,
+): number {
+  const optionsTotal = item.selectedOptions.reduce(
+    (sum, o) => sum + o.priceAdjustment,
+    0,
+  );
+  return (item.basePrice + optionsTotal) * quantity;
 }

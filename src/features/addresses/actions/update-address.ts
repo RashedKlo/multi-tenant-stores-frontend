@@ -16,8 +16,8 @@ export async function updateAddressAction(
       body: JSON.stringify(input),
     });
 
-    revalidateTag(CACHE_TAGS.addresses);
-    revalidateTag(CACHE_TAGS.address(input.id));
+    // revalidateTag(CACHE_TAGS.addresses);
+    // revalidateTag(CACHE_TAGS.address(input.id));
     return { success: true, data };
   } catch (error) {
     console.error("[updateAddressAction]", error);

@@ -18,7 +18,7 @@ export async function getFavoriteStores(
       {
         next: {
           revalidate: REVALIDATE.minute * 2,
-          tags: [CACHE_TAGS.favoriteStores],
+          // tags: [CACHE_TAGS.favoriteStores],
         },
       }
     );

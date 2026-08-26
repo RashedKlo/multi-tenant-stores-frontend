@@ -1,4 +1,4 @@
-// features/cart/components/sections/CartItems/empty.tsx
+// src/features/cart/components/sections/CartItems/empty.tsx
 "use client";
 
 import Link from "next/link";
@@ -19,7 +19,8 @@ export function CartEmpty() {
         className="mb-4 h-12 w-12 text-muted-foreground/50"
         aria-hidden
       >
-        <circle cx="9" cy="21" r="1" /><circle cx="19" cy="21" r="1" />
+        <circle cx="9" cy="21" r="1" />
+        <circle cx="19" cy="21" r="1" />
         <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57L22 5H5.12" />
       </svg>
 
@@ -27,7 +28,7 @@ export function CartEmpty() {
       <p className="mt-1 text-sm text-muted-foreground">{t("description")}</p>
 
       <Link
-        href="/"
+        href="/home"
         className="mt-6 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition-all hover:bg-primary/90 active:scale-95"
       >
         {t("browseCta")}

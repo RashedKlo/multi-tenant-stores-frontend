@@ -119,5 +119,28 @@
     "tabsLabel": "تصفح المفضلة",
     "products": "المنتجات",
     "stores": "المتاجر"
+  },"cart": {
+  "title": "السلة",
+  "itemCount": "{count, plural, =0 {لا توجد عناصر} =1 {عنصر واحد} =2 {عنصران} few {# عناصر} many {# عنصراً} other {# عنصر}}",
+  "itemsLabel": "عناصر السلة",
+  "quantityLabel": "الكمية",
+  "increase": "زيادة الكمية",
+  "decrease": "تقليل الكمية",
+  "removeItem": "إزالة {name}",
+  "empty": {
+    "title": "سلتك فارغة",
+    "description": "تصفح المتاجر وأضف عناصر للبدء.",
+    "browseCta": "تصفح المتاجر"
+  },
+  "summary": {
+    "ariaLabel": "ملخص الطلب",
+    "title": "الملخص",
+    "subtotal": "المجموع الفرعي",
+    "deliveryFee": "التوصيل",
+    "total": "الإجمالي",
+    "checkout": "إتمام الطلب",
+    "clearCart": "إفراغ السلة",
+    "taxNote": "تُحسب الضرائب والرسوم عند إتمام الطلب"
   }
+}
   }

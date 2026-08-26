@@ -10,7 +10,7 @@ export async function setDefaultAddressAction(
 ): Promise<{ success: boolean; error?: string }> {
   try {
     await fetchJson(`/api/addresses/${id}/set-default`, { method: "POST" });
-    revalidateTag(CACHE_TAGS.addresses);
+    // revalidateTag(CACHE_TAGS.addresses);
     return { success: true };
   } catch (error) {
     console.error("[setDefaultAddressAction]", error);

@@ -10,7 +10,7 @@ export async function getProductDetail(
     return await fetchJson<ProductDetail>(`/api/products/${productId}`, {
       next: {
         revalidate: REVALIDATE.minute * 10,
-        tags: [CACHE_TAGS.productDetail(productId)],
+        // tags: [CACHE_TAGS.productDetail(productId)],
       },
     });
   } catch (error) {

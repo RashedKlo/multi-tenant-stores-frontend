@@ -37,7 +37,7 @@ export async function getProductsBySection({
       {
         next: {
           revalidate: REVALIDATE.minute * 5,
-          tags: [CACHE_TAGS.sectionProducts(sectionId)],
+          // tags: [CACHE_TAGS.sectionProducts(sectionId)],
         },
       }
     );

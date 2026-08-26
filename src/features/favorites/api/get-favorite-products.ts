@@ -18,7 +18,7 @@ export async function getFavoriteProducts(
       {
         next: {
           revalidate: REVALIDATE.minute * 2,
-          tags: [CACHE_TAGS.favoriteProducts],
+          // tags: [CACHE_TAGS.favoriteProducts],
         },
       }
     );

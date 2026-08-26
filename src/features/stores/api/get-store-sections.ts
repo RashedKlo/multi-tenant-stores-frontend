@@ -25,7 +25,7 @@ export async function getStoreSections({
       {
         next: {
           revalidate: REVALIDATE.minute * 10,
-          tags: [CACHE_TAGS.storeSections(storeId)],
+          // tags: [CACHE_TAGS.storeSections(storeId)],
         },
       }
     );

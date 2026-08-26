@@ -10,7 +10,7 @@ export async function getStoreDetail(
     return await fetchJson<StoreDetail>(`/api/stores/${storeId}`, {
       next: {
         revalidate: REVALIDATE.hour,
-        tags: [CACHE_TAGS.storeDetail(storeId)],
+        // tags: [CACHE_TAGS.storeDetail(storeId)],
       },
     });
   } catch (error) {

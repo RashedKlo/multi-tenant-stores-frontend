@@ -1,4 +1,6 @@
-// features/cart/types/cart.types.ts
+// src/features/cart/types/cart.types.ts
+
+/** Mirrors backend SelectedOptionDto */
 export interface SelectedOption {
   optionId: string;
   groupNameEn: string;
@@ -8,6 +10,7 @@ export interface SelectedOption {
   priceAdjustment: number;
 }
 
+/** Mirrors backend CartItemDto */
 export interface CartItem {
   cartItemId: string;
   cartId: string;
@@ -21,7 +24,10 @@ export interface CartItem {
   itemTotalPrice: number;
 }
 
-/** Mirrors backend CartDto — always returned, never fails. */
+/**
+ * Mirrors backend CartDto.
+ * Backend always returns a cart (empty if none) — never fails for missing cart.
+ */
 export interface Cart {
   cartId: string | null;
   storeId: string;
@@ -30,7 +36,22 @@ export interface Cart {
   totalItemCount: number;
 }
 
-/** Localized name helper — pick by locale once, not in every component. */
-export type LocalizedCartItem = Omit<CartItem, "productNameEn" | "productNameAr"> & {
+/** UI-ready item after locale resolution */
+export interface LocalizedSelectedOption {
+  optionId: string;
+  groupName: string;
+  optionName: string;
+  priceAdjustment: number;
+}
+
+export type LocalizedCartItem = {
+  cartItemId: string;
+  cartId: string;
+  productId: string;
   name: string;
+  basePrice: number;
+  quantity: number;
+  notes?: string | null;
+  selectedOptions: LocalizedSelectedOption[];
+  itemTotalPrice: number;
 };

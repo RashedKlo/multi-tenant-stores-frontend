@@ -8,7 +8,7 @@ export async function getAddress(id: string): Promise<Address | null> {
     return await fetchJson<Address>(`/api/addresses/${id}`, {
       next: {
         revalidate: REVALIDATE.minute * 5,
-        tags: [CACHE_TAGS.address(id)],
+        // tags: [CACHE_TAGS.address(id)],
       },
     });
   } catch (error) {

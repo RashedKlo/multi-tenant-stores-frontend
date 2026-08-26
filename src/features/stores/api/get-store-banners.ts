@@ -12,7 +12,7 @@ export async function getStoreBanners(
       {
         next: {
           revalidate: REVALIDATE.hour,
-          tags: [CACHE_TAGS.storeBanners(storeId)],
+          // tags: [CACHE_TAGS.storeBanners(storeId)],
         },
       }
     );
