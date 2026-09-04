@@ -3,7 +3,6 @@ import { getProductsBySection } from "@/features/stores/api";
 import { ProductsClient } from "./ProductsClient";
 import ProductsEmpty from "./empty";
 import ProductsSkeleton from "./skeleton";
-import { MOCK_PAGED_PRODUCTS } from "@/features/stores/constants/products";
 
 interface ProductsProps {
   sectionId: string;
@@ -21,15 +20,14 @@ export const Products = Object.assign(
     minPrice,
     maxPrice,
   }: ProductsProps) {
-    // const data = await getProductsBySection({
-    //   sectionId,
-    //   inStockOnly,
-    //   minPrice,
-    //   maxPrice,
-    //   page: 1,
-    //   pageSize: 20,
-    // });
-    const data=MOCK_PAGED_PRODUCTS;
+    const data = await getProductsBySection({
+      sectionId,
+      inStockOnly,
+      minPrice,
+      maxPrice,
+      page: 1,
+      pageSize: 20,
+    });
 
     if (!data.items.length) {
       return <ProductsEmpty />;
@@ -40,7 +38,9 @@ export const Products = Object.assign(
         initialData={data}
         sectionId={sectionId}
         storeId={storeId}
-   
+        inStockOnly={inStockOnly}
+        minPrice={minPrice}
+        maxPrice={maxPrice}
       />
     );
   },

@@ -11,8 +11,8 @@ interface StoreBannersProps {
 
 export const StoreBanners = Object.assign(
   async function StoreBanners({ storeId }: StoreBannersProps) {
-    const banners = MOCK_STORE_BANNERS;
-    // const banners = await getStoreBanners(storeId);
+    // const banners = MOCK_STORE_BANNERS;
+    const banners = await getStoreBanners(storeId);
 
     if (!banners.length) {
       return <StoreBannersEmpty />;

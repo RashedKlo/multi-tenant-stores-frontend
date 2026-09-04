@@ -11,8 +11,8 @@ interface StoreDetailsProps {
 
 export const StoreHeader = Object.assign(
   async function StoreDetails({ storeId }: StoreDetailsProps) {
-    const storeDetails =MOCK_STORE_DETAIL;
-    // const storeDetails = await getStoreDetail(storeId);
+    // const storeDetails =MOCK_STORE_DETAIL;
+    const storeDetails = await getStoreDetail(storeId);
 
     if (!storeDetails) {
       return <StoreHeaderEmpty />;

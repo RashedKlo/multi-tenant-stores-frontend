@@ -66,11 +66,14 @@
     "count": "{count} sections",
     "noSections": "No sections available"
   }, "products": {
-    "title": "Products",
-    "count": "{count} products",
-    "loadMore": "Load more",
-    "loading": "Loading…"
-  },
+  "title": "Products",
+  "count": "{count} products",
+  "loadMore": "Load more",
+  "loading": "Loading…",
+  "noProducts": "No products found",
+  "noProductsHint": "Try adjusting the filters or check back later.",
+  "resetFilters": "Reset filters"
+},
   "productCard": {
     "outOfStock": "Out of stock"
   },

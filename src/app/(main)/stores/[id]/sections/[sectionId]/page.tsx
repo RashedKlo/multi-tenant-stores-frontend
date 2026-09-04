@@ -1,36 +1,50 @@
-// app/(main)/stores/[storeId]/sections/[sectionId]/page.tsx
-import { Suspense } from "react";
-import { StoreShell } from "@/features/stores/components/StoreShell";
 import { Products } from "@/features/stores/components/sections/Products";
-import ProductsSkeleton from "@/features/stores/components/sections/Products/skeleton";
+import { Suspense } from "react";
 
-interface SectionProductsPageProps {
+// e.g. store/[id]/sections/[sectionId]/page.tsx or wherever Products is rendered
+export default async function SectionPage({
+  params,
+  searchParams,
+}: {
   params: Promise<{ id: string; sectionId: string }>;
   searchParams: Promise<{
     inStockOnly?: string;
     minPrice?: string;
     maxPrice?: string;
   }>;
-}
+}) {
+  const { id: storeId, sectionId } = await params;
+  const sp = await searchParams;
 
-export default async function SectionProductsPage({
-  params,
-  searchParams,
-}: SectionProductsPageProps) {
-  const { id, sectionId } = await params;
-  const { inStockOnly, minPrice, maxPrice } = await searchParams;
+  const inStockOnly = sp.inStockOnly === "true";
+  const minPrice = numParam(sp.minPrice);
+  const maxPrice = numParam(sp.maxPrice);
+
+  const filterKey = [
+    inStockOnly ? "stock" : "all",
+    minPrice ?? "min",
+    maxPrice ?? "max",
+  ].join("-");
 
   return (
-    <StoreShell>
-      <Suspense fallback={<ProductsSkeleton />}>
+    <>
+      {/* static / independent UI above */}
+
+      <Suspense key={filterKey} fallback={<Products.skeleton />}>
         <Products
           sectionId={sectionId}
-          storeId={id}
-          inStockOnly={inStockOnly === "true"}
-          minPrice={minPrice ? Number(minPrice) : undefined}
-          maxPrice={maxPrice ? Number(maxPrice) : undefined}
+          storeId={storeId}
+          inStockOnly={inStockOnly}
+          minPrice={minPrice}
+          maxPrice={maxPrice}
         />
       </Suspense>
-    </StoreShell>
+    </>
   );
+}
+
+function numParam(v?: string): number | undefined {
+  if (v == null || v === "") return undefined;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : undefined;
 }

@@ -29,7 +29,7 @@ export function ProductCard({ product, storeId }: ProductCardProps) {
 
   return (
     <Link
-      href={`/stores/{storeId}/products/{product.id}`}
+      href={`/stores/${storeId}/products/${product.id}`}
       aria-label={product.name}
       className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98]"
     >

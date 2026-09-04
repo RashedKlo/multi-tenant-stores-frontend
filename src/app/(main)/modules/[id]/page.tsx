@@ -33,17 +33,20 @@ export default async function ModulePage({
           </>
         }
       >
-        <ModuleDetail moduleId={id} />
+        <ModuleDetail moduleId={id} categoryId={categoryId} />
       </Suspense>
 
       {/* Stores has its own endpoint → own Suspense */}
-      <Suspense fallback={<StoresSkeleton />}>
-        <Stores
-          moduleId={id}
-          categoryId={categoryId}
-          search={search}
-        />
-      </Suspense>
+    <Suspense
+  key={`${categoryId ?? "all"}-${search ?? ""}`}   // ← important
+  fallback={<StoresSkeleton />}
+>
+  <Stores
+    moduleId={id}
+    categoryId={categoryId}
+    search={search}
+  />
+</Suspense>
     </ModuleShell>
   );
 }

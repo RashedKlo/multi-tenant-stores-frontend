@@ -17,7 +17,6 @@ export async function getModuleDetail(
         tags: [CACHE_TAGS.moduleDetail(moduleId)],
       },
     });
-
     return data;
   } catch (error) {
     if (error instanceof ApiError) {

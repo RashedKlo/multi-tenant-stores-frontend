@@ -29,7 +29,7 @@ export function StoreSectionsClient({ initialData, storeId }: StoreSectionsClien
         {initialData.items.map((section) => (
           <li key={section.id}>
             <Link
-              href={`/stores/{storeId}/sections/{section.id}`}
+              href={`/stores/${storeId}/sections/${section.id}`}
               className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98] focus-visible:-translate-y-0.5"
             >
               <div className="relative aspect-[4/3] w-full bg-muted">

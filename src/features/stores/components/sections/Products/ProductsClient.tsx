@@ -1,12 +1,10 @@
-// features/stores/components/sections/Products/ProductsClient.tsx
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-
 import type { PagedProducts } from "@/features/stores/types";
-// import { getProductsBySection } from "@/features/stores/api"; // accepts filters + pagination
+// import { getProductsBySection } from "@/features/stores/api";
 import { ProductCard } from "./ProductCard";
 import { ProductFilters } from "./ProductFilters";
 import { ProductCardSkeleton } from "./skeleton";
@@ -15,63 +13,50 @@ interface ProductsClientProps {
   initialData: PagedProducts;
   sectionId: string;
   storeId: string;
+  inStockOnly?: boolean;
+  minPrice?: number;
+  maxPrice?: number;
 }
 
 export function ProductsClient({
   initialData,
   sectionId,
   storeId,
+  inStockOnly = false,
+  minPrice,
+  maxPrice,
 }: ProductsClientProps) {
   const t = useTranslations("products");
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const [, startTransition] = useTransition(); // for URL updates only
+  const pathname = usePathname();
 
-  const [data, setData] = useState<PagedProducts>(initialData);
+  // Fresh on every filter change because of Suspense key → remount
+  const [data, setData] = useState(initialData);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-  // Filters live in the URL — single source of truth
-  const inStockOnly = searchParams.get("inStockOnly") === "true";
-  const minPrice = numParam(searchParams.get("minPrice"));
-  const maxPrice = numParam(searchParams.get("maxPrice"));
-
-  /** Filter changes → URL → server re-renders page 1 (fresh initialData). */
   const updateFilters = (updates: {
     inStockOnly?: boolean;
     minPrice?: number;
     maxPrice?: number;
   }) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.delete("page"); // any filter change resets pagination
+    const params = new URLSearchParams();
 
-    if ("inStockOnly" in updates) {
-      updates.inStockOnly
-        ? params.set("inStockOnly", "true")
-        : params.delete("inStockOnly");
-    }
-    if ("minPrice" in updates) {
-      updates.minPrice !== undefined
-        ? params.set("minPrice", String(updates.minPrice))
-        : params.delete("minPrice");
-    }
-    if ("maxPrice" in updates) {
-      updates.maxPrice !== undefined
-        ? params.set("maxPrice", String(updates.maxPrice))
-        : params.delete("maxPrice");
-    }
+    const nextInStock =
+      "inStockOnly" in updates ? updates.inStockOnly : inStockOnly;
+    const nextMin = "minPrice" in updates ? updates.minPrice : minPrice;
+    const nextMax = "maxPrice" in updates ? updates.maxPrice : maxPrice;
 
-    startTransition(() => {
-      router.push(`?${params}`, { scroll: false });
-    });
+    if (nextInStock) params.set("inStockOnly", "true");
+    if (nextMin !== undefined) params.set("minPrice", String(nextMin));
+    if (nextMax !== undefined) params.set("maxPrice", String(nextMax));
+    // page intentionally omitted → always page 1 on filter change
+
+    const qs = params.toString();
+    router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
   };
 
-  /**
-   * Load more → CLIENT fetch + append.
-   * No navigation: keeps scroll position and avoids re-fetching page 1.
-   */
   const handleLoadMore = async () => {
     if (!data.hasNextPage || isLoadingMore) return;
-
     setIsLoadingMore(true);
     try {
       // const next = await getProductsBySection({
@@ -82,24 +67,24 @@ export function ProductsClient({
       //   minPrice,
       //   maxPrice,
       // });
-
       // setData((prev) => ({
       //   ...next,
       //   items: [...prev.items, ...dedupeById(prev.items, next.items)],
       // }));
     } catch {
-      router.refresh(); // graceful fallback: let the server retry
+      router.refresh();
     } finally {
       setIsLoadingMore(false);
     }
   };
 
-  const resetToFirstPage = () => setData(initialData); // cheap guard if needed
-
   return (
     <section aria-labelledby="products-heading" className="space-y-4">
       <div className="flex items-baseline justify-between gap-3">
-        <h2 id="products-heading" className="text-base font-semibold tracking-tight sm:text-lg">
+        <h2
+          id="products-heading"
+          className="text-base font-semibold tracking-tight sm:text-lg"
+        >
           {t("title")}
         </h2>
         <span className="shrink-0 text-xs text-muted-foreground" aria-live="polite">
@@ -112,22 +97,27 @@ export function ProductsClient({
         minPrice={minPrice}
         maxPrice={maxPrice}
         onInStockChange={(v) => updateFilters({ inStockOnly: v })}
-        onPriceChange={(min, max) => updateFilters({ minPrice: min, maxPrice: max })}
-        onReset={() => updateFilters({ inStockOnly: false, minPrice: undefined, maxPrice: undefined })}
+        onPriceChange={(min, max) =>
+          updateFilters({ minPrice: min, maxPrice: max })
+        }
+        onReset={() =>
+          updateFilters({
+            inStockOnly: false,
+            minPrice: undefined,
+            maxPrice: undefined,
+          })
+        }
       />
 
       <ul
         role="list"
-        className={`grid grid-cols-2 gap-3 transition-opacity duration-200 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 ${
-          isLoadingMore ? "" : ""
-        }`}
+        className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"
       >
         {data.items.map((product) => (
           <li key={product.id}>
             <ProductCard product={product} storeId={storeId} />
           </li>
         ))}
-
         {isLoadingMore &&
           Array.from({ length: Math.min(data.pageSize, 5) }, (_, i) => (
             <li key={`sk-${i}`}>
@@ -152,15 +142,3 @@ export function ProductsClient({
   );
 }
 
-/* ---------- helpers ---------- */
-
-function numParam(value: string | null): number | undefined {
-  if (value === null || value === "") return undefined;
-  const n = Number(value);
-  return Number.isFinite(n) ? n : undefined;
-}
-
-function dedupeById<T extends { id: string }>(current: T[], incoming: T[]): T[] {
-  const seen = new Set(current.map((i) => i.id));
-  return incoming.filter((i) => !seen.has(i.id));
-}

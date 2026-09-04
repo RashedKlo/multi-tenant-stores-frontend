@@ -66,12 +66,15 @@
     "title": "الأقسام",
     "count": "{count} قسم",
     "noSections": "لا توجد أقسام متاحة"
-  },  "products": {
-    "title": "المنتجات",
-    "count": "{count} منتج",
-    "loadMore": "تحميل المزيد",
-    "loading": "جارٍ التحميل…"
-  },
+  }, "products": {
+  "title": "المنتجات",
+  "count": "{count} منتج",
+  "loadMore": "تحميل المزيد",
+  "loading": "جارٍ التحميل…",
+  "noProducts": "لا توجد منتجات",
+  "noProductsHint": "جرّب تعديل الفلاتر أو عد لاحقاً.",
+  "resetFilters": "إعادة تعيين الفلاتر"
+},
   "productCard": {
     "outOfStock": "غير متوفر"
   },
@@ -80,7 +83,7 @@
     "inStockOnly": "المتوفر فقط",
     "reset": "إعادة تعيين",
     "price": {
-      "20": "أقل من ٢٠",
+      "under20": "أقل من ٢٠",
       "range20_50": "٢٠ – ٥٠",
       "over50": "٥٠+"
     }},

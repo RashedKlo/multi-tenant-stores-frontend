@@ -11,10 +11,10 @@ import { MOCK_BANNERS } from "@/features/home/constants/banners";
 export const Banners = Object.assign(
   async function Banners() {
     //fetch Backend Data
-    // const banners = await getHomeBanners();
+    const banners = await getHomeBanners();
     
     //fetch Mock Data
-    const banners = MOCK_BANNERS;
+    // const banners = MOCK_BANNERS;
 
 
     if (!banners.length) {

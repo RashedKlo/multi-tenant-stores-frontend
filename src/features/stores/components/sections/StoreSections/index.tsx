@@ -13,8 +13,8 @@ export const StoreSections = Object.assign(
   async function StoreSections({ storeId }: StoreSectionsProps) {
 
 
-    // const data = await getStoreSections({ storeId, page: 1, pageSize: 30 });
-    const data = MOCK_STORE_SECTIONS;
+    const data = await getStoreSections({ storeId, page: 1, pageSize: 30 });
+    // const data = MOCK_STORE_SECTIONS;
 
     if (!data.items.length) {
       return <StoreSectionsEmpty />;

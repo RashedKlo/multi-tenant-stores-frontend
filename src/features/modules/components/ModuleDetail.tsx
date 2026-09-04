@@ -19,8 +19,8 @@ interface ModuleDetailProps {
  * to presentational sections. Empty states are handled per-section.
  */
 export async function ModuleDetail({ moduleId, categoryId }: ModuleDetailProps) {
-  // const mod = await getModuleDetail(moduleId); // returns null if not found
-  const mod=MOCK_MODULE_DETAIL;
+  const mod = await getModuleDetail(moduleId); // returns null if not found
+  // const mod=MOCK_MODULE_DETAIL;
 
   if (!mod) return <ModuleHeaderEmpty />;
 
