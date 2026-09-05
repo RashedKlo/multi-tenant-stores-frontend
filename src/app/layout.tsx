@@ -3,7 +3,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { cookies } from "next/headers";
 import { NextIntlClientProvider } from "next-intl";
-
+import Script from "next/script";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -51,6 +51,10 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
+        <Script
+  src="https://accounts.google.com/gsi/client"
+  strategy="afterInteractive"
+/>
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
       </body>
     </html>
