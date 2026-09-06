@@ -1,14 +1,13 @@
 // features/stores/components/product-detail/ProductInfo.tsx
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
-import { useOptimistic, startTransition } from "react";
+import { startTransition, useState } from "react";
 import { useTranslations } from "next-intl";
 
 import type { ProductDetail } from "@/features/products/types";
+import { toggleFavoriteProduct } from "@/features/favorites/actions";
 import { formatPrice } from "@/shared/lib/format";
-// import { toggleFavoriteProduct } from "@/features/products/api";
+import { Notification } from "@/shared/lib/ui/Notification";
 
 interface ProductInfoProps {
   product: ProductDetail;
@@ -16,16 +15,23 @@ interface ProductInfoProps {
 
 export function ProductInfo({ product }: ProductInfoProps) {
   const t = useTranslations("productInfo");
+  const tAuth = useTranslations("auth");
+  const [error, setError] = useState<string | null>(null);
 
-  const [isFavorite, setIsFavorite] = useOptimistic(
-    product.isFavorite ?? false,
-    (_prev: boolean) => !_prev,
-  );
+  const [isFavorite, setIsFavorite] = useState(product.isFavorite ?? false);
 
   const handleToggleFavorite = () => {
+    setError(null);
+    const previousFavorite = isFavorite;
+    setIsFavorite(!previousFavorite);
+
     startTransition(async () => {
-      setIsFavorite(true);
-      // await toggleFavoriteProduct(product.id); // auto rollback on error
+      const result = await toggleFavoriteProduct(product.id, previousFavorite);
+      if (!result.success) {
+        setIsFavorite(previousFavorite);
+        setError(tAuth(result.error as Parameters<typeof tAuth>[0]));
+        return;
+      }
     });
   };
 
@@ -60,6 +66,8 @@ export function ProductInfo({ product }: ProductInfoProps) {
           </button>
         )}
       </div>
+
+      {error && <Notification message={error} onDismiss={() => setError(null)} />}
 
       {/* Price row */}
       <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1" dir="ltr">

@@ -14,7 +14,6 @@ export async function ProductDetail({
 }: ProductDetailProps) {
   const product = await getProductDetail(productId);
   // const product=MOCK_PRODUCT_DETAIL;
-
   if (!product) {
     return <ProductDetailEmpty />;
   }

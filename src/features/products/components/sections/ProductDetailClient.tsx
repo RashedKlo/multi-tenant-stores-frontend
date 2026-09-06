@@ -2,10 +2,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 
 import type { ProductDetail } from "@/features/products/types";
-// import { addToCart } from "@/features/cart/api";
+import { addCartItemAction } from "@/features/cart/actions/add-cart-item";
 
 import { ProductGallery } from "./ProductGallery";
 import { ProductInfo } from "./ProductInfo";
@@ -19,6 +20,7 @@ interface ProductDetailClientProps {
 
 export function ProductDetailClient({ product, storeId }: ProductDetailClientProps) {
   const t = useTranslations("productDetail");
+  const router = useRouter();
 
   // Pre-select default options — computed once, not memo-wrapped
   const [selected, setSelected] = useState<Record<string, string[]>>(() =>
@@ -68,14 +70,18 @@ export function ProductDetailClient({ product, storeId }: ProductDetailClientPro
     setError(null);
 
     try {
-      // await addToCart({
-      //   storeId,
-      //   productId: product.id,
-      //   quantity,
-      //   optionIds: Object.values(selected).flat(),
-      // });
-      // Optional success UX: toast or cart badge bump
-      // showToast(t("addedToCart")); bumpCartBadge();
+      const result = await addCartItemAction({
+        storeId,
+        productId: product.id,
+        quantity,
+        optionIds: Object.values(selected).flat(),
+      });
+      if (!result.success) {
+        setError(result.error);
+        return;
+      }
+
+      router.refresh();
     } catch {
       setError(t("addToCartError"));
     } finally {

@@ -5,11 +5,11 @@ import { ProductDetail } from "@/features/products/components/sections/index";
 import ProductDetailSkeleton from "@/features/products/components/sections/skeleton";
 
 interface ProductPageProps {
-  params: Promise<{ storeId: string; productId: string }>;
+  params: Promise<{ id: string; productId: string }>;
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
-  const { storeId, productId } = await params;
+  const { id: storeId, productId } = await params;
 
   return (
     <ProductShell>
