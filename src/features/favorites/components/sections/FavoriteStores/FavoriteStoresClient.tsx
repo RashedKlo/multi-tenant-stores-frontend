@@ -2,8 +2,11 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
+import { toggleFavoriteStore } from "@/features/favorites/actions";
 import type { PagedFavoriteStores } from "@/features/favorites/types";
 import { FavoriteStoreCard } from "./FavoriteStoreCard";
+import { Notification } from "@/shared/lib/ui/Notification";
 
 interface FavoriteStoresClientProps {
   initialData: PagedFavoriteStores;
@@ -12,19 +15,25 @@ interface FavoriteStoresClientProps {
 export function FavoriteStoresClient({
   initialData,
 }: FavoriteStoresClientProps) {
+  const tAuth = useTranslations("auth");
   const [data, setData] = useState(initialData);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleRemove = async (storeId: string) => {
+    setError(null);
+    const previousData = data;
+
     setData((prev) => ({
       ...prev,
       items: prev.items.filter((s) => s.storeId !== storeId),
-      totalCount: prev.totalCount - 1,
+      totalCount: Math.max(0, prev.totalCount - 1),
     }));
 
-    const success = null;
-    if (!success) {
-      setData(initialData);
+    const result = await toggleFavoriteStore(storeId, true);
+    if (!result.success) {
+      setData(previousData);
+      setError(tAuth(result.error as Parameters<typeof tAuth>[0]));
     }
   };
 
@@ -54,6 +63,8 @@ export function FavoriteStoresClient({
 
   return (
     <div className="space-y-3">
+      {error && <Notification message={error} onDismiss={() => setError(null)} />}
+
       {data.items.map((store) => (
         <FavoriteStoreCard
           key={store.storeId}

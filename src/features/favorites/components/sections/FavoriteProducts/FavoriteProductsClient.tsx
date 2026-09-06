@@ -2,8 +2,11 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
+import { toggleFavoriteProduct } from "@/features/favorites/actions";
 import type { PagedFavoriteProducts } from "@/features/favorites/types";
 import { FavoriteProductCard } from "./FavoriteProductCard";
+import { Notification } from "@/shared/lib/ui/Notification";
 
 interface FavoriteProductsClientProps {
   initialData: PagedFavoriteProducts;
@@ -12,21 +15,25 @@ interface FavoriteProductsClientProps {
 export function FavoriteProductsClient({
   initialData,
 }: FavoriteProductsClientProps) {
+  const tAuth = useTranslations("auth");
   const [data, setData] = useState(initialData);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleRemove = async (productId: string) => {
-    // Optimistic update
+    setError(null);
+    const previousData = data;
+
     setData((prev) => ({
       ...prev,
       items: prev.items.filter((p) => p.productId !== productId),
-      totalCount: prev.totalCount - 1,
+      totalCount: Math.max(0, prev.totalCount - 1),
     }));
 
-    const success =null;
-    if (!success) {
-      // Revert on failure (optional – you can refetch instead)
-      setData(initialData);
+    const result = await toggleFavoriteProduct(productId, true);
+    if (!result.success) {
+      setData(previousData);
+      setError(tAuth(result.error as Parameters<typeof tAuth>[0]));
     }
   };
 
@@ -56,6 +63,8 @@ export function FavoriteProductsClient({
 
   return (
     <div className="space-y-3">
+      {error && <Notification message={error} onDismiss={() => setError(null)} />}
+
       {data.items.map((product) => (
         <FavoriteProductCard
           key={product.productId}

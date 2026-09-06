@@ -2,11 +2,13 @@
 import { fetchJson, ApiError } from "@/shared/lib/http/fetch-json";
 import { CACHE_TAGS, REVALIDATE } from "@/shared/config/cache";
 import type { PagedFavoriteProducts } from "../types";
+import { getAccessToken } from "@/shared/lib/http/token-storage";
 
 export async function getFavoriteProducts(
   page = 1,
   pageSize = 20
 ): Promise<PagedFavoriteProducts> {
+  const token = await getAccessToken();
   try {
     const params = new URLSearchParams({
       page: String(page),
@@ -16,8 +18,9 @@ export async function getFavoriteProducts(
     return await fetchJson<PagedFavoriteProducts>(
       `/api/favorites/products?${params}`,
       {
+        headers: { Authorization: `Bearer ${token}` },
         next: {
-          revalidate: REVALIDATE.minute * 2,
+          // revalidate: REVALIDATE.minute * 2,
           // tags: [CACHE_TAGS.favoriteProducts],
         },
       }
