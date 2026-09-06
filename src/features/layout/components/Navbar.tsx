@@ -10,6 +10,7 @@ import { SearchToggle } from "./SearchToggle";
 import { ThemeToggle } from "./ThemeToggle";
 import { LocaleSwitcher } from "./LocaleSwitcher";
 import { cn } from "@/shared/lib/utils";
+import { LogoutButton } from "@/features/profile";
 
 /**
  * Responsive primary navigation.
@@ -19,7 +20,10 @@ import { cn } from "@/shared/lib/utils";
  * - Desktop (≥ md): full sticky header — logo, centered links with a
  *   sliding underline, and utility actions on the trailing edge.
  */
-export function Navbar() {
+interface NavbarProps {
+  isAuthenticated?: boolean;
+}
+export function Navbar({ isAuthenticated = false }: NavbarProps) {
   const pathname = usePathname();
   const t = useTranslations("nav");
   const tLayout = useTranslations("layout");
@@ -133,6 +137,7 @@ export function Navbar() {
                 toDark: tLayout("actions.toDark"),
               }}
             />
+            {isAuthenticated && <LogoutButton variant="icon" />}
           </div>
         </div>
       </header>
