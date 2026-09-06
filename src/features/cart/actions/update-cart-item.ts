@@ -1,32 +1,29 @@
 // src/features/cart/actions/update-cart-item.ts
 "use server";
 
-import { revalidateTag } from "next/cache";
 import { fetchJson } from "@/shared/lib/http/fetch-json";
-import { CACHE_TAGS } from "@/shared/config/cache";
-
-interface UpdateCartItemInput {
-  cartItemId: string;
-  storeId: string;
-  quantity: number;
-  notes?: string;
-}
-
-type ActionResult =
-  | { success: true; data: undefined }
-  | { success: false; error: string };
+import type { CartActionResult, UpdateCartItemInput } from "../types/cart.types";
 
 export async function updateCartItemAction(
   input: UpdateCartItemInput,
-): Promise<ActionResult> {
+): Promise<CartActionResult> {
+  if (!input.cartItemId || !input.storeId) {
+    return { success: false, error: "Invalid cart item" };
+  }
+  if (!input.quantity || input.quantity < 1) {
+    return { success: false, error: "Quantity must be at least 1" };
+  }
+
   try {
     await fetchJson(`/api/cart/items/${input.cartItemId}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+      },
+      allowEmptyResponse: true,
       body: JSON.stringify({
         storeId: input.storeId,
         quantity: input.quantity,
-        notes: input.notes,
       }),
     });
 

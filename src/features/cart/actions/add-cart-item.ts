@@ -1,36 +1,42 @@
 // src/features/cart/actions/add-cart-item.ts
 "use server";
 
-import { revalidateTag } from "next/cache";
-import { fetchJson } from "@/shared/lib/http/fetch-json";
-import { CACHE_TAGS } from "@/shared/config/cache";
-
-interface AddCartItemInput {
-  storeId: string;
-  productId: string;
-  quantity: number;
-  optionIds: string[];
-  notes?: string;
-}
-
-type ActionResult<T = undefined> =
-  | { success: true; data: T }
-  | { success: false; error: string };
+import { ApiError, fetchJson } from "@/shared/lib/http/fetch-json";
+import type { AddCartItemInput, CartActionResult } from "../types/cart.types";
 
 export async function addCartItemAction(
   input: AddCartItemInput,
-): Promise<ActionResult<{ itemCount: number }>> {
+): Promise<CartActionResult> {
+  if (!input.storeId || !input.productId) {
+    return { success: false, error: "Invalid product or store" };
+  }
+  if (!input.quantity || input.quantity < 1) {
+    return { success: false, error: "Quantity must be at least 1" };
+  }
+
   try {
-    const data = await fetchJson<{ itemCount: number }>("/api/cart/items", {
+    await fetchJson("/api/cart/items", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(input),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      allowEmptyResponse: true,
+      body: JSON.stringify({
+        storeId: input.storeId,
+        productId: input.productId,
+        quantity: input.quantity,
+        notes: input.notes ?? null,
+        optionIds: input.optionIds ?? [],
+      }),
     });
 
-    // revalidateTag(CACHE_TAGS.cart);
-    return { success: true, data };
+    // revalidateTag(CACHE_TAGS.cart,{expire: 60 * 5}); // Revalidate cart cache for 5 minutes
+    return { success: true, data: undefined };
   } catch (error) {
     console.error("[addCartItemAction]", error);
-    return { success: false, error: "Failed to add item to cart" };
+    return {
+      success: false,
+      error: error instanceof ApiError ? error.message : "Failed to add item to cart",
+    };
   }
 }

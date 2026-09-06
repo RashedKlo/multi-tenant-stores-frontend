@@ -2,52 +2,58 @@
 "use client";
 
 import Link from "next/link";
-import { useTranslations } from "next-intl";
-import type { LocalizedCartItem } from "@/features/cart/types";
-import { formatCartPrice } from "@/features/cart/lib/cart-helpers";
-import { MinusIcon, PlusIcon, TrashIcon } from "./icons";
+import { useLocale, useTranslations } from "next-intl";
+import type { CartItem } from "@/features/cart/types/cart.types";
+import { MinusIcon, PlusIcon, TrashIcon } from "../../constants/icons";
 
 interface CartItemCardProps {
-  item: LocalizedCartItem;
-  storeId: string;
+  item: CartItem;
   onQuantityChange: (quantity: number) => void;
   onRemove: () => void;
+  pending?: boolean;
 }
 
 export function CartItemCard({
   item,
-  storeId,
   onQuantityChange,
   onRemove,
+  pending = false,
 }: CartItemCardProps) {
   const t = useTranslations("cart");
+  const locale = useLocale();
 
   return (
-    <article className="flex gap-3 rounded-2xl border border-border bg-card p-3 shadow-sm transition-shadow hover:shadow-md sm:gap-4 sm:p-4">
+    <article
+      className={[
+        "flex gap-3 rounded-2xl border border-border bg-card p-3 shadow-sm transition-all sm:gap-4 sm:p-4",
+        pending ? "pointer-events-none opacity-60" : "hover:shadow-md",
+      ].join(" ")}
+    >
       <Link
-        href={`/stores/${storeId}/products/${item.productId}`}
+        href={`/stores/${item.storeId}/products/${item.productId}`}
         className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-muted sm:h-24 sm:w-24"
         tabIndex={-1}
-        aria-hidden
+        aria-hiddenju
       >
         <span className="flex h-full w-full items-center justify-center text-lg font-bold text-muted-foreground">
-          {item.name.charAt(0)}
+          {item.productImage}
         </span>
       </Link>
 
       <div className="flex min-w-0 flex-1 flex-col gap-1.5">
         <div className="flex items-start justify-between gap-2">
           <Link
-            href={`/stores/${storeId}/products/${item.productId}`}
+            href={`/stores/${item.storeId}/products/${item.productId}`}
             className="line-clamp-2 text-sm font-semibold leading-snug transition-colors hover:text-primary"
           >
-            {item.name}
+            {item.productName}
           </Link>
           <button
             type="button"
             onClick={onRemove}
-            aria-label={t("removeItem", { name: item.name })}
-            className="shrink-0 rounded-full p-1.5 text-muted-foreground transition-colors hover:bg-danger/10 hover:text-danger active:scale-90"
+            disabled={pending}
+            aria-label={t("removeItem", { name: item.productName })}
+            className="shrink-0 rounded-full p-1.5 text-muted-foreground transition-colors hover:bg-danger/10 hover:text-danger active:scale-90 disabled:opacity-50"
           >
             <TrashIcon />
           </button>
@@ -62,7 +68,7 @@ export function CartItemCard({
                 {option.priceAdjustment !== 0 && (
                   <span dir="ltr" className="ms-1 opacity-75">
                     ({option.priceAdjustment > 0 ? "+" : ""}
-                    {formatCartPrice(option.priceAdjustment)})
+                    {formatPrice(option.priceAdjustment, locale)})
                   </span>
                 )}
               </li>
@@ -82,7 +88,7 @@ export function CartItemCard({
           >
             <StepperButton
               label={t("decrease")}
-              disabled={item.quantity <= 1}
+              disabled={pending || item.quantity <= 1}
               onClick={() => onQuantityChange(item.quantity - 1)}
             >
               <MinusIcon />
@@ -97,6 +103,7 @@ export function CartItemCard({
 
             <StepperButton
               label={t("increase")}
+              disabled={pending}
               onClick={() => onQuantityChange(item.quantity + 1)}
             >
               <PlusIcon />
@@ -104,12 +111,20 @@ export function CartItemCard({
           </div>
 
           <p className="text-sm font-bold tabular-nums" dir="ltr">
-            {formatCartPrice(item.itemTotalPrice)}
+            {formatPrice(item.itemTotalPrice, locale)}
           </p>
         </div>
       </div>
     </article>
   );
+}
+
+function formatPrice(amount: number, locale: string) {
+  return new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency: "SYP",
+    maximumFractionDigits: 0,
+  }).format(amount);
 }
 
 function StepperButton({

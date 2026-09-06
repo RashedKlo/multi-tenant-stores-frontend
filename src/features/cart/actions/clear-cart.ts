@@ -1,23 +1,23 @@
 // src/features/cart/actions/clear-cart.ts
 "use server";
 
-import { revalidateTag } from "next/cache";
 import { fetchJson } from "@/shared/lib/http/fetch-json";
-import { CACHE_TAGS } from "@/shared/config/cache";
+import type { CartActionResult, ClearCartInput } from "../types/cart.types";
 
-type ActionResult =
-  | { success: true; data: undefined }
-  | { success: false; error: string };
+export async function clearCartAction(
+  input: ClearCartInput,
+): Promise<CartActionResult> {
+  if (!input.storeId) {
+    return { success: false, error: "Store is required" };
+  }
 
-export async function clearCartAction(input: {
-  storeId: string;
-}): Promise<ActionResult> {
   try {
     await fetchJson(`/api/cart?storeId=${encodeURIComponent(input.storeId)}`, {
       method: "DELETE",
+      allowEmptyResponse: true,
     });
 
-    // revalidateTag(CACHE_TAGS.cart);
+    // revalidateTag(CACHE_TAGS.cart,{expire: 60 * 5}); // Revalidate cart cache for 5 minutes
     return { success: true, data: undefined };
   } catch (error) {
     console.error("[clearCartAction]", error);

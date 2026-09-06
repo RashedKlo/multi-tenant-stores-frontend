@@ -1,22 +1,19 @@
 // src/features/cart/types/cart.types.ts
 
-/** Mirrors backend SelectedOptionDto */
 export interface SelectedOption {
   optionId: string;
-  groupNameEn: string;
-  groupNameAr: string;
-  optionNameEn: string;
-  optionNameAr: string;
+  groupName: string;
+  optionName: string;
   priceAdjustment: number;
 }
 
-/** Mirrors backend CartItemDto */
 export interface CartItem {
   cartItemId: string;
   cartId: string;
+  storeId: string;
   productId: string;
-  productNameEn: string;
-  productNameAr: string;
+  productName: string;
+  productImage: string;
   basePrice: number;
   quantity: number;
   notes?: string | null;
@@ -24,34 +21,30 @@ export interface CartItem {
   itemTotalPrice: number;
 }
 
-/**
- * Mirrors backend CartDto.
- * Backend always returns a cart (empty if none) — never fails for missing cart.
- */
-export interface Cart {
-  cartId: string | null;
+
+export interface AddCartItemInput {
   storeId: string;
-  items: CartItem[];
-  subtotal: number;
-  totalItemCount: number;
-}
-
-/** UI-ready item after locale resolution */
-export interface LocalizedSelectedOption {
-  optionId: string;
-  groupName: string;
-  optionName: string;
-  priceAdjustment: number;
-}
-
-export type LocalizedCartItem = {
-  cartItemId: string;
-  cartId: string;
   productId: string;
-  name: string;
-  basePrice: number;
   quantity: number;
-  notes?: string | null;
-  selectedOptions: LocalizedSelectedOption[];
-  itemTotalPrice: number;
-};
+  optionIds?: string[];
+  notes?: string;
+}
+
+export interface UpdateCartItemInput {
+  cartItemId: string;
+  storeId: string;
+  quantity: number;
+}
+
+export interface RemoveCartItemInput {
+  cartItemId: string;
+  storeId: string;
+}
+
+export interface ClearCartInput {
+  storeId: string;
+}
+
+export type CartActionResult<T = undefined> =
+  | { success: true; data: T }
+  | { success: false; error: string };

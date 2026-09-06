@@ -1,22 +1,22 @@
 // src/features/cart/actions/remove-cart-item.ts
 "use server";
 
-import { revalidateTag } from "next/cache";
 import { fetchJson } from "@/shared/lib/http/fetch-json";
-import { CACHE_TAGS } from "@/shared/config/cache";
+import type { CartActionResult, RemoveCartItemInput } from "../types/cart.types";
 
-type ActionResult =
-  | { success: true; data: undefined }
-  | { success: false; error: string };
-
-export async function removeCartItemAction(input: {
-  cartItemId: string;
-  storeId: string;
-}): Promise<ActionResult> {
+export async function removeCartItemAction(
+  input: RemoveCartItemInput,
+): Promise<CartActionResult> {
+  if (!input.cartItemId || !input.storeId) {
+    return { success: false, error: "Invalid cart item" };
+  }
   try {
     await fetchJson(
       `/api/cart/items/${input.cartItemId}?storeId=${encodeURIComponent(input.storeId)}`,
-      { method: "DELETE" },
+      {
+        method: "DELETE",
+        allowEmptyResponse: true,
+      },
     );
 
     // revalidateTag(CACHE_TAGS.cart);
