@@ -3,4 +3,5 @@ export type {
   Address,
   CreateAddressInput,
   UpdateAddressInput,
+  ActionResult,
 } from "./addresses.types";

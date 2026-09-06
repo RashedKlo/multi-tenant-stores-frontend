@@ -240,5 +240,77 @@
     "clearCart": "إفراغ السلة",
     "taxNote": "تُحسب الضرائب والرسوم عند إتمام الشراء"
   }
-}
+},  "addresses": {
+    "title": "عناويني",
+    "subtitle": "إدارة مواقع التوصيل",
+    "addNew": "إضافة عنوان جديد",
+    "addTitle": "إضافة عنوان",
+    "addSubtitle": "أين نُوصل طلباتك؟",
+    "back": "رجوع",
+    "listLabel": "العناوين المحفوظة",
+    "defaultBadge": "الافتراضي",
+    "setDefault": "تعيين كافتراضي",
+    "edit": "تعديل العنوان",
+    "delete": "حذف",
+    "empty": {
+      "title": "لا توجد عناوين بعد",
+      "description": "أضف عنوان توصيل لتتمكن من الطلب.",
+      "addCta": "إضافة عنوان"
+    },
+    "form": {
+      "label": "التسمية",
+      "labelPlaceholder": "المنزل، العمل…",
+      "addressText": "العنوان الكامل",
+      "addressPlaceholder": "الشارع، المبنى، الطابق، ملاحظات…",
+      "location": "الموقع على الخريطة",
+      "setAsDefault": "تعيين كعنوان افتراضي",
+      "create": "حفظ العنوان",
+      "save": "حفظ التغييرات",
+      "saving": "جارٍ الحفظ…"
+    },
+    "location": {
+      "placeholder": "اختر موقعاً على الخريطة",
+      "selected": "تم اختيار الموقع",
+      "useCurrent": "استخدم موقعي الحالي",
+      "reset": "إعادة تعيين"
+    },
+    "deleteModal": {
+      "title": "حذف هذا العنوان؟",
+      "description": "لا يمكن التراجع عن هذا الإجراء. الطلبات الجارية المرتبطة بهذا العنوان لن تتأثر.",
+      "cancel": "إلغاء",
+      "confirm": "حذف",
+      "deleting": "جارٍ الحذف…"
+    },
+    "errors": {
+      "labelRequired": "التسمية مطلوبة",
+      "labelTooLong": "التسمية طويلة جداً",
+      "addressRequired": "العنوان مطلوب",
+      "addressTooShort": "العنوان قصير جداً",
+      "locationRequired": "يرجى اختيار موقع"
+    }
+  },"checkout": {
+    "title": "تأكيد الطلب",
+    "subtitle": "راجع عنوان التوصيل وأكمل طلبك",
+    "addressSection": "عنوان التوصيل",
+    "deliverTo": "التوصيل إلى",
+    "defaultAddress": "الافتراضي",
+    "changeAddress": "تغيير",
+    "summarySection": "ملخص الطلب",
+    "summaryTitle": "الملخص",
+    "subtotal": "المجموع الفرعي",
+    "delivery": "التوصيل",
+    "total": "الإجمالي",
+    "confirmAndPay": "تأكيد والدفع",
+    "placingOrder": "جارٍ إنشاء الطلب…",
+    "paymentNote": "ستُكمل الدفع بأمان في الخطوة التالية.",
+    "payment": {
+      "title": "الدفع",
+      "subtitle": "أكمل الدفع لتأكيد الطلب",
+      "orderLabel": "رقم الطلب",
+      "stripePlaceholder": "سيظهر نموذج الدفع من Stripe هنا",
+      "stripeHint": "ثبّت @stripe/stripe-js و @stripe/react-stripe-js ثم اربط Payment Element باستخدام clientSecret.",
+      "backToCheckout": "العودة إلى إتمام الشراء",
+      "backToCart": "العودة إلى السلة"
+    }
+  }
   }

@@ -4,17 +4,19 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { AddressesShell } from "./AddressesShell";
-import { DeleteAddressModal } from "./DeleteAddressModal";
-import { deleteAddressAction } from "../actions/delete-address";
-import { setDefaultAddressAction } from "../actions/set-default-address";
-import type { Address } from "../types";
+import { useTranslations } from "next-intl";
+import { ConfirmModal } from "@/shared/lib/ui";
+import { AddressesShell } from "../AddressesShell";
+import { deleteAddressAction } from "../../actions/delete-address";
+import { setDefaultAddressAction } from "../../actions/set-default-address";
+import type { Address } from "../../types";
 
 interface AddressDetailClientProps {
   address: Address;
 }
 
 export function AddressDetailClient({ address }: AddressDetailClientProps) {
+  const t = useTranslations("addresses");
   const router = useRouter();
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -127,11 +129,16 @@ export function AddressDetailClient({ address }: AddressDetailClientProps) {
         </button>
       </div>
 
-      <DeleteAddressModal
+      <ConfirmModal
         open={!!deleteId}
+        title={t("deleteModal.title")}
+        description={t("deleteModal.description")}
+        cancelLabel={t("deleteModal.cancel")}
+        confirmLabel={t("deleteModal.confirm")}
+        loadingLabel={t("deleteModal.deleting")}
+        onClose={() => setDeleteId(null)}
         onConfirm={confirmDelete}
-        onCancel={() => setDeleteId(null)}
-        isDeleting={isPending}
+        isLoading={isPending}
       />
     </AddressesShell>
   );

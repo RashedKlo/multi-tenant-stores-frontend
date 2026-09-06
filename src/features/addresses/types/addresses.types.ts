@@ -13,13 +13,16 @@ export type CreateAddressInput = {
   latitude: number;
   longitude: number;
   addressText: string;
-  isDefault: boolean;
+  isDefault?: boolean;
 };
 
 export type UpdateAddressInput = {
-  id: string;
   label: string;
   latitude: number;
   longitude: number;
   addressText: string;
 };
+
+export type ActionResult<T = undefined> =
+  | { success: true; data: T }
+  | { success: false; error: string };

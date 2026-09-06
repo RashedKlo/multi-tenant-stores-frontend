@@ -8,12 +8,14 @@ export async function getAddress(id: string): Promise<Address | null> {
     return await fetchJson<Address>(`/api/addresses/${id}`, {
       next: {
         revalidate: REVALIDATE.minute * 5,
-        // tags: [CACHE_TAGS.address(id)],
+        tags: [CACHE_TAGS.addresses, `address-${id}`],
       },
     });
   } catch (error) {
     if (error instanceof ApiError) {
-      console.error(`[getAddress] ${error.message}`);
+      console.error(`[getAddress] ${error.status}: ${error.message}`);
+    } else {
+      console.error("[getAddress]", error);
     }
     return null;
   }

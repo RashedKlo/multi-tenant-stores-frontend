@@ -2,18 +2,26 @@
 "use server";
 
 import { revalidateTag } from "next/cache";
-import { fetchJson } from "@/shared/lib/http/fetch-json";
+import { fetchJson, ApiError } from "@/shared/lib/http/fetch-json";
 import { CACHE_TAGS } from "@/shared/config/cache";
+import type { ActionResult } from "../types";
 
 export async function deleteAddressAction(
-  id: string
-): Promise<{ success: boolean; error?: string }> {
+  id: string,
+): Promise<ActionResult> {
   try {
-    await fetchJson(`/api/addresses/${id}`, { method: "DELETE" });
+    await fetchJson(`/api/addresses/${id}`, {
+      method: "DELETE",
+      allowEmptyResponse: true,
+    });
+
     // revalidateTag(CACHE_TAGS.addresses);
-    return { success: true };
+    // revalidateTag(`address-${id}`);
+    return { success: true, data: undefined };
   } catch (error) {
     console.error("[deleteAddressAction]", error);
-    return { success: false, error: "Failed to delete address" };
+    const message =
+      error instanceof ApiError ? error.message : "Failed to delete address";
+    return { success: false, error: message };
   }
 }

@@ -241,5 +241,77 @@
       "clearCart": "Clear cart",
       "taxNote": "Taxes and fees calculated at checkout"
     }
+  }, "addresses": {
+    "title": "My Addresses",
+    "subtitle": "Manage your delivery locations",
+    "addNew": "Add new address",
+    "addTitle": "Add address",
+    "addSubtitle": "Where should we deliver your orders?",
+    "back": "Back",
+    "listLabel": "Saved addresses",
+    "defaultBadge": "Default",
+    "setDefault": "Set as default",
+    "edit": "Edit address",
+    "delete": "Delete",
+    "empty": {
+      "title": "No addresses yet",
+      "description": "Add a delivery address to place orders.",
+      "addCta": "Add address"
+    },
+    "form": {
+      "label": "Label",
+      "labelPlaceholder": "Home, Work…",
+      "addressText": "Full address",
+      "addressPlaceholder": "Street, building, floor, notes…",
+      "location": "Location on map",
+      "setAsDefault": "Set as default address",
+      "create": "Save address",
+      "save": "Save changes",
+      "saving": "Saving…"
+    },
+    "location": {
+      "placeholder": "Pick a location on the map",
+      "selected": "Location selected",
+      "useCurrent": "Use current location",
+      "reset": "Reset"
+    },
+    "deleteModal": {
+      "title": "Delete this address?",
+      "description": "This action cannot be undone. Pending orders using this address are not affected.",
+      "cancel": "Cancel",
+      "confirm": "Delete",
+      "deleting": "Deleting…"
+    },
+    "errors": {
+      "labelRequired": "Label is required",
+      "labelTooLong": "Label is too long",
+      "addressRequired": "Address is required",
+      "addressTooShort": "Address is too short",
+      "locationRequired": "Please select a location"
+    }
+  },"checkout": {
+    "title": "Confirm order",
+    "subtitle": "Review delivery address and place your order",
+    "addressSection": "Delivery address",
+    "deliverTo": "Deliver to",
+    "defaultAddress": "Default",
+    "changeAddress": "Change",
+    "summarySection": "Order summary",
+    "summaryTitle": "Summary",
+    "subtotal": "Subtotal",
+    "delivery": "Delivery",
+    "total": "Total",
+    "confirmAndPay": "Confirm & pay",
+    "placingOrder": "Placing order…",
+    "paymentNote": "You will complete payment securely on the next step.",
+    "payment": {
+      "title": "Payment",
+      "subtitle": "Complete your payment to confirm the order",
+      "orderLabel": "Order ID",
+      "stripePlaceholder": "Stripe Payment Element will appear here",
+      "stripeHint": "Install @stripe/stripe-js and @stripe/react-stripe-js, then mount Payment Element with the clientSecret.",
+      "backToCheckout": "Back to checkout",
+      "backToCart": "Back to cart"
+    }
   }
 }

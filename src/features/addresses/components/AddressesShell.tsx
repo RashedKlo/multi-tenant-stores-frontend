@@ -1,12 +1,12 @@
 // features/addresses/components/AddressesShell.tsx
-import type { ReactNode } from "react";
+interface AddressesShellProps {
+  children: React.ReactNode;
+}
 
-export function AddressesShell({ children }: { children: ReactNode }) {
+export function AddressesShell({ children }: AddressesShellProps) {
   return (
-    <div className="flex min-h-screen flex-col">
-      <main className="flex flex-1 flex-col px-4 py-4 pb-24 md:pb-8">
-        {children}
-      </main>
-    </div>
+    <main className="mx-auto min-h-dvh w-full max-w-lg px-4 pb-24 pt-4">
+      {children}
+    </main>
   );
 }

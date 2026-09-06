@@ -2,26 +2,32 @@
 "use server";
 
 import { revalidateTag } from "next/cache";
-import { fetchJson } from "@/shared/lib/http/fetch-json";
+import { fetchJson, ApiError } from "@/shared/lib/http/fetch-json";
 import { CACHE_TAGS } from "@/shared/config/cache";
-import type { Address, CreateAddressInput } from "../types";
-import { getAccessToken } from "@/shared/lib/http/token-storage";
+import type { Address, CreateAddressInput, ActionResult } from "../types";
 
 export async function createAddressAction(
-  input: CreateAddressInput
-): Promise<{ success: boolean; data?: Address; error?: string }> {
-  const token = getAccessToken(); // Implement this function to retrieve the access token from your auth system
+  input: CreateAddressInput,
+): Promise<ActionResult<Address>> {
   try {
     const data = await fetchJson<Address>("/api/addresses", {
       method: "POST",
-      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-      body: JSON.stringify(input),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        label: input.label.trim(),
+        latitude: input.latitude,
+        longitude: input.longitude,
+        addressText: input.addressText.trim(),
+        isDefault: input.isDefault ?? false,
+      }),
     });
 
     // revalidateTag(CACHE_TAGS.addresses);
     return { success: true, data };
   } catch (error) {
     console.error("[createAddressAction]", error);
-    return { success: false, error: "Failed to create address" };
+    const message =
+      error instanceof ApiError ? error.message : "Failed to create address";
+    return { success: false, error: message };
   }
 }

@@ -2,18 +2,26 @@
 "use server";
 
 import { revalidateTag } from "next/cache";
-import { fetchJson } from "@/shared/lib/http/fetch-json";
+import { fetchJson, ApiError } from "@/shared/lib/http/fetch-json";
 import { CACHE_TAGS } from "@/shared/config/cache";
+import type { Address, ActionResult } from "../types";
 
 export async function setDefaultAddressAction(
-  id: string
-): Promise<{ success: boolean; error?: string }> {
+  id: string,
+): Promise<ActionResult<Address>> {
   try {
-    await fetchJson(`/api/addresses/${id}/set-default`, { method: "POST" });
+    const data = await fetchJson<Address>(`/api/addresses/${id}/set-default`, {
+      method: "POST",
+    });
+
     // revalidateTag(CACHE_TAGS.addresses);
-    return { success: true };
+    return { success: true, data };
   } catch (error) {
     console.error("[setDefaultAddressAction]", error);
-    return { success: false, error: "Failed to set default address" };
+    const message =
+      error instanceof ApiError
+        ? error.message
+        : "Failed to set default address";
+    return { success: false, error: message };
   }
 }
