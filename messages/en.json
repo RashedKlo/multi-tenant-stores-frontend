@@ -122,30 +122,8 @@
     "tabsLabel": "Browse favorites",
     "products": "Products",
     "stores": "Stores"
-  },"cart": {
-  "title": "Cart",
-  "itemCount": "{count, plural, =0 {No items} =1 {1 item} other {# items}}",
-  "itemsLabel": "Cart items",
-  "quantityLabel": "Quantity",
-  "increase": "Increase quantity",
-  "decrease": "Decrease quantity",
-  "removeItem": "Remove {name}",
-  "empty": {
-    "title": "Your cart is empty",
-    "description": "Browse stores and add items to get started.",
-    "browseCta": "Browse stores"
   },
-  "summary": {
-    "ariaLabel": "Order summary",
-    "title": "Summary",
-    "subtotal": "Subtotal",
-    "deliveryFee": "Delivery",
-    "total": "Total",
-    "checkout": "Checkout",
-    "clearCart": "Clear cart",
-    "taxNote": "Taxes and fees calculated at checkout"
-  }
-}, "auth": {
+   "auth": {
     "signIn": "Sign in",
     "signInTitle": "Welcome back",
     "signInSubtitle": "Sign in to continue ordering",
@@ -194,6 +172,9 @@
     "noAccount": "Don’t have an account?",
     "hasAccount": "Already have an account?",
     "backToSignIn": "Back to sign in",
+    "continueAsGuest": "Continue as guest",
+"alreadyContinueAsGuest": "Already continuing as guest",
+"continuingAsGuest": "Continuing as guest…",
     "errors": {
       "generic": "Something went wrong. Please try again.",
       "badRequest": "Invalid request. Check your details.",
@@ -211,6 +192,54 @@
       "unauthorized": "Session expired. Please sign in again.",
       "googleNotConfigured": "Google sign-in is not configured yet."
     }
+    
+  },"profile": {
+  "title": "My profile",
+  "authRequiredTitle": "Sign in to view your profile",
+  "authRequiredSubtitle": "Access your account details, edit your info, and manage security.",
+  "signIn": "Sign in",
+  "createAccount": "Create account",
+  "editSection": "Personal information",
+  "securitySection": "Security",
+  "securityHint": "Google-only accounts may not have a local password.",
+  "sessionSection": "Session",
+  "emailVerified": "Verified",
+  "emailUnverified": "Unverified",
+  "memberSince": "Member since",
+  "emailReadOnlyHint": "Email cannot be changed here.",
+  "saveChanges": "Save changes",
+  "saving": "Saving…",
+  "profileUpdated": "Profile updated successfully",
+  "currentPassword": "Current password",
+  "newPassword": "New password",
+  "changePassword": "Change password",
+  "updatingPassword": "Updating…",
+  "passwordChanged": "Password changed successfully",
+  "logout": "Log out",
+  "loggingOut": "Logging out…"
+},  "cart": {
+    "title": "Cart",
+    "itemCount": "{count, plural, =0 {No items} =1 {1 item} other {# items}}",
+    "itemsLabel": "Cart items",
+    "quantityLabel": "Quantity",
+    "increase": "Increase quantity",
+    "decrease": "Decrease quantity",
+    "removeItem": "Remove {name}",
+    "storeGroup": "Store {id}",
+    "empty": {
+      "title": "Your cart is empty",
+      "description": "Browse stores and add items to get started.",
+      "browseCta": "Browse stores"
+    },
+    "summary": {
+      "ariaLabel": "Order summary",
+      "title": "Summary",
+      "subtotal": "Subtotal",
+      "deliveryFee": "Delivery",
+      "total": "Total",
+      "checkout": "Checkout",
+      "clearCart": "Clear cart",
+      "taxNote": "Taxes and fees calculated at checkout"
+    }
   }
-
 }

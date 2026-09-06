@@ -122,30 +122,8 @@
     "tabsLabel": "تصفح المفضلة",
     "products": "المنتجات",
     "stores": "المتاجر"
-  },"cart": {
-  "title": "السلة",
-  "itemCount": "{count, plural, =0 {لا توجد عناصر} =1 {عنصر واحد} =2 {عنصران} few {# عناصر} many {# عنصراً} other {# عنصر}}",
-  "itemsLabel": "عناصر السلة",
-  "quantityLabel": "الكمية",
-  "increase": "زيادة الكمية",
-  "decrease": "تقليل الكمية",
-  "removeItem": "إزالة {name}",
-  "empty": {
-    "title": "سلتك فارغة",
-    "description": "تصفح المتاجر وأضف عناصر للبدء.",
-    "browseCta": "تصفح المتاجر"
   },
-  "summary": {
-    "ariaLabel": "ملخص الطلب",
-    "title": "الملخص",
-    "subtotal": "المجموع الفرعي",
-    "deliveryFee": "التوصيل",
-    "total": "الإجمالي",
-    "checkout": "إتمام الطلب",
-    "clearCart": "إفراغ السلة",
-    "taxNote": "تُحسب الضرائب والرسوم عند إتمام الطلب"
-  }
-}, "auth": {
+"auth": {
     "signIn": "تسجيل الدخول",
     "signInTitle": "مرحباً بعودتك",
     "signInSubtitle": "سجّل الدخول لمتابعة الطلب",
@@ -194,6 +172,9 @@
     "noAccount": "ليس لديك حساب؟",
     "hasAccount": "لديك حساب بالفعل؟",
     "backToSignIn": "العودة لتسجيل الدخول",
+    "continueAsGuest": "المتابعة كضيف",
+"alreadyContinueAsGuest": "أنت بالفعل تتابع كضيف",
+"continuingAsGuest": "جارٍ المتابعة كضيف…",
     "errors": {
       "generic": "حدث خطأ ما. حاول مرة أخرى.",
       "badRequest": "طلب غير صالح. تحقق من بياناتك.",
@@ -211,5 +192,53 @@
       "unauthorized": "انتهت الجلسة. سجّل الدخول مجدداً.",
       "googleNotConfigured": "تسجيل الدخول عبر Google غير مفعّل بعد."
     }
+  },"profile": {
+  "title": "الملف الشخصي",
+  "authRequiredTitle": "سجّل الدخول لعرض ملفك الشخصي",
+  "authRequiredSubtitle": "الوصول إلى تفاصيل حسابك، وتعديل معلوماتك، وإدارة الأمان.",
+  "signIn": "تسجيل الدخول",
+  "createAccount": "إنشاء حساب",
+  "editSection": "المعلومات الشخصية",
+  "securitySection": "الأمان",
+  "securityHint": "الحسابات المرتبطة بـ Google فقط قد لا تحتوي على كلمة مرور محليّة.",
+  "sessionSection": "الجلسة",
+  "emailVerified": "مؤكّد",
+  "emailUnverified": "غير مؤكّد",
+  "memberSince": "عضو منذ",
+  "emailReadOnlyHint": "لا يمكن تغيير البريد الإلكتروني من هنا.",
+  "saveChanges": "حفظ التغييرات",
+  "saving": "جاري الحفظ…",
+  "profileUpdated": "تم تحديث الملف الشخصي بنجاح",
+  "currentPassword": "كلمة المرور الحالية",
+  "newPassword": "كلمة المرور الجديدة",
+  "changePassword": "تغيير كلمة المرور",
+  "updatingPassword": "جاري التحديث…",
+  "passwordChanged": "تم تغيير كلمة المرور بنجاح",
+  "logout": "تسجيل الخروج",
+  "loggingOut": "جاري تسجيل الخروج…"
+},"cart": {
+  "title": "سلة التسوق",
+  "itemCount": "{count, plural, =0 {لا توجد عناصر} one {عنصر واحد} two {عنصران} few {# عناصر} many {# عنصراً} other {# عنصر}}",
+  "itemsLabel": "عناصر سلة التسوق",
+  "quantityLabel": "الكمية",
+  "increase": "زيادة الكمية",
+  "decrease": "تقليل الكمية",
+  "removeItem": "إزالة {name}",
+  "storeGroup": "المتجر {id}",
+  "empty": {
+    "title": "سلة التسوق فارغة",
+    "description": "تصفح المتاجر وأضف العناصر للبدء.",
+    "browseCta": "تصفح المتاجر"
+  },
+  "summary": {
+    "ariaLabel": "ملخص الطلب",
+    "title": "الملخص",
+    "subtotal": "المجموع الفرعي",
+    "deliveryFee": "التوصيل",
+    "total": "الإجمالي",
+    "checkout": "إتمام الشراء",
+    "clearCart": "إفراغ السلة",
+    "taxNote": "تُحسب الضرائب والرسوم عند إتمام الشراء"
   }
+}
   }
