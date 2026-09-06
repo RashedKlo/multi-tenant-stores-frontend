@@ -1,6 +1,7 @@
 // src/features/cart/components/sections/CartSummary/CartSummary.tsx
 "use client";
 
+import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
@@ -63,13 +64,12 @@ export function CartSummary({
         </div>
       </dl>
 
-      <button
-        type="button"
-        className="mt-5 flex h-11 w-full items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground shadow-sm transition-all hover:opacity-90 active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-50"
-        disabled={itemCount === 0 || isPending}
+      <Link
+        href="/checkout"
+        className="mt-5 flex h-11 w-full items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground shadow-sm transition-all hover:opacity-90 active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
       >
         {t("checkout")}
-      </button>
+      </Link>
 
       <button
         type="button"
