@@ -7,8 +7,8 @@ import { MOCK_MODULES } from "@/features/home/constants/modules";
 import { MOCK_STORES } from "@/features/modules/constants/stores";
 
 export async function SearchPage() {
-  // const modules = await getModules();
-  const modules=MOCK_MODULES;
+  const modules = await getModules();
+  // const modules=MOCK_MODULES;
 
   if (!modules.length) {
     return <SearchEmpty />;
@@ -17,12 +17,12 @@ export async function SearchPage() {
   // Default = first module
   const defaultModuleId = modules[0].id;
 
-  // const initialStores = await getStoresByModule({
-  //   moduleId: defaultModuleId,
-  //   page: 1,
-  //   pageSize: 20,
-  // });
-const initialStores=MOCK_STORES;
+  const initialStores = await getStoresByModule({
+    moduleId: defaultModuleId,
+    page: 1,
+    pageSize: 20,
+  });
+// const initialStores=MOCK_STORES;
   return (
     <SearchPageClient
       modules={modules}
