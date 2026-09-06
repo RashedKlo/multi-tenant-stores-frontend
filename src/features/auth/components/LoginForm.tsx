@@ -10,6 +10,7 @@ import { loginAction } from "../actions";
 import { AUTH_REDIRECT } from "../constants/auth";
 import { FormField, SubmitButton, AlertBanner } from "../../../shared/lib/ui/FormField";
 import { GoogleButton } from "./GoogleButton";
+import { GuestButton } from "./GuestButton";
 
 export function LoginForm() {
   const t = useTranslations("auth");
@@ -97,6 +98,7 @@ export function LoginForm() {
       <Divider label={t("or")} />
 
       <GoogleButton disabled={pending} />
+      <GuestButton disabled={pending} />
 
       <p className="text-center text-sm text-muted-foreground">
         {t("noAccount")}{" "}

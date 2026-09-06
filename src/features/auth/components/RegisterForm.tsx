@@ -10,6 +10,7 @@ import { registerAction } from "../actions";
 import { AUTH_REDIRECT } from "../constants/auth";
 import { FormField, SubmitButton, AlertBanner } from "../../../shared/lib/ui/FormField";
 import { GoogleButton } from "./GoogleButton";
+import { GuestButton } from "./GuestButton";
 
 export function RegisterForm() {
   const t = useTranslations("auth");
@@ -122,6 +123,7 @@ export function RegisterForm() {
       </div>
 
       <GoogleButton disabled={pending} />
+      <GuestButton disabled={pending} />
 
       <p className="text-center text-sm text-muted-foreground">
         {t("hasAccount")}{" "}
