@@ -2,6 +2,7 @@
 import { fetchJson, ApiError } from "@/shared/lib/http/fetch-json";
 import { CACHE_TAGS, REVALIDATE } from "@/shared/config/cache";
 import type { PagedStores } from "../types";
+import { getAccessToken } from "@/shared/lib/http/token-storage";
 
 interface GetStoresParams {
   moduleId: string;
@@ -30,14 +31,15 @@ export async function getStoresByModule({
 
     if (categoryId) params.set("categoryId", categoryId);
     if (search) params.set("search", search);
-
+const token = await getAccessToken();
     const data = await fetchJson<PagedStores>(
       `/api/modules/${moduleId}/stores?${params.toString()}`,
       {
-        next: {
-          revalidate: REVALIDATE.minute * 5,
-          tags: [CACHE_TAGS.moduleStores(moduleId)],
-        },
+        headers: { Authorization: `Bearer ${token}` },
+        // next: {
+        //   revalidate: REVALIDATE.minute * 5,
+        //   tags: [CACHE_TAGS.moduleStores(moduleId)],
+        // },
       }
     );
 

@@ -21,7 +21,6 @@ export const Stores = Object.assign(
       pageSize: 20,
     });
     // const data=MOCK_STORES;
-
     if (!data.items.length) {
       return <StoresEmpty />;
     }

@@ -2,10 +2,12 @@
 "use client";
 
 import Image from "next/image";
-import { useOptimistic, startTransition } from "react";
+import { startTransition, useState } from "react";
 import { useTranslations } from "next-intl";
 
 import type { StoreDetail } from "@/features/stores/types";
+import { toggleFavoriteStore } from "@/features/favorites/actions";
+import { Notification } from "@/shared/lib/ui/Notification";
 
 interface StoreHeaderClientProps {
   store: StoreDetail;
@@ -13,15 +15,23 @@ interface StoreHeaderClientProps {
 
 export function StoreHeaderClient({ store }: StoreHeaderClientProps) {
   const t = useTranslations("storeHeader");
+  const tAuth = useTranslations("auth");
+  const [error, setError] = useState<string | null>(null);
 
-  const [isFavorite, setIsFavorite] = useOptimistic(
-    store.isFavorite ?? false,
-    (_prev: boolean) => !_prev,
-  );
+  const [isFavorite, setIsFavorite] = useState(store.isFavorite ?? false);
 
   const handleToggleFavorite = () => {
+    setError(null);
+    const previousFavorite = isFavorite;
+    setIsFavorite(!previousFavorite);
+
     startTransition(async () => {
-      setIsFavorite(true);
+      const result = await toggleFavoriteStore(store.id, previousFavorite);
+      if (!result.success) {
+        setIsFavorite(previousFavorite);
+        setError(tAuth(result.error as Parameters<typeof tAuth>[0]));
+        return;
+      }
     });
   };
 
@@ -105,6 +115,8 @@ export function StoreHeaderClient({ store }: StoreHeaderClientProps) {
           )}
         </div>
       </div>
+
+      {error && <Notification message={error} onDismiss={() => setError(null)} />}
     </header>
   );
 }

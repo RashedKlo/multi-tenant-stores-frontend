@@ -3,10 +3,12 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useOptimistic, startTransition } from "react";
+import { startTransition, useState } from "react";
 import { useTranslations } from "next-intl";
 
 import type { StoreSummary } from "@/features/modules/types";
+import { toggleFavoriteStore } from "@/features/favorites/actions";
+import { Notification } from "@/shared/lib/ui/Notification";
 
 interface StoreCardProps {
   store: StoreSummary;
@@ -14,23 +16,24 @@ interface StoreCardProps {
 
 export function StoreCard({ store }: StoreCardProps) {
   const t = useTranslations("storeCard");
+  const tAuth = useTranslations("auth");
+  const [error, setError] = useState<string | null>(null);
 
-  // Optimistic favorite toggle with automatic rollback on error
-  const [isFavorite, setIsFavorite] = useOptimistic(
-    store.isFavorite ?? false,
-    (_prev: boolean) => !_prev,
-  );
+  const [isFavorite, setIsFavorite] = useState(store.isFavorite ?? false);
 
   const handleToggleFavorite = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault(); // don't navigate — we're inside the card link
     e.stopPropagation();
+    setError(null);
+    const previousFavorite = isFavorite;
+    setIsFavorite(!previousFavorite);
 
     startTransition(async () => {
-      setIsFavorite(true);
-      try {
-        // await toggleFavoriteStore(store.id);
-      } catch {
-        // useOptimistic rolls back automatically when the transition errors
+      const result = await toggleFavoriteStore(store.id, previousFavorite);
+      if (!result.success) {
+        setIsFavorite(previousFavorite);
+        setError(tAuth(result.error as Parameters<typeof tAuth>[0]));
+        return;
       }
     });
   };
@@ -47,6 +50,13 @@ export function StoreCard({ store }: StoreCardProps) {
       >
         <HeartIcon filled={isFavorite} />
       </button>
+
+      {error && (
+        <Notification
+          message={error}
+          onDismiss={() => setError(null)}
+        />
+      )}
 
       <Link
         href={`/stores/${store.id}`}
