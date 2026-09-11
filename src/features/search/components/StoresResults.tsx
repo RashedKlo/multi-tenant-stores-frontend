@@ -2,47 +2,44 @@
 "use client";
 
 import { useCallback, useEffect, useState, useTransition } from "react";
-import type { PagedStores, StoreSummary } from "@/features/search/types";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import type { PagedStores } from "@/features/search/types";
 import { StoreCard } from "./StoreCard";
 import { SearchInput } from "./SearchInput";
 
 interface StoresResultsProps {
   moduleId: string;
+  initialQuery: string;
   initialData: PagedStores;
 }
 
-export function StoresResults({ moduleId, initialData }: StoresResultsProps) {
-  const [query, setQuery] = useState("");
+export function StoresResults({
+  moduleId,
+  initialQuery,
+  initialData,
+}: StoresResultsProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const [draftQuery, setDraftQuery] = useState(initialQuery);
+  const [query, setQuery] = useState(initialQuery);
   const [data, setData] = useState(initialData);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isPending, startTransition] = useTransition();
 
-  // Refetch when module or query changes
-  useEffect(() => {
-    let cancelled = false;
+  const handleSearch = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("moduleId", moduleId);
 
-    startTransition(async () => {
-      const params = new URLSearchParams({
-        page: "1",
-        pageSize: "20",
-      });
-      if (query) params.set("search", query);
+    if (draftQuery.trim()) {
+      params.set("search", draftQuery.trim());
+    } else {
+      params.delete("search");
+    }
 
-      try {
-        const res = await fetch(
-          `/api/modules/${moduleId}/stores?${params.toString()}`
-        );
-        const next: PagedStores = await res.json();
-        if (!cancelled) setData(next);
-      } catch (err) {
-        console.error("Search failed", err);
-      }
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [moduleId, query]);
+    router.push(`${pathname}?${params.toString()}`);
+    setQuery(draftQuery.trim());
+  };
 
   const handleLoadMore = useCallback(async () => {
     if (!data.hasNextPage || isLoadingMore) return;
@@ -50,7 +47,7 @@ export function StoresResults({ moduleId, initialData }: StoresResultsProps) {
     setIsLoadingMore(true);
     try {
       const params = new URLSearchParams({
-        page: String(data.page + 1),
+        page: String(data.pageNumber + 1),
         pageSize: String(data.pageSize),
       });
       if (query) params.set("search", query);
@@ -69,11 +66,15 @@ export function StoresResults({ moduleId, initialData }: StoresResultsProps) {
     } finally {
       setIsLoadingMore(false);
     }
-  }, [data, moduleId, query, isLoadingMore]);
+  }, [ ]);
 
   return (
     <div className="space-y-4">
-      <SearchInput value={query} onChange={setQuery} />
+      <SearchInput
+        value={draftQuery}
+        onChange={setDraftQuery}
+        onSearch={handleSearch}
+      />
 
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">

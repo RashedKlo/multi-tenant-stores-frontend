@@ -1,7 +1,6 @@
 // features/search/components/SearchPageClient.tsx
 "use client";
 
-import { useState } from "react";
 import type { Module, PagedStores } from "@/features/search/types";
 import { ModuleTabs } from "./ModuleTabs";
 import { StoresResults } from "./StoresResults";
@@ -9,16 +8,18 @@ import { StoresResults } from "./StoresResults";
 interface SearchPageClientProps {
   modules: Module[];
   defaultModuleId: string;
+  selectedModuleId: string;
+  initialSearch: string;
   initialStores: PagedStores;
 }
 
 export function SearchPageClient({
   modules,
   defaultModuleId,
+  selectedModuleId,
+  initialSearch,
   initialStores,
 }: SearchPageClientProps) {
-  const [selectedModuleId, setSelectedModuleId] = useState(defaultModuleId);
-
   return (
     <div className="space-y-5">
       <div>
@@ -31,18 +32,14 @@ export function SearchPageClient({
       <ModuleTabs
         modules={modules}
         selectedId={selectedModuleId}
-        onSelect={setSelectedModuleId}
+        search={initialSearch}
       />
 
-      {/* Key forces remount when module changes → clean state */}
       <StoresResults
-        key={selectedModuleId}
+        key={selectedModuleId + "|" + initialSearch}
         moduleId={selectedModuleId}
-        initialData={
-          selectedModuleId === defaultModuleId
-            ? initialStores
-            : { items: [], page: 1, pageSize: 20, totalCount: 0, hasNextPage: false }
-        }
+        initialQuery={initialSearch}
+        initialData={initialStores}
       />
     </div>
   );
