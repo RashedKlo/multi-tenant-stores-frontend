@@ -42,7 +42,6 @@ const token = await getAccessToken();
         // },
       }
     );
-
     return data;
   } catch (error) {
     if (error instanceof ApiError) {
@@ -50,13 +49,14 @@ const token = await getAccessToken();
     } else {
       console.error("[getStoresByModule] Unexpected error:", error);
     }
-
     // Safe empty fallback
     return {
       items: [],
-      page,
+      pageNumber: page,
       pageSize,
       totalCount: 0,
+      totalPages: 0,
+      hasPreviousPage: false,
       hasNextPage: false,
     };
   }

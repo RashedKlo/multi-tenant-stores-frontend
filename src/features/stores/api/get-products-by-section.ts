@@ -47,9 +47,11 @@ export async function getProductsBySection({
     }
     return {
       items: [],
-      page,
+      pageNumber: 1,
       pageSize,
       totalCount: 0,
+      totalPages: 0,
+      hasPreviousPage: false,
       hasNextPage: false,
     };
   }

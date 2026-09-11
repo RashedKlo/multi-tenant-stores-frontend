@@ -28,7 +28,6 @@ export const Products = Object.assign(
       page: 1,
       pageSize: 20,
     });
-
     if (!data.items.length) {
       return <ProductsEmpty />;
     }

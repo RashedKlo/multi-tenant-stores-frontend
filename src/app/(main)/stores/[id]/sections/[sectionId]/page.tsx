@@ -25,7 +25,6 @@ export default async function SectionPage({
     minPrice ?? "min",
     maxPrice ?? "max",
   ].join("-");
-
   return (
     <>
       {/* static / independent UI above */}

@@ -23,9 +23,11 @@ export const MOCK_STORES: PagedStores =
     rating: 4.8,
   },
 ],
-page:1,
+pageNumber:1,
 pageSize:12,
+totalPages:1,
 totalCount:4,
+hasPreviousPage:false,
 hasNextPage:false
 }
  

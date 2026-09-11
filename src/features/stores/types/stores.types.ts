@@ -45,8 +45,10 @@ export type ProductSummary = {
 };
 export type PagedProducts = {
   items: ProductSummary[];
-  page: number;
+  pageNumber: number;
   pageSize: number;
   totalCount: number;
+  totalPages: number;
   hasNextPage: boolean;
+  hasPreviousPage: boolean;
 };

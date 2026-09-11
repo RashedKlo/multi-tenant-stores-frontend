@@ -12,6 +12,7 @@ import { ProductGallery } from "./ProductGallery";
 import { ProductInfo } from "./ProductInfo";
 import { ProductOptions } from "./ProductOptions";
 import { AddToCartBar } from "./AddToCartBar";
+import { Notification } from "@/shared/lib/ui";
 
 interface ProductDetailClientProps {
   product: ProductDetail;
@@ -29,7 +30,7 @@ export function ProductDetailClient({ product, storeId }: ProductDetailClientPro
   const [quantity, setQuantity] = useState(1);
   const [isAdding, setIsAdding] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
+  const [success, setSuccess] = useState<string | null>(null);
   /** First incomplete required group — used for the inline hint. */
   const missingGroup = useMemo(
     () =>
@@ -50,7 +51,6 @@ export function ProductDetailClient({ product, storeId }: ProductDetailClientPro
     }
     return total * quantity; // ← multiply by quantity at the end, once
   }, [product.optionGroups, product.price, selected, quantity]);
-
   const canAdd =
     product.inStock &&
     product.optionGroups.every((group) => {
@@ -77,13 +77,17 @@ export function ProductDetailClient({ product, storeId }: ProductDetailClientPro
         optionIds: Object.values(selected).flat(),
       });
       if (!result.success) {
-        setError(result.error);
+        setError(t("addToCartError"));
+        setSuccess(null);
         return;
       }
 
+      setSuccess(t("addedToCart"));
+      setError(null);
       router.refresh();
-    } catch {
+    } catch (e) {
       setError(t("addToCartError"));
+      setSuccess(null);
     } finally {
       setIsAdding(false);
     }
@@ -122,6 +126,14 @@ export function ProductDetailClient({ product, storeId }: ProductDetailClientPro
           <p role="alert" className="text-sm text-danger">
             {error}
           </p>
+        )}
+
+        {success && (
+          <Notification
+            message={success}
+            variant="success"
+            onDismiss={() => setSuccess(null)}
+          />
         )}
       </div>
 

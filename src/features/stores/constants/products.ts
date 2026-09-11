@@ -75,8 +75,10 @@ export const MOCK_PRODUCTS: ProductSummary[] = [
 
 export const MOCK_PAGED_PRODUCTS: PagedProducts = {
   items: MOCK_PRODUCTS,
-  page: 1,
+  pageNumber: 1,
   pageSize: 8,
   totalCount: 32,
+  totalPages: 4,
+  hasPreviousPage: false,
   hasNextPage: true,
 };
