@@ -225,6 +225,24 @@
   "decrease": "تقليل الكمية",
   "removeItem": "إزالة {name}",
   "storeGroup": "المتجر {id}",
+  "updateSuccess": "تم تحديث الكمية",
+  "updateError": "تعذر تحديث الكمية",
+  "removeSuccess": "تمت إزالة العنصر من السلة",
+  "removeError": "تعذر إزالة العنصر",
+  "clearSuccess": "تم إفراغ السلة بنجاح",
+  "clearError": "تعذر إفراغ السلة",
+  "confirmRemove": {
+    "title": "هل تريد إزالة هذا العنصر؟",
+    "description": "هل أنت متأكد أنك تريد إزالة {name} من سلة التسوق؟",
+    "cancel": "إلغاء",
+    "confirm": "إزالة"
+  },
+  "confirmClear": {
+    "title": "إفراغ السلة؟",
+    "description": "سيؤدي هذا إلى إزالة جميع العناصر من سلة التسوق.",
+    "cancel": "إلغاء",
+    "confirm": "إفراغ السلة"
+  },
   "empty": {
     "title": "سلة التسوق فارغة",
     "description": "تصفح المتاجر وأضف العناصر للبدء.",

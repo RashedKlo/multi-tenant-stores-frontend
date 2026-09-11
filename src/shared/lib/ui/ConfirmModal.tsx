@@ -31,16 +31,16 @@ export function ConfirmModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-4 sm:items-center"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/45 p-4 backdrop-blur-[2px] sm:items-center"
       role="dialog"
       aria-modal="true"
       aria-labelledby="confirm-modal-title"
     >
-      <div className="w-full max-w-sm rounded-2xl bg-card p-5 shadow-xl">
-        <h2 id="confirm-modal-title" className="text-base font-semibold">
+      <div className="w-full max-w-md rounded-2xl border border-border bg-card/95 p-5 shadow-2xl backdrop-blur-sm">
+        <h2 id="confirm-modal-title" className="text-lg font-semibold text-foreground">
           {title}
         </h2>
-        <p className="mt-2 text-sm text-muted-foreground">{description}</p>
+        <p className="mt-2 text-sm leading-6 text-muted-foreground">{description}</p>
         {children}
 
         <div className="mt-5 flex gap-3">
@@ -48,7 +48,7 @@ export function ConfirmModal({
             type="button"
             onClick={onClose}
             disabled={isLoading}
-            className="flex-1 rounded-full border border-border py-2.5 text-sm font-medium transition-colors hover:bg-muted disabled:opacity-50"
+            className="flex-1 rounded-full border border-border bg-background py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
           >
             {cancelLabel}
           </button>
@@ -56,7 +56,7 @@ export function ConfirmModal({
             type="button"
             onClick={onConfirm}
             disabled={isLoading}
-            className="flex-1 rounded-full bg-destructive py-2.5 text-sm font-medium text-destructive-foreground transition-transform active:scale-95 disabled:opacity-50"
+            className="flex-1 rounded-full bg-destructive py-2.5 text-sm font-medium text-destructive-foreground transition-transform hover:opacity-95 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isLoading ? loadingLabel : confirmLabel}
           </button>

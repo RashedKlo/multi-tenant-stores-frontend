@@ -226,6 +226,24 @@
     "decrease": "Decrease quantity",
     "removeItem": "Remove {name}",
     "storeGroup": "Store {id}",
+    "updateSuccess": "Quantity updated",
+    "updateError": "Couldn't update quantity",
+    "removeSuccess": "Item removed from cart",
+    "removeError": "Couldn't remove item",
+    "clearSuccess": "Cart cleared successfully",
+    "clearError": "Couldn't clear cart",
+    "confirmRemove": {
+      "title": "Remove this item?",
+      "description": "Are you sure you want to remove {name} from your cart?",
+      "cancel": "Cancel",
+      "confirm": "Remove"
+    },
+    "confirmClear": {
+      "title": "Clear cart?",
+      "description": "This will remove all items from your cart.",
+      "cancel": "Cancel",
+      "confirm": "Clear cart"
+    },
     "empty": {
       "title": "Your cart is empty",
       "description": "Browse stores and add items to get started.",

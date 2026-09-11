@@ -42,7 +42,6 @@ export async function fetchJson<T>(
   const headers: HeadersInit = {
     Accept: "application/json",
     "Accept-Language": locale,
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...options.headers,
   };
 
