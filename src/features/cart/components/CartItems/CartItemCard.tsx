@@ -1,6 +1,7 @@
 // src/features/cart/components/sections/CartItems/CartItemCard.tsx
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import type { CartItem } from "@/features/cart/types/cart.types";
@@ -21,6 +22,9 @@ export function CartItemCard({
 }: CartItemCardProps) {
   const t = useTranslations("cart");
   const locale = useLocale();
+  const productLink = item.storeId
+    ? `/stores/${item.storeId}/products/${item.productId}`
+    : `/products/${item.productId}`;
 
   return (
     <article
@@ -30,20 +34,31 @@ export function CartItemCard({
       ].join(" ")}
     >
       <Link
-        href={`/stores/${item.storeId}/products/${item.productId}`}
+        href={productLink}
         className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-muted sm:h-24 sm:w-24"
         tabIndex={-1}
-        aria-hiddenju
+        aria-hidden="true"
       >
-        <span className="flex h-full w-full items-center justify-center text-lg font-bold text-muted-foreground">
-          {item.productImage}
-        </span>
+        {item.productImage ? (
+          <Image
+            src={item.productImage}
+            alt={item.productName}
+            fill
+            sizes="(max-width: 640px) 80px, 96px"
+            className="object-cover"
+            unoptimized
+          />
+        ) : (
+          <span className="flex h-full w-full items-center justify-center text-lg font-bold text-muted-foreground">
+            {item.productName?.slice(0, 1) || "P"}
+          </span>
+        )}
       </Link>
 
       <div className="flex min-w-0 flex-1 flex-col gap-1.5">
         <div className="flex items-start justify-between gap-2">
           <Link
-            href={`/stores/${item.storeId}/products/${item.productId}`}
+            href={productLink}
             className="line-clamp-2 text-sm font-semibold leading-snug transition-colors hover:text-primary"
           >
             {item.productName}
@@ -62,7 +77,7 @@ export function CartItemCard({
         {item.selectedOptions.length > 0 && (
           <ul role="list" className="space-y-0.5 text-xs text-muted-foreground">
             {item.selectedOptions.map((option) => (
-              <li key={option.optionId} className="truncate">
+              <li key={option.optionId || `${option.groupName}-${option.optionName}`} className="truncate">
                 <span className="font-medium">{option.groupName}:</span>{" "}
                 {option.optionName}
                 {option.priceAdjustment !== 0 && (

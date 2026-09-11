@@ -1,15 +1,21 @@
 // src/features/cart/api/get-cart.ts
 import { fetchJson, ApiError } from "@/shared/lib/http/fetch-json";
-import { CACHE_TAGS } from "@/shared/config/cache";
-import type { CartItem} from "../types/cart.types";
+import type { CartItem, RawCartItem } from "../types/cart.types";
+import { normalizeCartItem } from "../types/cart.types";
+import { getAccessToken } from "@/shared/lib/http/token-storage";
 
 export async function getCart(): Promise<CartItem[]> {
+  const token = await getAccessToken();
   try {
-    return await fetchJson<CartItem[]>("/api/cart", {
+    const data = await fetchJson<RawCartItem[]>("/api/cart", {
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
+      },
       method: "GET",
-      cache: "no-store",
-      next: { tags: [CACHE_TAGS.cart] },
     });
+
+    return (Array.isArray(data) ? data : []).map(normalizeCartItem);
   } catch (error) {
     if (error instanceof ApiError) {
       console.error(`[getCart] ${error.status} ${error.message}`);

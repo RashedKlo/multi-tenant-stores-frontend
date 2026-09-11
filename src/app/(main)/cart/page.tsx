@@ -15,8 +15,9 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function CartPage() {
   const t = await getTranslations("cart");
-  // const items = await getCart();
-  const items=MOCK_CART_ITEMS;
+  const items = await getCart();
+  // const items=MOCK_CART_ITEMS;
+  console.log(items);
   const itemCount = items.reduce((total, item) => total + item.quantity, 0);
 
   return (

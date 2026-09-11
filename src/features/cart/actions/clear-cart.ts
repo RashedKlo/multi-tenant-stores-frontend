@@ -3,6 +3,7 @@
 
 import { fetchJson } from "@/shared/lib/http/fetch-json";
 import type { CartActionResult, ClearCartInput } from "../types/cart.types";
+import { getAccessToken } from "@/shared/lib/http/token-storage";
 
 export async function clearCartAction(
   input: ClearCartInput,
@@ -10,9 +11,12 @@ export async function clearCartAction(
   if (!input.storeId) {
     return { success: false, error: "Store is required" };
   }
-
+const token=await getAccessToken();
   try {
     await fetchJson(`/api/cart?storeId=${encodeURIComponent(input.storeId)}`, {
+      headers:{
+        "authorization": `Bearer ${token}`,
+      },
       method: "DELETE",
       allowEmptyResponse: true,
     });

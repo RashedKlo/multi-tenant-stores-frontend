@@ -3,6 +3,7 @@
 
 import { fetchJson } from "@/shared/lib/http/fetch-json";
 import type { CartActionResult, RemoveCartItemInput } from "../types/cart.types";
+import { getAccessToken } from "@/shared/lib/http/token-storage";
 
 export async function removeCartItemAction(
   input: RemoveCartItemInput,
@@ -10,10 +11,16 @@ export async function removeCartItemAction(
   if (!input.cartItemId || !input.storeId) {
     return { success: false, error: "Invalid cart item" };
   }
+  const token=await getAccessToken();
   try {
     await fetchJson(
       `/api/cart/items/${input.cartItemId}?storeId=${encodeURIComponent(input.storeId)}`,
       {
+        headers: {
+               "authorization": `Bearer ${token}`,
+
+        "Content-Type": "application/json",
+      },
         method: "DELETE",
         allowEmptyResponse: true,
       },
