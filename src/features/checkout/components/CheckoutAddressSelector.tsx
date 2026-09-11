@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import type { Address } from "@/features/addresses";
@@ -15,16 +15,26 @@ export function CheckoutAddressSelector({
   selectedAddressId,
 }: CheckoutAddressSelectorProps) {
   const t = useTranslations("checkout");
-  const router = useRouter();
+  const searchParams = useSearchParams();
+  const storeId = searchParams.get("storeId") ?? "";
   const [selectedId, setSelectedId] = useState(
     selectedAddressId ?? addresses.find((address) => address.isDefault)?.id ?? addresses[0]?.id ?? "",
   );
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!selectedId) return;
+    if (!selectedId || !storeId) return;
 
-    // router.push(`/checkout/payment?addressId=${encodeURIComponent(selectedId)}`);
+    // const result = await createCheckoutAction({
+    //   storeId,
+    //   addressId: selectedId,
+    //   deliveryPhone: null,
+    // });
+
+    // if (!result.success) {
+    //   console.error(result.error);
+    //   return;
+    // }
   }
 
   return (

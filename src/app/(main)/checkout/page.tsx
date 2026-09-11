@@ -19,7 +19,6 @@ export default async function CheckoutPage({ searchParams }: CheckoutPageProps) 
   const sortedAddresses = [...addresses].sort(
     (a, b) => Number(b.isDefault) - Number(a.isDefault),
   );
-
   return (
     <CheckoutShell>
 
