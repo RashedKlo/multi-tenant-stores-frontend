@@ -4,4 +4,3 @@ export { NavIcon } from "./NavIcon";
 export { Logo } from "./Logo";
 export { ThemeToggle } from "./ThemeToggle";
 export { LocaleSwitcher } from "./LocaleSwitcher";
-export { SearchToggle } from "./SearchToggle";

@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Logo } from "./Logo";
-import { SearchToggle } from "./SearchToggle";
 import { ThemeToggle } from "./ThemeToggle";
+import Link from "next/link";
+import { SearchIcon } from "./icons";
 
 interface TopbarProps {
   /** Overrides the brand label shown on mobile. */
@@ -31,20 +32,15 @@ export function Topbar({ title, actions }: TopbarProps) {
 
         {actions ?? (
           <div className="flex flex-1 items-center justify-end gap-1">
-            <SearchToggle
-              variant="overlay"
-              placeholder={t("actions.searchPlaceholder")}
-              ariaLabel={t("actions.search")}
-              onOpenChange={setSearchOpen}
-            />
-            {!searchOpen && (
+           <Link href="/search" className="flex md:hidden">
+              <SearchIcon />
+            </Link>
               <ThemeToggle
                 labels={{
                   toLight: t("actions.toLight"),
                   toDark: t("actions.toDark"),
                 }}
               />
-            )}
           </div>
         )}
       </div>

@@ -6,11 +6,11 @@ import { useTranslations } from "next-intl";
 import { NAV_ITEMS } from "../constants/nav-items";
 import { NavIcon } from "./NavIcon";
 import { Logo } from "./Logo";
-import { SearchToggle } from "./SearchToggle";
 import { ThemeToggle } from "./ThemeToggle";
 import { LocaleSwitcher } from "./LocaleSwitcher";
 import { cn } from "@/shared/lib/utils";
 import { LogoutButton } from "@/features/profile";
+import { SearchIcon } from "./icons";
 
 /**
  * Responsive primary navigation.
@@ -126,10 +126,9 @@ export function Navbar({ isAuthenticated = false }: NavbarProps) {
           </ul>
 
           <div className="flex items-center gap-1">
-            <SearchToggle
-              placeholder={tLayout("actions.searchPlaceholder")}
-              ariaLabel={tLayout("actions.search")}
-            />
+            <Link href="/search" className="hidden md:flex">
+              <SearchIcon />
+            </Link>
             <LocaleSwitcher ariaLabelPrefix={tLayout("actions.switchLanguage")} />
             <ThemeToggle
               labels={{
