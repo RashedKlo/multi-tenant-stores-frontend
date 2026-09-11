@@ -20,6 +20,34 @@ The frontend is designed around a **feature-first architecture**, keeping domain
 
 ---
 
+## Local Development and CI
+
+This repository is an npm-based Next.js 16 project. Use Node 22+ and install dependencies with npm.
+
+```bash
+npm install
+cp .env.example .env.local
+npm run lint
+npm run typecheck
+npm run build
+```
+
+Required environment variables for local development and CI builds:
+
+```env
+NEXT_PUBLIC_API_URL=https://api.example.com
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=your-google-client-id
+```
+
+GitHub Actions runs the same quality gates on pushes and pull requests to `main`:
+
+- `npm ci`
+- `npm run lint -- --no-error-on-unmatched-pattern`
+- `npm run typecheck`
+- `npm run build`
+
+There is no separate automated test runner in this repository yet, so CI currently validates linting, type safety, and production build health.
+
 ## What This Project Demonstrates
 
 This project focuses on practical frontend engineering for a commerce application rather than simply building a collection of pages.
