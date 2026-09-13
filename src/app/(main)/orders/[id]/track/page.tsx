@@ -30,7 +30,7 @@ export default async function OrderTrackPage({ params }: TrackPageProps) {
     throw error;
   }
 
-  const accessToken = await getAccessToken();
+  const accessToken = await getAccessToken()??"";
 
   return (
     <OrdersShell>
