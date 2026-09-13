@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MoonIcon, SunIcon } from "./icons";
 import { cn } from "@/shared/lib/utils";
 
@@ -22,14 +22,13 @@ interface ThemeToggleProps {
  * crossfade instead of an abrupt color swap.
  */
 export function ThemeToggle({ labels, className }: ThemeToggleProps) {
-  const [isDark, setIsDark] = useState<boolean>(() => {
-    if (typeof document === "undefined") {
-      return false;
-    }
+  const [isDark, setIsDark] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
-    return document.documentElement.classList.contains("dark");
-  });
-  const [mounted] = useState(true);
+  useEffect(() => {
+    setIsDark(document.documentElement.classList.contains("dark"));
+    setMounted(true);
+  }, []);
 
   const toggle = () => {
     const next = !isDark;
