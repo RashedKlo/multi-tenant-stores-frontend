@@ -16,7 +16,7 @@ export async function addCartItemAction(
   }
   const token=await getAccessToken();
   try {
-    await fetchJson("/api/cart/items", {
+   const data= await fetchJson("/api/cart/items", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -31,6 +31,7 @@ export async function addCartItemAction(
         optionIds: input.optionIds ?? [],
       }),
     });
+    console.log(" data in cart",data);
 
     // revalidateTag(CACHE_TAGS.cart,{expire: 60 * 5}); // Revalidate cart cache for 5 minutes
     return { success: true, data: undefined };
