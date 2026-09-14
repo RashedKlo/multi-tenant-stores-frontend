@@ -11,6 +11,14 @@ export type OrderStatusName =
   | "Delivered"
   | "Cancelled"
   | "Unknown";
+  export type TrackingConnectionState =
+  | "idle"
+  | "connecting"
+  | "connected"
+  | "reconnecting"
+  | "disconnected"
+  | "error";
+
 
 export interface OrderStatusHistoryItem {
   status: OrderStatusCode | string;
@@ -20,16 +28,14 @@ export interface OrderStatusHistoryItem {
 
 export interface OrderItemOption {
   id: string;
-  nameEn: string;
-  nameAr: string;
+  name: string;
   priceAdjustment: number;
 }
 
 export interface OrderItem {
   id: string;
   productId: string | null;
-  nameEn: string;
-  nameAr: string;
+  name: string;
   unitPrice: number;
   quantity: number;
   lineTotal: number;
