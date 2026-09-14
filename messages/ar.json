@@ -371,5 +371,18 @@
     "viewOrder": "عرض الطلب",
     "continueShopping": "متابعة التسوق",
     "startLiveTracking": "بدء التتبع المباشر"
+},"supportChat": {
+    "listTitle": "الدعم",
+    "listSubtitle": "تواصل مع المتاجر وفرق الدعم عبر المحادثات.",
+    "emptyTitle": "لا توجد محادثات بعد",
+    "emptyDescription": "ابدأ محادثة من صفحة متجر، أو انتظر ردًا هنا.",
+    "emptyCta": "تصفح المتاجر",
+    "composerPlaceholder": "اكتب رسالة…",
+    "send": "إرسال",
+    "back": "رجوع",
+    "emptyThread": "قل مرحبًا — هذه بداية محادثتك.",
+    "live": "متصل",
+    "connecting": "جارٍ الاتصال…",
+    "offline": "غير متصل — تُرسل الرسائل على أي حال"
 }
   }

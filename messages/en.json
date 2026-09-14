@@ -372,6 +372,19 @@
     "viewOrder": "View order",
     "startLiveTracking": "Start live tracking",
     "continueShopping": "Continue shopping"
+  }, "supportChat": {
+    "listTitle": "Support",
+    "listSubtitle": "Chat with stores and support teams.",
+    "emptyTitle": "No conversations yet",
+    "emptyDescription": "Start a chat from a store page, or wait for a reply here.",
+    "emptyCta": "Browse stores",
+    "composerPlaceholder": "Type a message…",
+    "send": "Send",
+    "back": "Back",
+    "emptyThread": "Say hello — this is the start of your conversation.",
+    "live": "Online",
+    "connecting": "Connecting…",
+    "offline": "Offline — messages still send"
   }
 
 }
