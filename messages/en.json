@@ -370,6 +370,7 @@
     "sessionId": "Session",
     "trackOrder": "Track order",
     "viewOrder": "View order",
+    "startLiveTracking": "Start live tracking",
     "continueShopping": "Continue shopping"
   }
 
