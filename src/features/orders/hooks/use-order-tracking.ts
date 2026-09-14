@@ -1,124 +1,144 @@
+// features/orders/hooks/use-order-tracking.ts
 "use client";
 
-// features/orders/hooks/use-order-tracking.ts
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { HubConnection } from "@microsoft/signalr";
-import { createHubConnection } from "@/shared/lib/signalr/create-hub-connection";
-import type { OrderStatusChangedEvent } from "../types";
+import { hubConnectionManager } from "@/shared/lib/signalr/hub-connection-manager";
+import type { OrderStatusChangedEvent, TrackingConnectionState } from "../types";
 import { resolveStatusName } from "../constants";
 
 const HUB_PATH = "/hubs/order-tracking";
 const EVENT_NAME = "OrderStatusChanged";
 
-export type TrackingConnectionState =
-  | "idle"
-  | "connecting"
-  | "connected"
-  | "reconnecting"
-  | "disconnected"
-  | "error";
 
 interface UseOrderTrackingOptions {
   orderId: string;
-  /** JWT access token — required for hub auth */
-  accessToken: string | null;
-  /** When false, do not connect (e.g. order still loading) */
-  enabled?: boolean;
   onStatusChanged?: (event: OrderStatusChangedEvent) => void;
 }
 
+interface UseOrderTrackingResult {
+  connectionState: TrackingConnectionState;
+  lastEvent: OrderStatusChangedEvent | null;
+  /** Opens the shared hub connection. No-op if already connected/connecting. */
+  connect: (accessToken: string) => Promise<void>;
+  /** Releases this subscriber's hold on the shared connection. */
+  disconnect: () => void;
+}
+
 /**
- * Connects to OrderTrackingHub after order is known.
- * Listens for OrderStatusChanged targeted at the authenticated customer.
+ * Subscribes to OrderTrackingHub's OrderStatusChanged event for one order.
+ *
+ * The connection lifecycle is fully caller-driven: nothing happens until
+ * `connect(accessToken)` is invoked (typically from a "Start live tracking"
+ * click). The underlying HubConnection is owned by `hubConnectionManager`
+ * and shared across every order screen the user opens, so tracking a
+ * second order never opens a second socket.
  */
 export function useOrderTracking({
   orderId,
-  accessToken,
-  enabled = true,
   onStatusChanged,
-}: UseOrderTrackingOptions) {
+}: UseOrderTrackingOptions): UseOrderTrackingResult {
   const [connectionState, setConnectionState] =
     useState<TrackingConnectionState>("idle");
   const [lastEvent, setLastEvent] = useState<OrderStatusChangedEvent | null>(
     null,
   );
+
   const connectionRef = useRef<HubConnection | null>(null);
+  const tokenRef = useRef<string | null>(null);
+  const handlerRef = useRef<((payload: OrderStatusChangedEvent) => void) | null>(null);
+  const isConnectingRef = useRef(false);
+  // signalR gives no way to remove a single onclose/onreconnecting/
+  // onreconnected callback individually — since the connection outlives
+  // this hook instance, we gate those callbacks with this flag instead so
+  // they become no-ops once we've detached.
+  const activeRef = useRef(false);
   const onStatusChangedRef = useRef(onStatusChanged);
   onStatusChangedRef.current = onStatusChanged;
 
-  const disconnect = useCallback(async () => {
-    const conn = connectionRef.current;
-    connectionRef.current = null;
-    if (conn) {
-      try {
-        await conn.stop();
-      } catch {
-        // ignore
-      }
+  const disconnect = useCallback(() => {
+    activeRef.current = false;
+
+    const connection = connectionRef.current;
+    if (connection && handlerRef.current) {
+      connection.off(EVENT_NAME, handlerRef.current);
     }
-    setConnectionState("disconnected");
+    handlerRef.current = null;
+    connectionRef.current = null;
+
+    if (tokenRef.current) {
+      hubConnectionManager.release(HUB_PATH, tokenRef.current);
+      tokenRef.current = null;
+    }
+    setConnectionState("idle");
   }, []);
 
-  useEffect(() => {
-    if (!enabled || !orderId || !accessToken) {
-      return;
-    }
-
-    let cancelled = false;
-    const connection = createHubConnection(HUB_PATH, accessToken);
-    connectionRef.current = connection;
-
-    connection.on(EVENT_NAME, (payload: OrderStatusChangedEvent) => {
-      if (cancelled) return;
-      // Only apply events for this order
-      if (
-        payload?.orderId &&
-        payload.orderId.toLowerCase() !== orderId.toLowerCase()
-      ) {
+  const connect = useCallback(
+    async (accessToken: string) => {
+      if (!accessToken || connectionRef.current || isConnectingRef.current) {
         return;
       }
-      const normalized: OrderStatusChangedEvent = {
-        orderId: payload.orderId,
-        status: resolveStatusName(payload.status),
-        note: payload.note ?? null,
-        changedAt: payload.changedAt ?? new Date().toISOString(),
-      };
-      setLastEvent(normalized);
-      onStatusChangedRef.current?.(normalized);
-    });
 
-    connection.onreconnecting(() => {
-      if (!cancelled) setConnectionState("reconnecting");
-    });
-    connection.onreconnected(() => {
-      if (!cancelled) setConnectionState("connected");
-    });
-    connection.onclose(() => {
-      if (!cancelled) setConnectionState("disconnected");
-    });
+      isConnectingRef.current = true;
+      setConnectionState("connecting");
 
-    setConnectionState("connecting");
-    connection
-      .start()
-      .then(() => {
-        if (!cancelled) setConnectionState("connected");
-      })
-      .catch((err) => {
-        console.error("[useOrderTracking] start failed", err);
-        if (!cancelled) setConnectionState("error");
-      });
+      try {
+        const connection = await hubConnectionManager.acquire(
+          HUB_PATH,
+          accessToken,
+        );
 
-    return () => {
-      cancelled = true;
-      connection.off(EVENT_NAME);
-      connection.stop().catch(() => undefined);
-      connectionRef.current = null;
-    };
-  }, [orderId, accessToken, enabled]);
+        activeRef.current = true;
+        connectionRef.current = connection;
+        tokenRef.current = accessToken;
 
-  return {
-    connectionState,
-    lastEvent,
-    disconnect,
-  };
+        const handler = (payload: OrderStatusChangedEvent) => {
+          if (!activeRef.current) return;
+          if (
+            payload?.orderId &&
+            payload.orderId.toLowerCase() !== orderId.toLowerCase()
+          ) {
+            return; // event for a different order on the same shared connection
+          }
+          const normalized: OrderStatusChangedEvent = {
+            orderId: payload.orderId,
+            status: resolveStatusName(payload.status),
+            note: payload.note ?? null,
+            changedAt: payload.changedAt ?? new Date().toISOString(),
+          };
+          setLastEvent(normalized);
+          onStatusChangedRef.current?.(normalized);
+        };
+        handlerRef.current = handler;
+        connection.on(EVENT_NAME, handler);
+
+        connection.onreconnecting(() => {
+          if (activeRef.current) setConnectionState("reconnecting");
+        });
+        connection.onreconnected(() => {
+          if (activeRef.current) setConnectionState("connected");
+        });
+        connection.onclose(() => {
+          if (activeRef.current) setConnectionState("disconnected");
+        });
+
+        setConnectionState("connected");
+      } catch (err) {
+        console.error("[useOrderTracking] connect failed", err);
+        hubConnectionManager.release(HUB_PATH, accessToken);
+        setConnectionState("error");
+      } finally {
+        isConnectingRef.current = false;
+      }
+    },
+    [orderId],
+  );
+
+  // Always release our hold on the shared connection on unmount, even if
+  // the caller never explicitly called disconnect().
+  useEffect(() => {
+    return () => disconnect();
+  }, [disconnect]);
+
+  return { connectionState, lastEvent, connect, disconnect };
 }
