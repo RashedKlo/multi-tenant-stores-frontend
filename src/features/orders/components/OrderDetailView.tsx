@@ -65,12 +65,12 @@ export function OrderDetailView({ order, labels }: OrderDetailViewProps) {
             >
               <div className="min-w-0">
                 <p className="text-sm font-medium text-foreground">
-                  {item.nameEn}
+                  {item.name}
                 </p>
                 <p className="text-xs text-muted-foreground">
                   {labels.qty} {item.quantity}
                   {item.options.length > 0
-                    ? ` · ${item.options.map((o) => o.nameEn).join(", ")}`
+                    ? ` · ${item.options.map((o) => o.name).join(", ")}`
                     : ""}
                 </p>
               </div>

@@ -1,7 +1,7 @@
+// features/orders/components/OrderTrackingClient.tsx
 "use client";
 
-// features/orders/components/OrderTrackingClient.tsx
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import type { OrderDetail, OrderStatusChangedEvent } from "../types";
@@ -13,7 +13,7 @@ import { formatDateTime, shortOrderId } from "../lib/format";
 
 interface OrderTrackingClientProps {
   order: OrderDetail;
-  /** Client-readable access token for SignalR */
+  /** Access token for SignalR, fetched server-side. Null when unauthenticated. */
   accessToken: string | null;
 }
 
@@ -33,30 +33,38 @@ export function OrderTrackingClient({
     setStatus(event.status);
     setLiveNote(event.note);
     setHistory((prev) => [
-      {
-        status: event.status,
-        note: event.note,
-        changedAt: event.changedAt,
-      },
+      { status: event.status, note: event.note, changedAt: event.changedAt },
       ...prev,
     ]);
   }, []);
 
-  const { connectionState } = useOrderTracking({
+  const { connectionState, connect, disconnect } = useOrderTracking({
     orderId: initialOrder.id,
-    accessToken,
-    enabled: Boolean(accessToken) && !terminal,
     onStatusChanged,
   });
+
+  // A live update pushed the order into a terminal state — nothing left to
+  // track, release the socket.
+  useEffect(() => {
+    if (terminal) disconnect();
+  }, [terminal, disconnect]);
+
+  const handleStartTracking = useCallback(() => {
+    if (!accessToken) return;
+    connect(accessToken);
+  }, [accessToken, connect]);
+
+  const canStart =
+    connectionState === "idle" ||
+    connectionState === "disconnected" ||
+    connectionState === "error";
 
   const connectionLabel =
     connectionState === "connected"
       ? t("liveConnected")
       : connectionState === "connecting" || connectionState === "reconnecting"
         ? t("liveConnecting")
-        : connectionState === "error"
-          ? t("liveError")
-          : t("liveOffline");
+        : t("liveError");
 
   return (
     <div className="space-y-6">
@@ -70,22 +78,34 @@ export function OrderTrackingClient({
         <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
           {t("trackTitle")}
         </h1>
-        <p className="text-sm text-muted-foreground">
-          {t("trackSubtitle")}
-        </p>
+        <p className="text-sm text-muted-foreground">{t("trackSubtitle")}</p>
+
         {!terminal && (
-          <p className="text-xs text-muted-foreground">
-            <span
-              className={
-                connectionState === "connected"
-                  ? "text-emerald-600 dark:text-emerald-400"
-                  : ""
-              }
-            >
-              {connectionLabel}
-            </span>
-            {liveNote ? ` · ${liveNote}` : ""}
-          </p>
+          <div className="flex flex-wrap items-center gap-2 text-xs">
+            {canStart ? (
+              <button
+                type="button"
+                onClick={handleStartTracking}
+                disabled={!accessToken}
+                className="inline-flex h-8 items-center justify-center rounded-full bg-primary px-3 text-xs font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
+              >
+                {t("startLiveTracking")}
+              </button>
+            ) : (
+              <span
+                className={
+                  connectionState === "connected"
+                    ? "text-emerald-600 dark:text-emerald-400"
+                    : "text-muted-foreground"
+                }
+              >
+                {connectionLabel}
+              </span>
+            )}
+            {liveNote ? (
+              <span className="text-muted-foreground">· {liveNote}</span>
+            ) : null}
+          </div>
         )}
       </header>
 
@@ -94,16 +114,12 @@ export function OrderTrackingClient({
           currentStatus={status}
           history={history}
           cancelledLabel={t("cancelledBanner")}
-          liveLabel={
-            connectionState === "connected" ? t("liveBadge") : undefined
-          }
+          liveLabel={connectionState === "connected" ? t("liveBadge") : undefined}
         />
       </section>
 
       <section className="rounded-2xl border border-border bg-card p-4 text-sm sm:p-5">
-        <p className="font-medium text-foreground">
-          {initialOrder.deliveryName}
-        </p>
+        <p className="font-medium text-foreground">{initialOrder.deliveryName}</p>
         <p className="mt-1 text-muted-foreground">
           {initialOrder.deliveryAddressText}
         </p>
