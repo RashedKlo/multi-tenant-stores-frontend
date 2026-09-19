@@ -17,7 +17,6 @@ interface CheckoutAddressSelectorProps {
 export function CheckoutAddressSelector({
   addresses,
   storeId,
-  selectedAddressId,
 }: CheckoutAddressSelectorProps) {
   const t = useTranslations("checkout");
   const router = useRouter();
@@ -25,7 +24,6 @@ export function CheckoutAddressSelector({
   const [error, setError] = useState<string | null>(null);
 
   const defaultId =
-    selectedAddressId ??
     addresses.find((a) => a.isDefault)?.id ??
     addresses[0]?.id ??
     "";

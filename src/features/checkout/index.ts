@@ -5,6 +5,12 @@ export { CheckoutAddressSelector } from "./components/CheckoutAddressSelector";
 export { CheckoutCartSummary } from "./components/CheckoutCartSummary";
 export { CheckoutEmptyCart } from "./components/CheckoutEmptyCart";
 export { CheckoutNoAddress } from "./components/CheckoutNoAddress";
+export {
+  CheckoutPage,
+  CheckoutSkeleton,
+} from "./components/sections/Checkout";
+export { CheckoutSuccess } from "./components/sections/CheckoutSuccess";
+export { CheckoutCancel } from "./components/sections/CheckoutCancel";
 
 export { createCheckout } from "./api/create-checkout";
 export { createCheckoutAction } from "./actions/create-checkout.action";

@@ -18,7 +18,7 @@ export type CheckoutCartLine = {
   productName: string;
   productImage: string;
   quantity: number;
-  unitPrice: number;
+  basePrice: number;
   itemTotalPrice: number;
   notes?: string | null;
 };
