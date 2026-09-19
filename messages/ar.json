@@ -121,7 +121,11 @@
     "subtitle": "المنتجات والمتاجر التي تعشقها",
     "tabsLabel": "تصفح المفضلة",
     "products": "المنتجات",
-    "stores": "المتاجر"
+    "stores": "المتاجر",
+    "emptyProductsTitle": "لا توجد منتجات مفضلة بعد",
+    "emptyProductsDescription": "اضغط على رمز القلب في أي منتج لحفظه هنا",
+    "emptyStoresTitle": "لا توجد متاجر مفضلة بعد",
+    "emptyStoresDescription": "اضغط على رمز القلب في أي متجر لحفظه هنا"
   },
 "auth": {
     "signIn": "تسجيل الدخول",

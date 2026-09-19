@@ -121,7 +121,11 @@
     "subtitle": "Products and stores you love",
     "tabsLabel": "Browse favorites",
     "products": "Products",
-    "stores": "Stores"
+    "stores": "Stores",
+    "emptyProductsTitle": "No favorite products yet",
+    "emptyProductsDescription": "Tap the heart on any product to save it here",
+    "emptyStoresTitle": "No favorite stores yet",
+    "emptyStoresDescription": "Tap the heart on any store to save it here"
   },
    "auth": {
     "signIn": "Sign in",
