@@ -5,13 +5,18 @@ import { EditAddressClient } from "@/features/addresses";
 
 interface EditAddressPageProps {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ returnTo?: string }>;
 }
 
-export default async function EditAddressPage({ params }: EditAddressPageProps) {
+export default async function EditAddressPage({
+  params,
+  searchParams,
+}: EditAddressPageProps) {
   const { id } = await params;
-  const address = await getAddress(id);
+  const { returnTo } = await searchParams;
 
+  const address = await getAddress(id);
   if (!address) notFound();
 
-  return <EditAddressClient address={address} />;
+  return <EditAddressClient address={address} returnTo={returnTo} />;
 }

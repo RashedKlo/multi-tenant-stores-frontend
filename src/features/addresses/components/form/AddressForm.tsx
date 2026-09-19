@@ -12,7 +12,8 @@ interface AddressFormProps {
   mode: "create" | "edit";
   initial?: Address;
   /** After successful create — e.g. redirect back to checkout */
-  returnTo?: string;
+  returnTo?: string
+  
 }
 
 export function AddressForm({ mode, initial, returnTo }: AddressFormProps) {

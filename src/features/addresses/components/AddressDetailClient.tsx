@@ -6,10 +6,9 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { ConfirmModal } from "@/shared/lib/ui";
-import { AddressesShell } from "../AddressesShell";
-import { deleteAddressAction } from "../../actions/delete-address";
-import { setDefaultAddressAction } from "../../actions/set-default-address";
-import type { Address } from "../../types";
+import { Address } from "../types";
+import { deleteAddressAction, setDefaultAddressAction } from "../actions";
+
 
 interface AddressDetailClientProps {
   address: Address;
@@ -30,11 +29,12 @@ export function AddressDetailClient({ address }: AddressDetailClientProps) {
 
     startTransition(async () => {
       const result = await deleteAddressAction(deleteId);
+
       if (result.success) {
         router.push("/addresses");
         router.refresh();
       } else {
-        alert(result.error ?? "Failed to delete address");
+        alert( "Failed to delete address");
         setDeleteId(null);
       }
     });
@@ -52,7 +52,7 @@ export function AddressDetailClient({ address }: AddressDetailClientProps) {
   };
 
   return (
-    <AddressesShell>
+    <>
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold">{address.label}</h1>
@@ -140,6 +140,6 @@ export function AddressDetailClient({ address }: AddressDetailClientProps) {
         onConfirm={confirmDelete}
         isLoading={isPending}
       />
-    </AddressesShell>
+    </>
   );
 }
