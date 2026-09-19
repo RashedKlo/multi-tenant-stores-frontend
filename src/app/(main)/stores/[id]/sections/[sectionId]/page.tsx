@@ -1,4 +1,5 @@
 import { Products } from "@/features/stores/components/sections/Products";
+import { isNumber } from "@/shared/lib/format";
 import { Suspense } from "react";
 
 // e.g. store/[id]/sections/[sectionId]/page.tsx or wherever Products is rendered
@@ -17,8 +18,8 @@ export default async function SectionPage({
   const sp = await searchParams;
 
   const inStockOnly = sp.inStockOnly === "true";
-  const minPrice = numParam(sp.minPrice);
-  const maxPrice = numParam(sp.maxPrice);
+  const minPrice = isNumber(sp.minPrice);
+  const maxPrice = isNumber(sp.maxPrice);
 
   const filterKey = [
     inStockOnly ? "stock" : "all",
@@ -27,8 +28,6 @@ export default async function SectionPage({
   ].join("-");
   return (
     <>
-      {/* static / independent UI above */}
-
       <Suspense key={filterKey} fallback={<Products.skeleton />}>
         <Products
           sectionId={sectionId}
@@ -42,8 +41,3 @@ export default async function SectionPage({
   );
 }
 
-function numParam(v?: string): number | undefined {
-  if (v == null || v === "") return undefined;
-  const n = Number(v);
-  return Number.isFinite(n) ? n : undefined;
-}
