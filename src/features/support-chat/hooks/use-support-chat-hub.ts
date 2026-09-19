@@ -41,23 +41,37 @@ export function useSupportChatHub({
   onMessageDeleted,
   onConversationDeleted,
 }: UseSupportChatHubOptions) {
-  const [hubState, setHubState] = useState<HubState>("idle");
+  // Real connection state — only ever set from async callbacks
+  // (promise .then/.catch, SignalR event handlers), never synchronously
+  // in the effect body.
+  const [connectionState, setConnectionState] = useState<HubState>("idle");
+
+  // Publicly exposed state is derived: when disabled/no token, it's
+  // always "idle" regardless of whatever connectionState holds from a
+  // previous session, so we never need to setState on bail-out.
+  const hubState: HubState = enabled && accessToken ? connectionState : "idle";
+
   const handlersRef = useRef({
     onNewMessage,
     onMessagesRead,
     onMessageDeleted,
     onConversationDeleted,
   });
-  handlersRef.current = {
-    onNewMessage,
-    onMessagesRead,
-    onMessageDeleted,
-    onConversationDeleted,
-  };
+
+  // Sync the ref after render/commit instead of mutating it during render.
+  useEffect(() => {
+    handlersRef.current = {
+      onNewMessage,
+      onMessagesRead,
+      onMessageDeleted,
+      onConversationDeleted,
+    };
+  });
 
   useEffect(() => {
     if (!enabled || !accessToken) {
-      setHubState("idle");
+      // No setState here — `hubState` above already derives to "idle"
+      // whenever disabled or there's no token.
       return;
     }
 
@@ -73,16 +87,20 @@ export function useSupportChatHub({
     const onDelConv = (e: ConversationDeletedEvent) =>
       handlersRef.current.onConversationDeleted?.(e);
 
-    setHubState("connecting");
-
-    hubConnectionManager
-      .acquire(SUPPORT_CHAT_HUB_PATH, accessToken)
-      .then((conn) => {
-        if (cancelled) {
+      Promise.resolve()
+    .then(() => {
+      if (cancelled) return null;
+      setConnectionState("connecting");
+      return hubConnectionManager.acquire(SUPPORT_CHAT_HUB_PATH, accessToken);
+    })
+    .then((conn) => {
+      if (!conn || cancelled) {
+        if (conn) {
           hubConnectionManager.release(SUPPORT_CHAT_HUB_PATH, accessToken);
-          return;
         }
-        connection = conn;
+        return;
+      }
+      connection = conn;
 
         conn.on(SUPPORT_EVENTS.NewMessage, onNew);
         conn.on(SUPPORT_EVENTS.MessagesRead, onRead);
@@ -90,20 +108,20 @@ export function useSupportChatHub({
         conn.on(SUPPORT_EVENTS.ConversationDeleted, onDelConv);
 
         conn.onreconnecting(() => {
-          if (!cancelled) setHubState("reconnecting");
+          if (!cancelled) setConnectionState("reconnecting");
         });
         conn.onreconnected(() => {
-          if (!cancelled) setHubState("connected");
+          if (!cancelled) setConnectionState("connected");
         });
         conn.onclose(() => {
-          if (!cancelled) setHubState("disconnected");
+          if (!cancelled) setConnectionState("disconnected");
         });
 
-        setHubState("connected");
+        setConnectionState("connected");
       })
       .catch((err) => {
         console.error("[useSupportChatHub]", err);
-        if (!cancelled) setHubState("error");
+        if (!cancelled) setConnectionState("error");
       });
 
     return () => {

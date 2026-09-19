@@ -1,4 +1,13 @@
 // features/support-chat/types/index.ts
+export type Conversation = {
+  id: string;
+  tenantId: string;
+  tenantName: string;
+  customerId: string;
+  status: string;
+  createdAt: string;
+  lastMessageAt: string;
+};
 
 export type ConversationSummary = {
   id: string;

@@ -1,13 +1,14 @@
 // features/support-chat/api/start-conversation.ts
 import { fetchJson, ApiError } from "@/shared/lib/http/fetch-json";
 import { getAccessToken } from "@/shared/lib/http/token-storage";
+import { Conversation } from "../types";
 
 /** Returns conversation id (idempotent for tenant + customer). */
-export async function startConversation(tenantId: string): Promise<string> {
+export async function startConversation(tenantId: string): Promise<Conversation> {
   const token = await getAccessToken();
 
   try {
-    const id = await fetchJson<string>("/api/support/conversations", {
+    const id = await fetchJson<Conversation>("/api/support/conversations", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

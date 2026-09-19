@@ -14,7 +14,6 @@ export async function getConversations(): Promise<ConversationSummary[]> {
         cache: "no-store",
       },
     );
-    console.log("data");
     return Array.isArray(data) ? data : [];
   } catch (error) {
     if (error instanceof ApiError) {

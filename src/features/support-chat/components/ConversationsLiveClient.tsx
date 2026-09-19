@@ -10,7 +10,7 @@ import { useTranslations } from "next-intl";
 
 interface ConversationsLiveClientProps {
   initial: ConversationSummary[];
-  accessToken: string | null;
+  accessToken?: string;
 }
 
 /**
@@ -49,7 +49,7 @@ export function ConversationsLiveClient({
   );
 
   useSupportChatHub({
-    accessToken,
+    accessToken: accessToken ?? null,
     enabled: Boolean(accessToken),
     onNewMessage,
     onConversationDeleted,
