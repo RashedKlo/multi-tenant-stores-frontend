@@ -48,13 +48,13 @@ export function useOrderTracking({
   const tokenRef = useRef<string | null>(null);
   const handlerRef = useRef<((payload: OrderStatusChangedEvent) => void) | null>(null);
   const isConnectingRef = useRef(false);
-  // signalR gives no way to remove a single onclose/onreconnecting/
-  // onreconnected callback individually — since the connection outlives
-  // this hook instance, we gate those callbacks with this flag instead so
-  // they become no-ops once we've detached.
   const activeRef = useRef(false);
+
   const onStatusChangedRef = useRef(onStatusChanged);
-  onStatusChangedRef.current = onStatusChanged;
+  // Sync after render/commit, not during render.
+  useEffect(() => {
+    onStatusChangedRef.current = onStatusChanged;
+  });
 
   const disconnect = useCallback(() => {
     activeRef.current = false;
@@ -98,7 +98,7 @@ export function useOrderTracking({
             payload?.orderId &&
             payload.orderId.toLowerCase() !== orderId.toLowerCase()
           ) {
-            return; // event for a different order on the same shared connection
+            return;
           }
           const normalized: OrderStatusChangedEvent = {
             orderId: payload.orderId,
@@ -134,8 +134,6 @@ export function useOrderTracking({
     [orderId],
   );
 
-  // Always release our hold on the shared connection on unmount, even if
-  // the caller never explicitly called disconnect().
   useEffect(() => {
     return () => disconnect();
   }, [disconnect]);
