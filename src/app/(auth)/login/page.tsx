@@ -8,9 +8,6 @@ export default async function LoginPage() {
 
   return (
     <AuthShell title={t("signInTitle")} subtitle={t("signInSubtitle")}>
-      {/* Auto One Tap */}
-      <GoogleOneTap context="signin" />
-
       <Suspense fallback={<div className="h-40 animate-pulse rounded-xl bg-muted" />}>
         <LoginForm />
       </Suspense>

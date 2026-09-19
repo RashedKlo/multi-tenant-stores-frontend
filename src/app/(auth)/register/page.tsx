@@ -7,7 +7,6 @@ export default async function RegisterPage() {
 
   return (
     <AuthShell title={t("signUpTitle")} subtitle={t("signUpSubtitle")}>
-      <GoogleOneTap context="signup" />
       <RegisterForm />
     </AuthShell>
   );
