@@ -3,7 +3,6 @@ import { getFavoriteStores } from "@/features/favorites/api/get-favorite-stores"
 import { FavoriteStoresClient } from "./FavoriteStoresClient";
 import FavoriteStoresEmpty from "./empty";
 import FavoriteStoresSkeleton from "./skeleton";
-import { MOCK_PAGED_FAVORITE_STORES } from "@/features/favorites/constants/favorites";
 
 export const FavoriteStores = Object.assign(
   async function FavoriteStores() {
@@ -16,5 +15,5 @@ export const FavoriteStores = Object.assign(
 
     return <FavoriteStoresClient initialData={data} />;
   },
-  { skeleton: FavoriteStoresSkeleton, empty: FavoriteStoresEmpty }
+  { skeleton: FavoriteStoresSkeleton, empty: FavoriteStoresEmpty },
 );

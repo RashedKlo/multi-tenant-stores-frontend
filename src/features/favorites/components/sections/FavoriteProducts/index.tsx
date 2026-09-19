@@ -3,7 +3,6 @@ import { getFavoriteProducts } from "@/features/favorites/api/get-favorite-produ
 import { FavoriteProductsClient } from "./FavoriteProductsClient";
 import FavoriteProductsEmpty from "./empty";
 import FavoriteProductsSkeleton from "./skeleton";
-import { MOCK_FAVORITE_PRODUCTS, MOCK_PAGED_FAVORITE_PRODUCTS, MOCK_PAGED_FAVORITE_STORES } from "@/features/favorites/constants/favorites";
 
 export const FavoriteProducts = Object.assign(
   async function FavoriteProducts() {
@@ -16,5 +15,5 @@ export const FavoriteProducts = Object.assign(
 
     return <FavoriteProductsClient initialData={data} />;
   },
-  { skeleton: FavoriteProductsSkeleton, empty: FavoriteProductsEmpty }
+  { skeleton: FavoriteProductsSkeleton, empty: FavoriteProductsEmpty },
 );

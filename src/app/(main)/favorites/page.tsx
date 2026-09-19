@@ -7,6 +7,7 @@ import { FavoritesShell } from "@/features/favorites/components/FavoritesShell";
 import { FavoriteProducts } from "@/features/favorites/components/sections/FavoriteProducts";
 import { FavoriteStores } from "@/features/favorites/components/sections/FavoriteStores";
 import { FavoritesTabs } from "@/features/favorites/components/FavoritesTabs";
+import { AuthGate } from "@/shared/lib/ui";
 
 type FavoritesTab = "products" | "stores";
 
@@ -35,14 +36,9 @@ export default async function FavoritesPage({ searchParams }: FavoritesPageProps
   const activeTab: FavoritesTab = tab === "stores" ? "stores" : "products";
 
   return (
-    <FavoritesShell>
+    <AuthGate redirectTo={"/favorites"}>
+    <FavoritesShell title={t("title")} subtitle={t("subtitle")}>
       <div className="space-y-5">
-        {/* Page heading */}
-        <header>
-          <h1 className="text-xl font-bold tracking-tight sm:text-2xl">{t("title")}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">{t("subtitle")}</p>
-        </header>
-
         {/* Segmented tabs */}
         <FavoritesTabs active={activeTab} />
 
@@ -56,6 +52,7 @@ export default async function FavoritesPage({ searchParams }: FavoritesPageProps
         </Suspense>
       </div>
     </FavoritesShell>
+    </AuthGate>
   );
 }
 
