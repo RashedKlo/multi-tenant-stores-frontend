@@ -23,12 +23,7 @@ interface ThemeToggleProps {
  */
 export function ThemeToggle({ labels, className }: ThemeToggleProps) {
   const [isDark, setIsDark] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setIsDark(document.documentElement.classList.contains("dark"));
-    setMounted(true);
-  }, []);
+ 
 
   const toggle = () => {
     const next = !isDark;
@@ -60,26 +55,24 @@ export function ThemeToggle({ labels, className }: ThemeToggleProps) {
         className
       )}
     >
-      {mounted && (
         <>
           <SunIcon
             className={cn(
               "absolute h-5 w-5 transition-all duration-300",
-              isDark
+              !isDark
                 ? "-rotate-90 scale-0 opacity-0"
                 : "rotate-0 scale-100 opacity-100"
             )}
           />
+          </>:
           <MoonIcon
             className={cn(
               "absolute h-5 w-5 transition-all duration-300",
-              isDark
+              !isDark
                 ? "rotate-0 scale-100 opacity-100"
                 : "rotate-90 scale-0 opacity-0"
             )}
           />
-        </>
-      )}
     </button>
   );
 }
