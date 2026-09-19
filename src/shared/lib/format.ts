@@ -19,3 +19,8 @@ export function formatPrice(
   if (opts?.sign && amount > 0) return `+${formatted}`;
   return amount < 0 ? `-${formatted}` : formatted;
 }
+export function isNumber(v?: string): number | undefined {
+  if (v == null || v === "") return undefined;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : undefined;
+}

@@ -45,7 +45,7 @@ export async function clearAuthCookies() {
 
 export async function getAccessToken(): Promise<string | undefined> {
   const store = await cookies();
-  return store.get(AUTH_COOKIE.accessToken)?.value;
+  return store.get(AUTH_COOKIE.accessToken)?.value??"";
 }
 
 export async function getRefreshToken(): Promise<string | undefined> {
