@@ -9,8 +9,9 @@ import type { CartItem } from "@/features/cart/types/cart.types";
 import { updateCartItemAction } from "@/features/cart/actions/update-cart-item";
 import { removeCartItemAction } from "@/features/cart/actions/remove-cart-item";
 import { ConfirmModal, Notification } from "@/shared/lib/ui";
-import { CartItemCard } from "./CartItemCard";
 import { CartEmpty } from "./empty";
+import { CartItemCard } from "./CartItemCard";
+
 
 interface CartItemsClientProps {
   initialItems: CartItem[];

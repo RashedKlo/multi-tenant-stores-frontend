@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import type { CartItem } from "@/features/cart/types/cart.types";
-import { MinusIcon, PlusIcon, TrashIcon } from "../../constants/icons";
+import { MinusIcon, PlusIcon, TrashIcon } from "../constants/icons";
 
 interface CartItemCardProps {
   item: CartItem;

@@ -1,12 +1,8 @@
 // src/app/(main)/cart/page.tsx
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
-
-import { getCart } from "@/features/cart/api/get-cart";
-import { MOCK_CART_ITEMS } from "@/features/cart/constants/mock-cart";
-import { CartClient } from "@/features/cart/components/CartClient";
-import { CartShell } from "@/features/cart/components/CartShell";
-
+import { CartShell,Cart,CartItemsSkeleton } from "@/features/cart";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("cart");
@@ -15,14 +11,11 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function CartPage() {
   const t = await getTranslations("cart");
-  const items = await getCart();
-  // const items=MOCK_CART_ITEMS;
-  console.log(items);
-  const itemCount = items.reduce((total, item) => total + item.quantity, 0);
-
   return (
-    <CartShell title={t("title")} itemCount={itemCount}>
-      <CartClient items={items} />
+    <CartShell title={t("title")}>
+      <Suspense fallback={<CartItemsSkeleton />}>
+        <Cart />
+      </Suspense>
     </CartShell>
   );
 }

@@ -3,7 +3,7 @@
 
 import { fetchJson } from "@/shared/lib/http/fetch-json";
 import type { CartActionResult, UpdateCartItemInput } from "../types/cart.types";
-import { getAccessToken } from "@/shared/lib/http/token-storage";
+import { getAccessToken, getGuestToken } from "@/shared/lib/http/token-storage";
 
 export async function updateCartItemAction(
   input: UpdateCartItemInput,
@@ -15,13 +15,13 @@ export async function updateCartItemAction(
     return { success: false, error: "Quantity must be at least 1" };
   }
   const token=await getAccessToken();
-
+const guest=await getGuestToken();
   try {
     await fetchJson(`/api/cart/items/${input.cartItemId}`, {
       method: "PUT",
       headers: {
                "authorization": `Bearer ${token}`,
-
+"X-Guest-Session":`${guest}`,
         "Content-Type": "application/json",
       },
       allowEmptyResponse: true,
