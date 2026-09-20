@@ -1,25 +1,17 @@
 // features/support-chat/api/get-conversations.ts
-import { fetchJson, ApiError } from "@/shared/lib/http/fetch-json";
-import { getAccessToken } from "@/shared/lib/http/token-storage";
+import { fetchJson } from "@/shared/lib/http/fetch-json";
+import { CACHE_TAGS } from "@/shared/config/cache";
+import type { Result } from "@/shared/lib/result";
 import type { ConversationSummary } from "../types";
 
-export async function getConversations(): Promise<ConversationSummary[]> {
-  const token = await getAccessToken();
-
-  try {
-    const data = await fetchJson<ConversationSummary[]>(
-      "/api/support/conversations",
-      {
-        headers: { Authorization: `Bearer ${token}` },
-        cache: "no-store",
-      },
-    );
-    return Array.isArray(data) ? data : [];
-  } catch (error) {
-    if (error instanceof ApiError) {
-      console.error(`[getConversations] ${error.status}: ${error.message}`);
-    }
-        return [];
-
-  }
+/** Always fresh — list updates via SignalR + mutations. */
+export async function getConversations(): Promise<
+  Result<ConversationSummary[]>
+> {
+  return fetchJson<ConversationSummary[]>("/api/support/conversations", {
+    cache: "no-store",
+    next: {
+      tags: [CACHE_TAGS.supportConversations],
+    },
+  });
 }

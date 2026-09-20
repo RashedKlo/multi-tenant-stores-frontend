@@ -1,33 +1,29 @@
-// features/support-chat/actions/send-message.ts
+// features/support-chat/actions/mark-conversation-read.ts
 "use server";
 
 import { updateTag } from "next/cache";
 import { fetchJson } from "@/shared/lib/http/fetch-json";
 import { fail, type Result } from "@/shared/lib/result";
 import { CACHE_TAGS } from "@/shared/config/cache";
-import type { Message } from "../types";
 import {
-  sendMessageSchema,
-  type SendMessageInput,
+  markConversationReadSchema,
+  type MarkConversationReadInput,
 } from "../schemas/support-chat.schema";
 
-export async function sendMessage(
-  input: SendMessageInput,
-): Promise<Result<Message>> {
-  const parsed = sendMessageSchema.safeParse(input);
+export async function markConversationRead(
+  input: MarkConversationReadInput,
+): Promise<Result<void>> {
+  const parsed = markConversationReadSchema.safeParse(input);
 
   if (!parsed.success) {
     return fail("errors.validation", parsed.error.flatten().fieldErrors);
   }
 
-  const { conversationId, body } = parsed.data;
+  const { conversationId } = parsed.data;
 
-  const result = await fetchJson<Message>(
-    `/api/support/conversations/${conversationId}/messages`,
-    {
-      method: "POST",
-      body: { body },
-    },
+  const result = await fetchJson<void>(
+    `/api/support/conversations/${conversationId}/read`,
+    { method: "POST" },
   );
 
   if (result.success) {

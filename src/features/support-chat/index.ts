@@ -1,15 +1,16 @@
-// features/support-chat — public API
+// features/support-chat/index.ts
 
+// Reads
+export { getConversations, getMessages } from "./api";
+
+// Mutations
 export {
-  getConversations,
-  getMessages,
   startConversation,
   sendMessage,
   markConversationRead,
-} from "./api";
+} from "./actions";
 
-export { sendMessageAction } from "./actions/send-message.action";
-
+// UI
 export { ChatShell } from "./components/ChatShell";
 export { ConversationListItem } from "./components/ConversationListItem";
 export { Conversations, ConversationsSkeleton } from "./components";
@@ -20,12 +21,26 @@ export { ChatThreadClient } from "./components/ChatThreadClient";
 export { MessageBubble } from "./components/MessageBubble";
 export { ChatComposer } from "./components/ChatComposer";
 export { ConversationsEmpty } from "./components/ConversationsEmpty";
+
+// Realtime
 export { useSupportChatHub } from "./hooks/use-support-chat-hub";
+export { SUPPORT_CHAT_HUB_PATH, SUPPORT_EVENTS } from "./constants";
+
+// Types
 export type {
+  Conversation,
   ConversationSummary,
   Message,
   PagedMessages,
   NewMessageEvent,
+  MessagesReadEvent,
+  MessageDeletedEvent,
+  ConversationDeletedEvent,
 } from "./types";
 
-export { SUPPORT_CHAT_HUB_PATH, SUPPORT_EVENTS } from "./constants";
+export type {
+  StartConversationInput,
+  GetMessagesInput,
+  SendMessageInput,
+  MarkConversationReadInput,
+} from "./schemas/support-chat.schema";

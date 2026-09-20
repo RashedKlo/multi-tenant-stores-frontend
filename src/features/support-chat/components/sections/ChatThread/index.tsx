@@ -2,7 +2,7 @@
 // Server Component — no "use client"
 import { notFound } from "next/navigation";
 import { getAccessToken } from "@/shared/lib/http/token-storage";
-import { startConversation } from "../../../api/start-conversation";
+import { startConversation } from "../../../actions/start-conversation";
 import { getMessages } from "../../../api/get-messages";
 import { ChatThreadClient } from "../../ChatThreadClient";
 import { ChatThreadSkeleton } from "./skeleton";

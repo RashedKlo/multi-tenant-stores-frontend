@@ -1,31 +1,38 @@
 // features/support-chat/api/get-messages.ts
-import { fetchJson, ApiError } from "@/shared/lib/http/fetch-json";
-import { getAccessToken } from "@/shared/lib/http/token-storage";
+import { fetchJson } from "@/shared/lib/http/fetch-json";
+import { fail, type Result } from "@/shared/lib/result";
+import { CACHE_TAGS } from "@/shared/config/cache";
 import type { PagedMessages } from "../types";
+import {
+  getMessagesSchema,
+  type GetMessagesInput,
+} from "../schemas/support-chat.schema";
 
 export async function getMessages(
-  conversationId: string,
-  page = 1,
-  pageSize = 30,
-): Promise<PagedMessages> {
-  const token = await getAccessToken();
+  input: GetMessagesInput,
+): Promise<Result<PagedMessages>> {
+  const parsed = getMessagesSchema.safeParse(input);
+
+  if (!parsed.success) {
+    return fail("errors.validation", parsed.error.flatten().fieldErrors);
+  }
+
+  const { conversationId, page, pageSize } = parsed.data;
   const qs = new URLSearchParams({
     page: String(page),
     pageSize: String(pageSize),
   });
 
-  try {
-    return await fetchJson<PagedMessages>(
-      `/api/support/conversations/${conversationId}/messages?${qs}`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-        cache: "no-store",
+  return fetchJson<PagedMessages>(
+    `/api/support/conversations/${conversationId}/messages?${qs}`,
+    {
+      cache: "no-store",
+      next: {
+        tags: [
+          CACHE_TAGS.supportMessages(conversationId),
+          CACHE_TAGS.supportConversations,
+        ],
       },
-    );
-  } catch (error) {
-    if (error instanceof ApiError) {
-      console.error(`[getMessages] ${error.status}: ${error.message}`);
-    }
-    throw error;
-  }
+    },
+  );
 }
