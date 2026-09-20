@@ -1,63 +1,39 @@
 // features/modules/api/get-stores-by-module.ts
-import { fetchJson, ApiError } from "@/shared/lib/http/fetch-json";
+import { fetchJson } from "@/shared/lib/http/fetch-json";
+import { fail, type Result } from "@/shared/lib/result";
 import { CACHE_TAGS, REVALIDATE } from "@/shared/config/cache";
 import type { PagedStores } from "../types";
-import { getAccessToken } from "@/shared/lib/http/token-storage";
+import {
+  getStoresByModuleSchema,
+  type GetStoresByModuleInput,
+} from "../schemas/modules.schema";
 
-interface GetStoresParams {
-  moduleId: string;
-  categoryId?: string;
-  search?: string;
-  page?: number;
-  pageSize?: number;
-}
+export async function getStoresByModule(
+  input: GetStoresByModuleInput,
+): Promise<Result<PagedStores>> {
+  const parsed = getStoresByModuleSchema.safeParse(input);
 
-/**
- * GET /api/modules/{id}/stores
- * Server-only. Supports category filter + search + pagination.
- */
-export async function getStoresByModule({
-  moduleId,
-  categoryId,
-  search,
-  page = 1,
-  pageSize = 20,
-}: GetStoresParams): Promise<PagedStores> {
-  try {
-    const params = new URLSearchParams({
-      page: String(page),
-      pageSize: String(pageSize),
-    });
-
-    if (categoryId) params.set("categoryId", categoryId);
-    if (search) params.set("search", search);
-const token = await getAccessToken();
-    const data = await fetchJson<PagedStores>(
-      `/api/modules/${moduleId}/stores?${params.toString()}`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-        // next: {
-        //   revalidate: REVALIDATE.minute * 5,
-        //   tags: [CACHE_TAGS.moduleStores(moduleId)],
-        // },
-      }
-    );
-    return data;
-  } catch (error) {
-    if (error instanceof ApiError) {
-      console.error(`[getStoresByModule] ${error.message} (${error.path})`);
-    } else {
-      console.error("[getStoresByModule] Unexpected error:", error);
-    }
-    // Safe empty fallback
-    return {
-      items: [],
-      pageNumber: page,
-      pageSize,
-      totalCount: 0,
-      totalPages: 0,
-      hasPreviousPage: false,
-      hasNextPage: false,
-    };
+  if (!parsed.success) {
+    return fail("errors.validation", parsed.error.flatten().fieldErrors);
   }
+
+  const { moduleId, categoryId, search, page, pageSize } = parsed.data;
+
+  const params = new URLSearchParams({
+    page: String(page),
+    pageSize: String(pageSize),
+  });
+
+  if (categoryId) params.set("categoryId", categoryId);
+  if (search) params.set("search", search);
+
+  return fetchJson<PagedStores>(
+    `/api/modules/${moduleId}/stores?${params.toString()}`,
+    {
+      next: {
+        revalidate: REVALIDATE.minute * 5,
+        tags: [CACHE_TAGS.moduleStores(moduleId)],
+      },
+    },
+  );
 }
