@@ -6,6 +6,29 @@
     "orders": "Orders",
     "profile": "Profile"
   },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "badRequest": "Invalid request. Check your details.",
+    "invalidCredentials": "Incorrect email or password.",
+    "forbidden": "You don’t have access to this action.",
+    "notFound": "Account not found.",
+    "conflict": "An account with this email already exists.",
+    "validation": "Please check the form and try again.",
+    "rateLimited": "Too many attempts. Please wait a moment.",
+    "server": "Server error. Please try again later.",
+    "network": "Network error. Please check your connection and try again.",
+    "required": "This field is required.",
+    "invalidValue": "Please enter a valid value.",
+    "invalidEmail": "Enter a valid email address.",
+    "invalidPassword": "Password must be at least 8 characters.",
+    "invalidCode": "Enter a valid verification code.",
+    "nameRequired": "First and last name are required.",
+    "unauthorized": "Session expired. Please sign in again.",
+    "googleNotConfigured": "Google sign-in is not configured yet.",
+    "addressNotFound": "Address not found.",
+    "saveFailed": "Could not save the address.",
+    "deleteFailed": "Could not delete the address."
+  },
   "layout": {
     "mainNav": "Main navigation",
     "actions": {
@@ -189,12 +212,18 @@
       "validation": "Please check the form and try again.",
       "rateLimited": "Too many attempts. Please wait a moment.",
       "server": "Server error. Please try again later.",
+      "network": "Network error. Please check your connection and try again.",
+      "required": "This field is required.",
+      "invalidValue": "Please enter a valid value.",
       "invalidEmail": "Enter a valid email address.",
       "invalidPassword": "Password must be at least 8 characters.",
       "invalidCode": "Enter a valid verification code.",
       "nameRequired": "First and last name are required.",
       "unauthorized": "Session expired. Please sign in again.",
-      "googleNotConfigured": "Google sign-in is not configured yet."
+      "googleNotConfigured": "Google sign-in is not configured yet.",
+      "addressNotFound": "Address not found.",
+      "saveFailed": "Could not save the address.",
+      "deleteFailed": "Could not delete the address."
     }
     
   },"profile": {
