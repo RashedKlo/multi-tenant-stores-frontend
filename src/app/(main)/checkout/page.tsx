@@ -6,11 +6,9 @@ import {
 } from "@/features/checkout";
 import { AuthGate } from "@/shared/lib/ui";
 
-interface CheckoutPageProps {
-  
-}
 
-export default async function CheckoutPage({  }: CheckoutPageProps) {
+
+export default async function CheckoutPage({  }) {
 
 
   return (
