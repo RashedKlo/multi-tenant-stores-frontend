@@ -5,7 +5,7 @@ import { revalidateTag, updateTag } from "next/cache";
 import { fetchJson } from "@/shared/lib/http/fetch-json";
 import { fail, type Result } from "@/shared/lib/result";
 import { CACHE_TAGS } from "@/shared/config/cache";
-import type { Address } from "../types";
+import type { Address } from "../types/addresses.types";
 import {
   updateAddressSchema,
   type UpdateAddressInput,
