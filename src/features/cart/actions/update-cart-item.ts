@@ -1,40 +1,38 @@
-// src/features/cart/actions/update-cart-item.ts
+// features/cart/actions/update-cart-item.ts
 "use server";
 
+import { updateTag } from "next/cache";
 import { fetchJson } from "@/shared/lib/http/fetch-json";
-import type { CartActionResult, UpdateCartItemInput } from "../types/cart.types";
-import { getAccessToken, getGuestToken } from "@/shared/lib/http/token-storage";
+import { fail, type Result } from "@/shared/lib/result";
+import { CACHE_TAGS } from "@/shared/config/cache";
+import {
+  updateCartItemSchema,
+  type UpdateCartItemInput,
+} from "../schemas/cart.schema";
 
 export async function updateCartItemAction(
   input: UpdateCartItemInput,
-): Promise<CartActionResult> {
-  if (!input.cartItemId || !input.storeId) {
-    return { success: false, error: "Invalid cart item" };
-  }
-  if (!input.quantity || input.quantity < 1) {
-    return { success: false, error: "Quantity must be at least 1" };
-  }
-  const token=await getAccessToken();
-const guest=await getGuestToken();
-  try {
-    await fetchJson(`/api/cart/items/${input.cartItemId}`, {
-      method: "PUT",
-      headers: {
-               "authorization": `Bearer ${token}`,
-"X-Guest-Session":`${guest}`,
-        "Content-Type": "application/json",
-      },
-      allowEmptyResponse: true,
-      body: JSON.stringify({
-        storeId: input.storeId,
-        quantity: input.quantity,
-      }),
-    });
+): Promise<Result<void>> {
+  const parsed = updateCartItemSchema.safeParse(input);
 
-    // revalidateTag(CACHE_TAGS.cart);
-    return { success: true, data: undefined };
-  } catch (error) {
-    console.error("[updateCartItemAction]", error);
-    return { success: false, error: "Failed to update item" };
+  if (!parsed.success) {
+    return fail("errors.validation", parsed.error.flatten().fieldErrors);
   }
+
+  const result = await fetchJson<void>(
+    `/api/cart/items/${parsed.data.cartItemId}`,
+    {
+      method: "PUT",
+      body: {
+        storeId: parsed.data.storeId,
+        quantity: parsed.data.quantity,
+      },
+    },
+  );
+
+  if (result.success) {
+    updateTag(CACHE_TAGS.cart);
+  }
+
+  return result;
 }

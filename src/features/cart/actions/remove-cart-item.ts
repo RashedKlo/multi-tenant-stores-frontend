@@ -1,35 +1,32 @@
-// src/features/cart/actions/remove-cart-item.ts
+// features/cart/actions/remove-cart-item.ts
 "use server";
 
+import { updateTag } from "next/cache";
 import { fetchJson } from "@/shared/lib/http/fetch-json";
-import type { CartActionResult, RemoveCartItemInput } from "../types/cart.types";
-import { getAccessToken } from "@/shared/lib/http/token-storage";
+import { fail, type Result } from "@/shared/lib/result";
+import { CACHE_TAGS } from "@/shared/config/cache";
+import {
+  removeCartItemSchema,
+  type RemoveCartItemInput,
+} from "../schemas/cart.schema";
 
 export async function removeCartItemAction(
   input: RemoveCartItemInput,
-): Promise<CartActionResult> {
-  if (!input.cartItemId || !input.storeId) {
-    return { success: false, error: "Invalid cart item" };
-  }
-  const token=await getAccessToken();
-  try {
-    await fetchJson(
-      `/api/cart/items/${input.cartItemId}?storeId=${encodeURIComponent(input.storeId)}`,
-      {
-        headers: {
-               "authorization": `Bearer ${token}`,
+): Promise<Result<void>> {
+  const parsed = removeCartItemSchema.safeParse(input);
 
-        "Content-Type": "application/json",
-      },
-        method: "DELETE",
-        allowEmptyResponse: true,
-      },
-    );
-
-    // revalidateTag(CACHE_TAGS.cart);
-    return { success: true, data: undefined };
-  } catch (error) {
-    console.error("[removeCartItemAction]", error);
-    return { success: false, error: "Failed to remove item" };
+  if (!parsed.success) {
+    return fail("errors.validation", parsed.error.flatten().fieldErrors);
   }
+
+  const result = await fetchJson<void>(
+    `/api/cart/items/${parsed.data.cartItemId}?storeId=${encodeURIComponent(parsed.data.storeId)}`,
+    { method: "DELETE" },
+  );
+
+  if (result.success) {
+    updateTag(CACHE_TAGS.cart);
+  }
+
+  return result;
 }
