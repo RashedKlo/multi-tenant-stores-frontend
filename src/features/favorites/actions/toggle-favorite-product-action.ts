@@ -1,29 +1,36 @@
+// features/favorites/actions/toggle-favorite-product-action.ts
 "use server";
 
+import { updateTag } from "next/cache";
 import { fetchJson } from "@/shared/lib/http/fetch-json";
-import { toAuthErrorKey } from "@/shared/lib/http/auth-errors";
-import { getAccessToken } from "@/shared/lib/http/token-storage";
-import type { ActionResult } from "@/features/auth/types";
+import { fail, type Result } from "@/shared/lib/result";
+import { CACHE_TAGS } from "@/shared/config/cache";
+import {
+  toggleFavoriteProductSchema,
+  type ToggleFavoriteProductInput,
+} from "../schemas/favorites.schema";
 
-export async function toggleFavoriteProduct(
-  productId: string,
-  isFavorite: boolean,
-): Promise<ActionResult> {
-  try {
-    const token = await getAccessToken();
-    if (!token) {
-      return { success: false, error: "errors.unauthorized" };
-    }
+export async function toggleFavoriteProductAction(
+  input: ToggleFavoriteProductInput,
+): Promise<Result<void>> {
+  const parsed = toggleFavoriteProductSchema.safeParse(input);
 
-    await fetchJson<unknown>(`/api/favorites/products/${productId}`, {
-      method: isFavorite ? "DELETE" : "POST",
-      headers: { Authorization: `Bearer ${token}` },
-      allowEmptyResponse: true,
-    });
-
-    return { success: true, data: undefined };
-  } catch (error) {
-    console.error("[toggleFavoriteProduct]", error);
-    return { success: false, error: toAuthErrorKey(error) };
+  if (!parsed.success) {
+    return fail("errors.validation", parsed.error.flatten().fieldErrors);
   }
+
+  const { productId, isFavorite } = parsed.data;
+
+  const result = await fetchJson<void>(
+    `/api/favorites/products/${productId}`,
+    {
+      method: isFavorite ? "DELETE" : "POST",
+    },
+  );
+
+  if (result.success) {
+    updateTag(CACHE_TAGS.favoriteProducts);
+  }
+
+  return result;
 }
