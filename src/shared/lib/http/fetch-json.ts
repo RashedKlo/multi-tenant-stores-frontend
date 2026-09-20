@@ -1,7 +1,11 @@
 // shared/lib/http/fetch-json.ts
 import { cookies } from "next/headers";
-import { getAccessToken } from "./token-storage";
+import { getAccessToken, getGuestToken } from "./token-storage";
+import { Result, ok, fail } from "../result";
 
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
+type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 export class ApiError extends Error {
   constructor(
     public status: number,
@@ -12,96 +16,122 @@ export class ApiError extends Error {
     this.name = "ApiError";
   }
 }
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-
-interface FetchJsonOptions extends RequestInit {
-  next?: NextFetchRequestConfig;
-  timeoutMs?: number;
-  allowEmptyResponse?: boolean;
-  /** Override the locale from the cookie if needed */
+interface FetchJsonOptions {
+  method?: HttpMethod;
+  body?: unknown;
+  headers?: HeadersInit;
   locale?: string;
+  authToken?: string | null; // pass null to force "no auth" even if logged in
+  guestToken?: string | null;
+  timeoutMs?: number;
+  cache?: RequestCache;
+  next?: NextFetchRequestConfig;
 }
 
-/**
- * Shared server-side JSON fetch client.
- * Automatically reads the locale cookie and sends it as Accept-Language
- * so the backend can return already-localized fields.
- */
+const STATUS_ERROR_KEYS: Record<number, string> = {
+  400: "errors.badRequest",
+  401: "errors.unauthorized",
+  403: "errors.forbidden",
+  404: "errors.notFound",
+  409: "errors.conflict",
+  422: "errors.validation",
+  429: "errors.rateLimited",
+};
+
+function statusToErrorKey(status: number): string {
+  if (STATUS_ERROR_KEYS[status]) return STATUS_ERROR_KEYS[status];
+  console.error(`[fetchJson] Unmapped HTTP status ${status}`);
+  if (status >= 500) return "errors.server";
+  return "errors.generic";
+}
+
 export async function fetchJson<T>(
   path: string,
-  { timeoutMs = 8000, allowEmptyResponse = false, ...options }: FetchJsonOptions = {}
-): Promise<T> {
+  options: FetchJsonOptions = {}
+): Promise<Result<T>> {
   if (!BASE_URL) {
-    throw new Error("NEXT_PUBLIC_API_URL is not defined. Check your .env file.");
+    console.error("[fetchJson] NEXT_PUBLIC_API_URL is not defined.");
+    return fail("errors.server");
   }
 
-  const cookieStore = await cookies();
-  const locale = cookieStore.get("locale")?.value ?? "en";
-  const token = await getAccessToken();
-  const headers: HeadersInit = {
-    Accept: "application/json",
-    "Accept-Language": locale,
-    ...options.headers,
-  };
-
-  const res = await fetch(`${BASE_URL}${path}`, {
-    ...options,
-    signal: AbortSignal.timeout(timeoutMs),
-    headers,
-  });
-
-  if (!res.ok) {
-    const body = await res.text();
-    throw new ApiError(
-      res.status,
-      getApiErrorMessage(body, `${res.status} ${res.statusText}`),
-      path
-    );
-  }
-
-  if (allowEmptyResponse && res.status === 204) {
-    return undefined as T;
-  }
-
-  // Safe parse
-  let data: unknown;
-  try {
-    const body = await res.text();
-    if (!body.trim() && allowEmptyResponse) {
-      return undefined as T;
-    }
-    data = JSON.parse(body);
-  } catch {
-    throw new ApiError(res.status, "Response is not valid JSON", path);
-  }
-
-  if (data === null || data === undefined) {
-    throw new ApiError(res.status, "Empty response body", path);
-  }
-
-  return data as T;
-}
-
-function getApiErrorMessage(body: string, fallback: string): string {
-  if (!body.trim()) return fallback;
+  const {
+    method = "GET",
+    body,
+    locale,
+    authToken,
+    guestToken,
+    timeoutMs = 8000,
+    cache,
+    next,
+    headers: extraHeaders,
+  } = options;
 
   try {
-    const payload = JSON.parse(body) as {
-      detail?: string;
-      title?: string;
-      message?: string;
-      errors?: Record<string, string[] | string>;
+    const cookieStore = await cookies();
+    const resolvedLocale = locale ?? cookieStore.get("locale")?.value ?? "en";
+    const token = authToken !== undefined ? authToken : await getAccessToken();
+    const guest =
+      guestToken !== undefined ? guestToken : token ? undefined : await getGuestToken();
+    const headers: HeadersInit = {
+      Accept: "application/json",
+      "Accept-Language": resolvedLocale,
+      ...(body ? { "Content-Type": "application/json" } : {}),
+      ...(token ? { Authorization: `Bearer ${token}` } : guest ? { "X-Guest-Token": guest } : {}),
+      ...extraHeaders,
     };
 
-    const validationErrors = payload.errors
-      ? Object.values(payload.errors)
-          .flatMap((value) => (Array.isArray(value) ? value : [value]))
-          .join("; ")
-      : "";
+    const res = await fetch(`${BASE_URL}${path}`, {
+      method,
+      headers,
+      body: body !== undefined ? JSON.stringify(body) : undefined,
+      signal: AbortSignal.timeout(timeoutMs),
+      cache,
+      next,
+    });
 
-    return payload.detail ?? payload.message ?? validationErrors ?? payload.title ?? fallback;
-  } catch {
-    return body.trim() || fallback;
+    if (res.status === 204) return ok(undefined as T);
+
+    const text = await res.text();
+    let json: unknown = null;
+
+    if (text.trim()) {
+      try {
+        json = JSON.parse(text);
+      } catch {
+        console.error(`[fetchJson] ${path} returned non-JSON body`);
+        return fail(res.ok ? "errors.generic" : statusToErrorKey(res.status));
+      }
+    }
+
+    if (!res.ok) {
+      const errorBody = json as {
+        message?: string;
+        detail?: string;
+        title?: string;
+        errors?: Record<string, string[] | string>;
+      } | null;
+
+      const fieldErrors = errorBody?.errors
+        ? Object.fromEntries(
+            Object.entries(errorBody.errors).map(([field, msgs]) => [
+              field,
+              Array.isArray(msgs) ? msgs : [msgs],
+            ])
+          )
+        : undefined;
+
+      // Full detail (status, backend message) is logged server-side only —
+      // the client gets nothing but the mapped i18n key + optional fieldErrors.
+      console.error(
+        `[fetchJson] ${method} ${path} -> ${res.status}: ${errorBody?.message ?? errorBody?.detail ?? res.statusText}`
+      );
+
+      return fail(statusToErrorKey(res.status), fieldErrors);
+    }
+
+    return ok(json as T);
+  } catch (error) {
+    console.error(`[fetchJson] ${method} ${path} failed:`, error);
+    return fail("errors.generic");
   }
 }
