@@ -1,30 +1,23 @@
 // features/stores/api/get-store-detail.ts
-import { fetchJson, ApiError } from "@/shared/lib/http/fetch-json";
+import { fetchJson } from "@/shared/lib/http/fetch-json";
+import { fail, type Result } from "@/shared/lib/result";
 import { CACHE_TAGS, REVALIDATE } from "@/shared/config/cache";
 import type { StoreDetail } from "../types";
-import { getAccessToken } from "@/shared/lib/http/token-storage";
+import { getStoreDetailSchema } from "../schemas/stores.schema";
 
 export async function getStoreDetail(
-  storeId: string
-): Promise<StoreDetail | null> {
-  try {
-    const token = await getAccessToken();
-    return await fetchJson<StoreDetail>(`/api/stores/${storeId}`, {
-      headers: {  
-        Authorization: `Bearer ${token}`,
-        // Authorization: `Bearer ${process.env.NEXT_PUBLIC_FAVORITES_API_KEY}`,
-      },
-      next: {
-        // revalidate: REVALIDATE.hour,
-        // tags: [CACHE_TAGS.storeDetail(storeId)],
-      },
-    });
-  } catch (error) {
-    if (error instanceof ApiError) {
-      console.error(`[getStoreDetail] ${error.message} (${error.path})`);
-    } else {
-      console.error("[getStoreDetail] Unexpected error:", error);
-    }
-    return null;
+  storeId: string,
+): Promise<Result<StoreDetail>> {
+  const parsed = getStoreDetailSchema.safeParse({ storeId });
+
+  if (!parsed.success) {
+    return fail("errors.validation", parsed.error.flatten().fieldErrors);
   }
+
+  return fetchJson<StoreDetail>(`/api/stores/${parsed.data.storeId}`, {
+    next: {
+      revalidate: REVALIDATE.hour,
+      tags: [CACHE_TAGS.storeDetail(parsed.data.storeId)],
+    },
+  });
 }

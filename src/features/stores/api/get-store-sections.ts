@@ -1,44 +1,35 @@
 // features/stores/api/get-store-sections.ts
-import { fetchJson, ApiError } from "@/shared/lib/http/fetch-json";
+import { fetchJson } from "@/shared/lib/http/fetch-json";
+import { fail, type Result } from "@/shared/lib/result";
 import { CACHE_TAGS, REVALIDATE } from "@/shared/config/cache";
 import type { PagedStoreSections } from "../types";
+import {
+  getStoreSectionsSchema,
+  type GetStoreSectionsInput,
+} from "../schemas/stores.schema";
 
-interface Params {
-  storeId: string;
-  page?: number;
-  pageSize?: number;
-}
+export async function getStoreSections(
+  input: GetStoreSectionsInput,
+): Promise<Result<PagedStoreSections>> {
+  const parsed = getStoreSectionsSchema.safeParse(input);
 
-export async function getStoreSections({
-  storeId,
-  page = 1,
-  pageSize = 20,
-}: Params): Promise<PagedStoreSections> {
-  try {
-    const params = new URLSearchParams({
-      page: String(page),
-      pageSize: String(pageSize),
-    });
-
-    return await fetchJson<PagedStoreSections>(
-      `/api/stores/${storeId}/sections?${params}`,
-      {
-        next: {
-          revalidate: REVALIDATE.minute * 10,
-          // tags: [CACHE_TAGS.storeSections(storeId)],
-        },
-      }
-    );
-  } catch (error) {
-    if (error instanceof ApiError) {
-      console.error(`[getStoreSections] ${error.message}`);
-    }
-    return {
-      items: [],
-      page,
-      pageSize,
-      totalCount: 0,
-      hasNextPage: false,
-    };
+  if (!parsed.success) {
+    return fail("errors.validation", parsed.error.flatten().fieldErrors);
   }
+
+  const { storeId, page, pageSize } = parsed.data;
+  const params = new URLSearchParams({
+    page: String(page),
+    pageSize: String(pageSize),
+  });
+
+  return fetchJson<PagedStoreSections>(
+    `/api/stores/${storeId}/sections?${params}`,
+    {
+      next: {
+        revalidate: REVALIDATE.minute * 10,
+        tags: [CACHE_TAGS.storeSections(storeId)],
+      },
+    },
+  );
 }
