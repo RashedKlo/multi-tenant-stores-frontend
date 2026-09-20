@@ -3,7 +3,7 @@ import { fetchJson, ApiError } from "@/shared/lib/http/fetch-json";
 import { getAccessToken } from "@/shared/lib/http/token-storage";
 import type { OrderDetail } from "../types";
 
-export async function getOrder(orderId: string): Promise<OrderDetail> {
+export async function getOrder(orderId: string): Promise<OrderDetail | null> {
   const token = await getAccessToken();
 
   try {
@@ -17,6 +17,7 @@ export async function getOrder(orderId: string): Promise<OrderDetail> {
   } catch (error) {
     if (error instanceof ApiError) {
       console.error(`[getOrder] ${error.status}: ${error.message}`);
+      if (error.status === 404) return null;
     }
     throw error;
   }

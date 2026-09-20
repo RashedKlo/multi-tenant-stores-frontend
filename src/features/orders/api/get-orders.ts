@@ -18,15 +18,16 @@ export async function getOrders(options?: {
   const path = qs ? `/api/orders?${qs}` : "/api/orders";
 
   try {
-    return await fetchJson<PagedOrders>(path, {
+    const response = await fetchJson<PagedOrders>(path, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
+    return response;
   } catch (error) {
     if (error instanceof ApiError) {
       console.error(`[getOrders] ${error.status}: ${error.message}`);
     }
-    throw error;
+    return {items: [], pageNumber: 0,pageSize: 0, totalPages: 0,totalCount: 0,hasNextPage: false,hasPreviousPage: false}; // Return an empty PagedOrders object on error
   }
 }
