@@ -1,38 +1,37 @@
 // features/auth/actions/verify-email-action.ts
 "use server";
 
-import { setAuthCookies } from "../../../shared/lib/http/token-storage";
-import { toAuthErrorKey } from "../../../shared/lib/http/auth-errors";
-import { isValidEmail, isValidCode, normalizeEmail } from "../lib/validators";
-import type { ActionResult, AuthTokens, VerifyEmailInput } from "../types";
+import { setAuthCookies } from "@/shared/lib/http/token-storage";
 import { fetchJson } from "@/shared/lib/http/fetch-json";
+import { fail, type Result } from "@/shared/lib/result";
+import type { AuthTokens } from "../types";
+import {
+  verifyEmailSchema,
+  type VerifyEmailInput,
+} from "../schemas/auth.schema";
 
 export async function verifyEmailAction(
-  input: VerifyEmailInput,
-): Promise<ActionResult<AuthTokens>> {
-  const email = normalizeEmail(input.email ?? "");
-  const code = (input.code ?? "").trim();
+  input: VerifyEmailInput
+): Promise<Result<AuthTokens>> {
+  const parsed = verifyEmailSchema.safeParse(input);
 
-  if (!isValidEmail(email)) {
-    return { success: false, error: "errors.invalidEmail" };
-  }
-  if (!isValidCode(code)) {
-    return { success: false, error: "errors.invalidCode" };
+  if (!parsed.success) {
+    return fail("errors.validation", parsed.error.flatten().fieldErrors);
   }
 
-  try {
-    const tokens = await fetchJson<AuthTokens>("/api/auth/verify-email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: input.email,
-          code: input.code,
-        }),
-      });
-    await setAuthCookies(tokens);
-    return { success: true, data: tokens };
-  } catch (error) {
-    console.error("[verifyEmailAction]", error);
-    return { success: false, error: toAuthErrorKey(error) };
+  const result = await fetchJson<AuthTokens>("/api/auth/verify-email", {
+    method: "POST",
+    authToken: null,
+    body: {
+      email: parsed.data.email,
+      code: parsed.data.code,
+    },
+  });
+
+  if (!result.success) {
+    return result;
   }
+
+  await setAuthCookies(result.data);
+  return result;
 }

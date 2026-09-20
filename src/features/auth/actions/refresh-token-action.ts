@@ -5,28 +5,29 @@ import {
   getRefreshToken,
   setAuthCookies,
   clearAuthCookies,
-} from "../../../shared/lib/http/token-storage";
-import { toAuthErrorKey } from "../../../shared/lib/http/auth-errors";
-import type { ActionResult, AuthTokens } from "../types";
+} from "@/shared/lib/http/token-storage";
 import { fetchJson } from "@/shared/lib/http/fetch-json";
+import { fail, type Result } from "@/shared/lib/result";
+import type { AuthTokens } from "../types";
 
-export async function refreshTokenAction(): Promise<ActionResult<AuthTokens>> {
-  try {
-    const refreshToken = await getRefreshToken();
-    if (!refreshToken) {
-      return { success: false, error: "errors.unauthorized" };
-    }
+export async function refreshTokenAction(): Promise<Result<AuthTokens>> {
+  const refreshToken = await getRefreshToken();
 
-    const tokens = await fetchJson<AuthTokens>("/api/auth/refresh", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ refreshToken: refreshToken }),
-      });
-    await setAuthCookies(tokens);
-    return { success: true, data: tokens };
-  } catch (error) {
-    console.error("[refreshTokenAction]", error);
-    await clearAuthCookies();
-    return { success: false, error: toAuthErrorKey(error) };
+  if (!refreshToken) {
+    return fail("errors.unauthorized");
   }
+
+  const result = await fetchJson<AuthTokens>("/api/auth/refresh", {
+    method: "POST",
+    authToken: null, // refresh is unauthenticated; only body token matters
+    body: { refreshToken },
+  });
+
+  if (!result.success) {
+    await clearAuthCookies();
+    return result;
+  }
+
+  await setAuthCookies(result.data);
+  return result;
 }

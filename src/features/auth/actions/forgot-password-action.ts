@@ -1,34 +1,26 @@
 // features/auth/actions/forgot-password-action.ts
 "use server";
 
-import { toAuthErrorKey } from "../../../shared/lib/http/auth-errors";
-import { isValidEmail, normalizeEmail } from "../lib/validators";
-import type { ActionResult, ForgotPasswordInput } from "../types";
 import { fetchJson } from "@/shared/lib/http/fetch-json";
+import { fail, ok, type Result } from "@/shared/lib/result";
+import {
+  forgotPasswordSchema,
+  type ForgotPasswordInput,
+} from "../schemas/auth.schema";
 
 export async function forgotPasswordAction(
-  input: ForgotPasswordInput,
-): Promise<ActionResult> {
-  const email = normalizeEmail(input.email ?? "");
+  input: ForgotPasswordInput
+): Promise<Result<void>> {
+  const parsed = forgotPasswordSchema.safeParse(input);
 
-  if (!isValidEmail(email)) {
-    return { success: false, error: "errors.invalidEmail" };
+  if (!parsed.success) {
+    return fail("errors.validation", parsed.error.flatten().fieldErrors);
   }
 
-  try {
-    await fetchJson<undefined>("/api/auth/forgot-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: input.email }),
-      });
-    // Always succeed from the client's perspective to avoid email enumeration
-    return { success: true, data: undefined };
-  } catch (error) {
-    console.error("[forgotPasswordAction]", error);
-    // Still return success for UX / security (backend should too)
-    if (toAuthErrorKey(error) === "errors.rateLimited") {
-      return { success: false, error: "errors.rateLimited" };
-    }
-    return { success: true, data: undefined };
-  }
+  const result = await fetchJson<void>("/api/auth/forgot-password", {
+    method: "POST",
+    authToken: null,
+    body: { email: parsed.data.email },
+  });
+  return result;
 }

@@ -1,30 +1,39 @@
 // features/auth/actions/google-login-action.ts
 "use server";
 
-import { setAuthCookies, clearGuestCookie } from "../../../shared/lib/http/token-storage";
-import { toAuthErrorKey } from "../../../shared/lib/http/auth-errors";
-import type { ActionResult, AuthTokens, GoogleLoginInput } from "../types";
+import {
+  setAuthCookies,
+  clearGuestCookie,
+} from "@/shared/lib/http/token-storage";
 import { fetchJson } from "@/shared/lib/http/fetch-json";
+import { fail, type Result } from "@/shared/lib/result";
+import type { AuthTokens } from "../types";
+import {
+  googleLoginSchema,
+  type GoogleLoginInput,
+} from "../schemas/auth.schema";
 
 export async function googleLoginAction(
-  input: GoogleLoginInput,
-): Promise<ActionResult<AuthTokens>> {
-  const idToken = (input.idToken ?? "").trim();
-  if (!idToken) {
-    return { success: false, error: "errors.generic" };
+  input: GoogleLoginInput
+): Promise<Result<AuthTokens>> {
+  const parsed = googleLoginSchema.safeParse(input);
+
+  if (!parsed.success) {
+    return fail("errors.validation", parsed.error.flatten().fieldErrors);
   }
 
-  try {
-    const tokens = await fetchJson<AuthTokens>("/api/auth/google", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ idToken: input.idToken }),
-      });
-    await setAuthCookies(tokens);
-    await clearGuestCookie();
-    return { success: true, data: tokens };
-  } catch (error) {
-    console.error("[googleLoginAction]", error);
-    return { success: false, error: toAuthErrorKey(error) };
+  const result = await fetchJson<AuthTokens>("/api/auth/google", {
+    method: "POST",
+    authToken: null,
+    body: { idToken: parsed.data.idToken },
+  });
+
+  if (!result.success) {
+    return result;
   }
+
+  await setAuthCookies(result.data);
+  await clearGuestCookie();
+
+  return result;
 }

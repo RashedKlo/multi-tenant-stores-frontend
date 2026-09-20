@@ -5,35 +5,22 @@ import {
   clearAuthCookies,
   getAccessToken,
   getRefreshToken,
-} from "../../../shared/lib/http/token-storage";
-import { toAuthErrorKey } from "../../../shared/lib/http/auth-errors";
-import type { ActionResult } from "../types";
+} from "@/shared/lib/http/token-storage";
 import { fetchJson } from "@/shared/lib/http/fetch-json";
+import { fail, type Result } from "@/shared/lib/result";
 
-/**
- * Logout requires a valid access token (backend [Authorize]).
- * We still clear cookies even if the API call fails.
- */
-export async function logoutAction(): Promise<ActionResult> {
-  try {
-    const refreshToken = await getRefreshToken();
-    const accessToken = await getAccessToken();
+export async function logoutAction(): Promise<Result<void>> {
+  const refreshToken = await getRefreshToken();
+  const accessToken = await getAccessToken();
 
-    if (refreshToken && accessToken) {
-      await   fetchJson<unknown>("/api/auth/logout", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ refreshToken: refreshToken }),
-        });
-    }
-  } catch (error) {
-    console.error("[logoutAction]", error);
-    // fall through — always clear local session
-    void toAuthErrorKey(error);
-  }
-
+  if (!refreshToken || !accessToken) {
+    return fail("errors.notFound");
+   }
+    const result = await fetchJson<void>("/api/auth/logout", {
+      method: "POST",
+      body: { refreshToken },
+    });
   await clearAuthCookies();
-  return { success: true, data: undefined };
+
+  return result;
 }

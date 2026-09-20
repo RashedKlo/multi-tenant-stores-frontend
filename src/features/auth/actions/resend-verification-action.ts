@@ -1,29 +1,25 @@
 // features/auth/actions/resend-verification-action.ts
 "use server";
 
-import { toAuthErrorKey } from "../../../shared/lib/http/auth-errors";
-import { isValidEmail, normalizeEmail } from "../lib/validators";
-import type { ActionResult, ResendVerificationInput } from "../types";
 import { fetchJson } from "@/shared/lib/http/fetch-json";
+import { fail, type Result } from "@/shared/lib/result";
+import {
+  resendVerificationSchema,
+  type ResendVerificationInput,
+} from "../schemas/auth.schema";
 
 export async function resendVerificationAction(
-  input: ResendVerificationInput,
-): Promise<ActionResult> {
-  const email = normalizeEmail(input.email ?? "");
+  input: ResendVerificationInput
+): Promise<Result<void>> {
+  const parsed = resendVerificationSchema.safeParse(input);
 
-  if (!isValidEmail(email)) {
-    return { success: false, error: "errors.invalidEmail" };
+  if (!parsed.success) {
+    return fail("errors.validation", parsed.error.flatten().fieldErrors);
   }
 
-  try {
-    await fetchJson<unknown>("/api/auth/resend-verification", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: input.email }),
-      });
-    return { success: true, data: undefined };
-  } catch (error) {
-    console.error("[resendVerificationAction]", error);
-    return { success: false, error: toAuthErrorKey(error) };
-  }
+  return fetchJson<void>("/api/auth/resend-verification", {
+    method: "POST",
+    authToken: null,
+    body: { email: parsed.data.email },
+  });
 }
