@@ -11,6 +11,8 @@ export const CACHE_TAGS = {
   sectionProducts: (id: string) => `sections${id}products`,
   moduleDetail: (id: string) => `modules${id}`,
   moduleStores: (id: string) => `modules${id}stores`,
+  supportConversations: "support-conversations",
+  supportMessages: (conversationId: string) => `support-messages-${conversationId}`,
 } as const;
 
 export const REVALIDATE = {
