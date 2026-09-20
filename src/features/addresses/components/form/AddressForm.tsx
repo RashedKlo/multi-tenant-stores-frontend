@@ -3,7 +3,9 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import type { Address, CreateAddressInput } from "../../types";
+import type { Address } from "../../types/addresses.types";
+import type { CreateAddressInput } from "../../schemas/address.schema";
+import { Notification } from "@/shared/lib/ui/Notification";
 import { LocationPicker } from "./LocationPicker";
 import { createAddressAction, updateAddressAction } from "../../actions";
 import { DEFAULT_MAP_CENTER } from "../../constants/addresses";
@@ -12,15 +14,16 @@ interface AddressFormProps {
   mode: "create" | "edit";
   initial?: Address;
   /** After successful create — e.g. redirect back to checkout */
-  returnTo?: string
-  
+  returnTo?: string;
 }
 
 export function AddressForm({ mode, initial, returnTo }: AddressFormProps) {
   const t = useTranslations("addresses");
+  const tError = useTranslations();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-const [serverError, setServerError] = useState<string | null>(null);
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
 
   const [values, setValues] = useState({
     label: initial?.label ?? "",
@@ -30,23 +33,24 @@ const [serverError, setServerError] = useState<string | null>(null);
     isDefault: initial?.isDefault ?? mode === "create",
   });
 
-
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setServerError(null);
+    setFieldErrors({});
 
     startTransition(async () => {
       if (mode === "create") {
         const input: CreateAddressInput = {
-          label: values.label.trim(),
-          addressText: values.addressText.trim(),
+          label: values.label,
+          addressText: values.addressText,
           latitude: values.latitude,
           longitude: values.longitude,
           isDefault: values.isDefault,
         };
         const result = await createAddressAction(input);
         if (!result.success) {
-          setServerError(result.error);
+          setServerError(tError(result.error));
+          setFieldErrors(result.fieldErrors ?? {});
           return;
         }
         router.push(returnTo || "/addresses");
@@ -56,13 +60,14 @@ const [serverError, setServerError] = useState<string | null>(null);
 
       if (!initial) return;
       const result = await updateAddressAction(initial.id, {
-        label: values.label.trim(),
-        addressText: values.addressText.trim(),
+        label: values.label,
+        addressText: values.addressText,
         latitude: values.latitude,
         longitude: values.longitude,
       });
       if (!result.success) {
-        setServerError(result.error);
+        setServerError(tError(result.error));
+        setFieldErrors(result.fieldErrors ?? {});
         return;
       }
       router.push("/addresses");
@@ -70,12 +75,16 @@ const [serverError, setServerError] = useState<string | null>(null);
     });
   }
 
+  
+
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5" noValidate>
       {serverError && (
-        <p className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive" role="alert">
-          {serverError}
-        </p>
+        <Notification
+          message={serverError}
+          variant="error"
+          onDismiss={() => setServerError(null)}
+        />
       )}
 
       <div className="space-y-1.5">
@@ -88,10 +97,11 @@ const [serverError, setServerError] = useState<string | null>(null);
           value={values.label}
           onChange={(e) => setValues((prev) => ({ ...prev, label: e.target.value }))}
           placeholder={t("form.labelPlaceholder")}
+          aria-invalid={!!fieldErrors.label}
           className="h-11 w-full rounded-xl border border-border bg-background px-3 text-sm outline-none ring-primary/30 focus:ring-2"
           autoComplete="off"
         />
- 
+       
       </div>
 
       <div className="space-y-1.5">
@@ -104,9 +114,9 @@ const [serverError, setServerError] = useState<string | null>(null);
           onChange={(e) => setValues((prev) => ({ ...prev, addressText: e.target.value }))}
           placeholder={t("form.addressPlaceholder")}
           rows={3}
+          aria-invalid={!!fieldErrors.addressText}
           className="w-full resize-none rounded-xl border border-border bg-background px-3 py-2.5 text-sm outline-none ring-primary/30 focus:ring-2"
         />
-  
       </div>
 
       <div className="space-y-1.5">
@@ -118,7 +128,6 @@ const [serverError, setServerError] = useState<string | null>(null);
             setValues((prev) => ({ ...prev, latitude: lat, longitude: lng }));
           }}
         />
-
       </div>
 
       {mode === "create" && (
@@ -138,11 +147,7 @@ const [serverError, setServerError] = useState<string | null>(null);
         disabled={isPending}
         className="mt-2 h-12 w-full rounded-full bg-primary text-sm font-semibold text-primary-foreground transition-transform active:scale-[0.98] disabled:opacity-60"
       >
-        {isPending
-          ? t("form.saving")
-          : mode === "create"
-            ? t("form.create")
-            : t("form.save")}
+        {isPending ? t("form.saving") : mode === "create" ? t("form.create") : t("form.save")}
       </button>
     </form>
   );

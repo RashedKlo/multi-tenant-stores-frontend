@@ -10,4 +10,4 @@ export { default as AddressesEmpty } from "./components/list/empty";
 
 export * from "./actions";
 export * from "./api";
-export type * from "./types";
+export type * from "./types/addresses.types";

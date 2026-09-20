@@ -4,11 +4,12 @@ import { AddressListClient } from "./AddressListClient";
 import AddressesEmpty from "./empty";
 
 export async function AddressList() {
-  const addresses = await getAddresses();
+  const result = await getAddresses();
 
-  if (addresses.length === 0) {
+  if (!result.success) {
     return <AddressesEmpty />;
   }
+  const addresses = result.data;
 
   // Default first for better UX
   const sorted = [...addresses].sort(

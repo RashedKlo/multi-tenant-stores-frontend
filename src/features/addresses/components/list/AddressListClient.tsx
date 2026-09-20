@@ -4,8 +4,8 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { ConfirmModal } from "@/shared/lib/ui";
-import type { Address } from "../../types";
+import { ConfirmModal, Notification } from "@/shared/lib/ui";
+import type { Address } from "../../types/addresses.types";
 import { AddressCard } from "./AddressCard";
 import {
   deleteAddressAction,
@@ -18,6 +18,7 @@ interface AddressListClientProps {
 
 export function AddressListClient({ addresses: initial }: AddressListClientProps) {
   const t = useTranslations("addresses");
+  const tError = useTranslations();
   const router = useRouter();
   const [addresses, setAddresses] = useState(initial);
   const [busyId, setBusyId] = useState<string | null>(null);
@@ -52,7 +53,7 @@ export function AddressListClient({ addresses: initial }: AddressListClientProps
       setBusyId(null);
       setDeleteId(null);
       if (!result.success) {
-        setError(result.error);
+        setError(tError(result.error));
         return;
       }
       setAddresses((prev) => prev.filter((a) => a.id !== id));
@@ -66,11 +67,13 @@ export function AddressListClient({ addresses: initial }: AddressListClientProps
 
   return (
     <div className="flex flex-col gap-3">
-      {error && (
-        <p className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive" role="alert">
-          {error}
-        </p>
-      )}
+       {error && (
+              <Notification
+                message={error}
+                variant="error"
+                onDismiss={() => setError(null)}
+              />
+            )}
 
       <ul className="flex flex-col gap-3" aria-label={t("listLabel")}>
         {addresses.map((address) => (

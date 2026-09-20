@@ -2,7 +2,6 @@
 "use client";
 
 import { AddressForm } from "./form/AddressForm";
-import type { Address } from "../types";
 import Link from "next/link";
 
 interface AddAddressClientProps {

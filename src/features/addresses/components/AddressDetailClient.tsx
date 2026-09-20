@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { ConfirmModal } from "@/shared/lib/ui";
-import { Address } from "../types";
+import { Address } from "../types/addresses.types";
 import { deleteAddressAction, setDefaultAddressAction } from "../actions";
 
 

@@ -1,33 +1,23 @@
 // features/addresses/actions/delete-address.ts
 "use server";
 
-import { revalidateTag } from "next/cache";
-import { fetchJson, ApiError } from "@/shared/lib/http/fetch-json";
+import { revalidateTag, updateTag } from "next/cache";
+import { fetchJson } from "@/shared/lib/http/fetch-json";
+import type { Result } from "@/shared/lib/result";
 import { CACHE_TAGS } from "@/shared/config/cache";
-import type { ActionResult } from "../types";
-import { getAccessToken } from "@/shared/lib/http/token-storage";
 
 export async function deleteAddressAction(
-  id: string,
-): Promise<ActionResult> {
-  const token=await getAccessToken();
-  try {
-    await fetchJson(`/api/addresses/${id}`, {
-          headers: {
-        "Content-Type": "application/json",
-        "authorization": `Bearer ${token}`,
-      },
-      method: "DELETE",
-      allowEmptyResponse: true,
-    });
+  id: string
+): Promise<Result<void>> {
+  const result = await fetchJson<void>(`/api/addresses/${id}`, {
+    method: "DELETE",
+  });
 
-    // revalidateTag(CACHE_TAGS.addresses);
-    // revalidateTag(`address-${id}`);
-    return { success: true, data: undefined };
-  } catch (error) {
-    console.error("[deleteAddressAction]", error);
-    const message =
-      error instanceof ApiError ? error.message : "Failed to delete address";
-    return { success: false, error: "Please Try Again" };
+  if (result.success) {
+    updateTag(CACHE_TAGS.addresses);
+    updateTag(CACHE_TAGS.address(id));
   }
+
+
+  return result;
 }

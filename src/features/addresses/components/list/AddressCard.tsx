@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import type { Address } from "../../types";
+import type { Address } from "../../types/addresses.types";
 
 interface AddressCardProps {
   address: Address;

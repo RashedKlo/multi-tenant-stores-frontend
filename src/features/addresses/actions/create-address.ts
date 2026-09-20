@@ -1,33 +1,33 @@
 // features/addresses/actions/create-address.ts
 "use server";
 
-import { revalidateTag } from "next/cache";
-import { fetchJson, ApiError } from "@/shared/lib/http/fetch-json";
+import { revalidateTag, updateTag } from "next/cache";
+import { fetchJson } from "@/shared/lib/http/fetch-json";
+import { fail, type Result } from "@/shared/lib/result";
 import { CACHE_TAGS } from "@/shared/config/cache";
-import type { Address, CreateAddressInput, ActionResult } from "../types";
+import type { Address } from "../types";
+import {
+  createAddressSchema,
+  type CreateAddressInput,
+} from "../schemas/address.schema";
 
 export async function createAddressAction(
-  input: CreateAddressInput,
-): Promise<ActionResult<Address>> {
-  try {
-    const data = await fetchJson<Address>("/api/addresses", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        label: input.label.trim(),
-        latitude: input.latitude,
-        longitude: input.longitude,
-        addressText: input.addressText.trim(),
-        isDefault: input.isDefault ?? false,
-      }),
-    });
+  input: CreateAddressInput
+): Promise<Result<Address>> {
+  const parsed = createAddressSchema.safeParse(input);
 
-    // revalidateTag(CACHE_TAGS.addresses);
-    return { success: true, data };
-  } catch (error) {
-    console.error("[createAddressAction]", error);
-    const message =
-      error instanceof ApiError ? error.message : "Failed to create address";
-    return { success: false, error: message };
+  if (!parsed.success) {
+    return fail("errors.validation", parsed.error.flatten().fieldErrors);
   }
+
+  const result = await fetchJson<Address>("/api/addresses", {
+    method: "POST",
+    body: parsed.data,
+  });
+
+  if (result.success) {
+    updateTag(CACHE_TAGS.addresses);
+  }
+
+  return result;
 }
