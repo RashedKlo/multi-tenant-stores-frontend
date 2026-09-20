@@ -1,24 +1,24 @@
 // features/orders/api/get-order.ts
-import { fetchJson, ApiError } from "@/shared/lib/http/fetch-json";
-import { getAccessToken } from "@/shared/lib/http/token-storage";
+import { fetchJson } from "@/shared/lib/http/fetch-json";
+import { fail, type Result } from "@/shared/lib/result";
+import { CACHE_TAGS } from "@/shared/config/cache";
 import type { OrderDetail } from "../types";
+import { getOrderSchema } from "../schemas/orders.schema";
 
-export async function getOrder(orderId: string): Promise<OrderDetail | null> {
-  const token = await getAccessToken();
 
-  try {
-    return await fetchJson<OrderDetail>(`/api/orders/${orderId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      // Always fresh for tracking
-      cache: "no-store",
-    });
-  } catch (error) {
-    if (error instanceof ApiError) {
-      console.error(`[getOrder] ${error.status}: ${error.message}`);
-      if (error.status === 404) return null;
-    }
-    throw error;
+export async function getOrder(
+  orderId: string,
+): Promise<Result<OrderDetail>> {
+  const parsed = getOrderSchema.safeParse({ orderId });
+
+  if (!parsed.success) {
+    return fail("errors.validation", parsed.error.flatten().fieldErrors);
   }
+
+  return fetchJson<OrderDetail>(`/api/orders/${parsed.data.orderId}`, {
+    cache: "no-store",
+    next: {
+      tags: [CACHE_TAGS.order(parsed.data.orderId), CACHE_TAGS.orders],
+    },
+  });
 }
