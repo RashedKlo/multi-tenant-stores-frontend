@@ -4,9 +4,9 @@ import { CACHE_TAGS, REVALIDATE } from "@/shared/config/cache";
 import {  type Result } from "@/shared/lib/result";
 import type { CartItem} from "../types/cart.types";
 
-export async function getCart(storeId: string): Promise<Result<CartItem[]>> {
+export async function getCart(): Promise<Result<CartItem[]>> {
   const result = await fetchJson<CartItem[]>(
-    `/api/cart?storeId=${encodeURIComponent(storeId)}`,
+    `/api/cart`,
     {
       next: {
         revalidate: REVALIDATE.minute,

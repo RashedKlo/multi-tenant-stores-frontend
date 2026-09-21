@@ -1,0 +1,3 @@
+export function CartItemsSkeleton({ count = 3 }: { count?: number }) {
+	return <div className="space-y-3" aria-hidden>{Array.from({ length: count }, (_, index) => <div key={index} className="flex animate-pulse gap-3 rounded-2xl border border-border/60 bg-card p-3"><div className="h-20 w-20 shrink-0 rounded-xl bg-muted" /><div className="flex flex-1 flex-col gap-2 py-1"><div className="h-3.5 w-3/5 rounded bg-muted" /><div className="h-3 w-2/5 rounded bg-muted" /><div className="mt-auto flex items-center justify-between"><div className="h-9 w-24 rounded-full bg-muted" /><div className="h-3.5 w-16 rounded bg-muted" /></div></div></div>)}</div>;
+}
