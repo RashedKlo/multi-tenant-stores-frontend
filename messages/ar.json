@@ -404,6 +404,18 @@
     "viewOrder": "عرض الطلب",
     "continueShopping": "متابعة التسوق",
     "startLiveTracking": "بدء التتبع المباشر"
+},"search": {
+  "title": "بحث",
+  "subtitle": "اختر تصنيفًا ثم ابحث عن المتاجر",
+  "noModules": "لا توجد تصنيفات متاحة",
+  "tryAgainLater": "يرجى المحاولة مرة أخرى لاحقًا.",
+  "searchStoresPlaceholder": "ابحث عن المتاجر...",
+  "searchButton": "بحث",
+  "storesFound": "{count, plural, =0 {لا توجد متاجر} one {تم العثور على متجر واحد} two {تم العثور على متجرين} few {تم العثور على # متاجر} many {تم العثور على # متجرًا} other {تم العثور على # متجر}}",
+  "noStores": "لم يتم العثور على متاجر",
+  "tryDifferentSearch": "جرّب بحثًا أو تصنيفًا مختلفًا",
+  "loading": "جارٍ التحميل...",
+  "loadMore": "تحميل المزيد"
 },"supportChat": {
     "listTitle": "الدعم",
     "listSubtitle": "تواصل مع المتاجر وفرق الدعم عبر المحادثات.",

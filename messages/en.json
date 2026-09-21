@@ -405,6 +405,18 @@
     "viewOrder": "View order",
     "startLiveTracking": "Start live tracking",
     "continueShopping": "Continue shopping"
+  }, "search": {
+    "title": "Search",
+    "subtitle": "Choose a category then search stores",
+    "noModules": "No modules available",
+    "tryAgainLater": "Please try again later.",
+    "searchStoresPlaceholder": "Search stores...",
+    "searchButton": "Search",
+    "storesFound": "{count, plural, =0 {No stores found} one {# store found} other {# stores found}}",
+    "noStores": "No stores found",
+    "tryDifferentSearch": "Try a different search or module",
+    "loading": "Loading...",
+    "loadMore": "Load more"
   }, "supportChat": {
     "listTitle": "Support",
     "listSubtitle": "Chat with stores and support teams.",
