@@ -7,13 +7,13 @@ import FavoriteStoresSkeleton from "./skeleton";
 export const FavoriteStores = Object.assign(
   async function FavoriteStores() {
     // const data = MOCK_PAGED_FAVORITE_STORES;
-    const data = await getFavoriteStores(1, 20);
+    const result = await getFavoriteStores(1, 20);
 
-    if (!data.items.length) {
+    if (!result.success || result.data.items.length === 0) {
       return <FavoriteStoresEmpty />;
     }
 
-    return <FavoriteStoresClient initialData={data} />;
+    return <FavoriteStoresClient initialData={result.data} />;
   },
   { skeleton: FavoriteStoresSkeleton, empty: FavoriteStoresEmpty },
 );

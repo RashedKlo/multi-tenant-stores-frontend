@@ -10,7 +10,7 @@ import {
   type ToggleFavoriteProductInput,
 } from "../schemas/favorites.schema";
 
-export async function toggleFavoriteProductAction(
+export async function toggleFavoriteProduct(
   input: ToggleFavoriteProductInput,
 ): Promise<Result<void>> {
   const parsed = toggleFavoriteProductSchema.safeParse(input);

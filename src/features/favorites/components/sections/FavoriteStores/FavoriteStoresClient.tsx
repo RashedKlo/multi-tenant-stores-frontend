@@ -30,7 +30,7 @@ export function FavoriteStoresClient({
       totalCount: Math.max(0, prev.totalCount - 1),
     }));
 
-    const result = await toggleFavoriteStore(storeId, true);
+    const result = await toggleFavoriteStore({ storeId: storeId, isFavorite: true });
     if (!result.success) {
       setData(previousData);
       setError(tAuth(result.error as Parameters<typeof tAuth>[0]));

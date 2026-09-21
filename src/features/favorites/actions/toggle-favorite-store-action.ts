@@ -1,5 +1,3 @@
-// features/favorites/actions/toggle-favorite-store-action.ts
-"use server";
 
 import { updateTag } from "next/cache";
 import { fetchJson } from "@/shared/lib/http/fetch-json";
@@ -10,7 +8,7 @@ import {
   type ToggleFavoriteStoreInput,
 } from "../schemas/favorites.schema";
 
-export async function toggleFavoriteStoreAction(
+export async function toggleFavoriteStore(
   input: ToggleFavoriteStoreInput,
 ): Promise<Result<void>> {
   const parsed = toggleFavoriteStoreSchema.safeParse(input);

@@ -7,13 +7,13 @@ import FavoriteProductsSkeleton from "./skeleton";
 export const FavoriteProducts = Object.assign(
   async function FavoriteProducts() {
     // const data =MOCK_PAGED_FAVORITE_PRODUCTS;;
-    const data = await getFavoriteProducts(1, 20);
+    const result = await getFavoriteProducts(1, 20);
 
-    if (!data.items.length) {
+    if (!result.success || result.data.items.length === 0) {
       return <FavoriteProductsEmpty />;
     }
 
-    return <FavoriteProductsClient initialData={data} />;
+    return <FavoriteProductsClient initialData={result.data} />;
   },
   { skeleton: FavoriteProductsSkeleton, empty: FavoriteProductsEmpty },
 );

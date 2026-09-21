@@ -15,7 +15,7 @@ interface FavoriteProductsClientProps {
 export function FavoriteProductsClient({
   initialData,
 }: FavoriteProductsClientProps) {
-  const tAuth = useTranslations("auth");
+  const tError = useTranslations("auth");
   const [data, setData] = useState(initialData);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -30,10 +30,10 @@ export function FavoriteProductsClient({
       totalCount: Math.max(0, prev.totalCount - 1),
     }));
 
-    const result = await toggleFavoriteProduct(productId, true);
+    const result = await toggleFavoriteProduct({ productId: productId, isFavorite: true });
     if (!result.success) {
       setData(previousData);
-      setError(tAuth(result.error as Parameters<typeof tAuth>[0]));
+      setError(tError(result.error as Parameters<typeof tError>[0]));
     }
   };
 
