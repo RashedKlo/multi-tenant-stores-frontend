@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Logo } from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
@@ -20,7 +19,6 @@ interface TopbarProps {
  */
 export function Topbar({ title, actions }: TopbarProps) {
   const t = useTranslations("layout");
-  const [searchOpen, setSearchOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-30 border-b border-border/70 bg-background/85 backdrop-blur-md supports-backdrop-filter:bg-background/70 md:hidden">
@@ -28,7 +26,7 @@ export function Topbar({ title, actions }: TopbarProps) {
         {/* Hidden (not just covered) while search is open, so it drops out
             of the tab order and the overlay's background isn't fighting
             anything underneath it. */}
-        {!searchOpen && <Logo label={title} />}
+        <Logo label={title} />
 
         {actions ?? (
           <div className="flex flex-1 items-center justify-end gap-1">

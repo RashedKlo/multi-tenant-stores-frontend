@@ -9,7 +9,7 @@ import { Logo } from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
 import { LocaleSwitcher } from "./LocaleSwitcher";
 import { cn } from "@/shared/lib/utils";
-import { LogoutButton } from "@/features/profile";
+import { LogoutButton } from "@/features/profile/components/sections/Session/LogoutButton";
 import { SearchIcon } from "./icons";
 
 /**
