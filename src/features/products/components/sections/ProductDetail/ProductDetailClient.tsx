@@ -86,7 +86,7 @@ export function ProductDetailClient({ product, storeId }: ProductDetailClientPro
       setSuccess(t("addedToCart"));
       setError(null);
       router.refresh();
-    } catch (error) {
+    } catch {
       setError(t("addToCartError"));
       setSuccess(null);
     } finally {
