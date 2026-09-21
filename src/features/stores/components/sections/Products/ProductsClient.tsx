@@ -20,7 +20,6 @@ interface ProductsClientProps {
 
 export function ProductsClient({
   initialData,
-  sectionId,
   storeId,
   inStockOnly = false,
   minPrice,
@@ -31,7 +30,7 @@ export function ProductsClient({
   const pathname = usePathname();
 
   // Fresh on every filter change because of Suspense key → remount
-  const [data, setData] = useState(initialData);
+  const [data] = useState(initialData);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   const updateFilters = (updates: {
