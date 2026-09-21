@@ -15,8 +15,8 @@ export default async function EditAddressPage({
   const { id } = await params;
   const { returnTo } = await searchParams;
 
-  const address = await getAddress(id);
-  if (!address) notFound();
+  const result = await getAddress(id);
+  if (!result.success) notFound();
 
-  return <EditAddressClient address={address} returnTo={returnTo} />;
+  return <EditAddressClient address={result.data} returnTo={returnTo} />;
 }

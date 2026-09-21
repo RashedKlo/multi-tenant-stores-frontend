@@ -1,5 +1,4 @@
-// app/(main)/addresses/page.tsx
-import Link from "next/link";
+
 import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import {

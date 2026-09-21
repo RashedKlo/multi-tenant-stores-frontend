@@ -1,7 +1,7 @@
 // features/addresses/components/AddAddressClient.tsx
 "use client";
 
-import { AddressForm } from "./form/AddressForm";
+import { AddressForm } from "../form/AddressForm";
 import Link from "next/link";
 
 interface AddAddressClientProps {

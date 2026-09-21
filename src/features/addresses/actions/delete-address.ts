@@ -1,7 +1,7 @@
 // features/addresses/actions/delete-address.ts
 "use server";
 
-import { revalidateTag, updateTag } from "next/cache";
+import {  updateTag } from "next/cache";
 import { fetchJson } from "@/shared/lib/http/fetch-json";
 import type { Result } from "@/shared/lib/result";
 import { CACHE_TAGS } from "@/shared/config/cache";

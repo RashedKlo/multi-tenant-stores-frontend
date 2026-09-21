@@ -1,14 +1,13 @@
-// features/addresses/components/AddressDetailClient.tsx
+// features/addresses/components/detail/AddressDetailClient.tsx
 "use client";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
-import { ConfirmModal } from "@/shared/lib/ui";
-import { Address } from "../types/addresses.types";
-import { deleteAddressAction, setDefaultAddressAction } from "../actions";
-
+import { ConfirmModal, Notification } from "@/shared/lib/ui";
+import { Address } from "../../types/addresses.types";
+import { deleteAddressAction, setDefaultAddressAction } from "../../actions";
 
 interface AddressDetailClientProps {
   address: Address;
@@ -16,8 +15,10 @@ interface AddressDetailClientProps {
 
 export function AddressDetailClient({ address }: AddressDetailClientProps) {
   const t = useTranslations("addresses");
+  const tError = useTranslations();
   const router = useRouter();
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   const handleDelete = () => {
@@ -26,6 +27,7 @@ export function AddressDetailClient({ address }: AddressDetailClientProps) {
 
   const confirmDelete = () => {
     if (!deleteId) return;
+    setError(null);
 
     startTransition(async () => {
       const result = await deleteAddressAction(deleteId);
@@ -34,25 +36,31 @@ export function AddressDetailClient({ address }: AddressDetailClientProps) {
         router.push("/addresses");
         router.refresh();
       } else {
-        alert( "Failed to delete address");
+
+        setError(tError(result.error));
         setDeleteId(null);
       }
     });
   };
 
   const handleSetDefault = () => {
+    setError(null);
     startTransition(async () => {
       const result = await setDefaultAddressAction(address.id);
       if (result.success) {
         router.refresh();
       } else {
-        alert(result.error ?? "Failed to set default address");
+        setError(tError(result.error));
       }
     });
   };
 
   return (
     <>
+      {error && (
+        <Notification message={error} variant="error" onDismiss={() => setError(null)} />
+      )}
+
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold">{address.label}</h1>

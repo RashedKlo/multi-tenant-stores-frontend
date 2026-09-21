@@ -1,8 +1,8 @@
 // features/addresses/components/EditAddressClient.tsx
 "use client";
 
-import { AddressForm } from "./form/AddressForm";
-import type { Address } from "../types/addresses.types";
+import { AddressForm } from "../form/AddressForm";
+import type { Address } from "../../types/addresses.types";
 
 interface EditAddressClientProps {
   address: Address;
