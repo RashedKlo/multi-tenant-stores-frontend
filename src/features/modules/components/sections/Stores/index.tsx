@@ -3,7 +3,6 @@ import { getStoresByModule } from "@/features/modules/api";
 import { StoresClient } from "./StoresClient";
 import StoresEmpty from "./empty";
 import StoresSkeleton from "./skeleton";
-import { MOCK_STORES } from "@/features/modules/constants/stores";
 
 interface StoresProps {
   moduleId: string;
@@ -13,21 +12,21 @@ interface StoresProps {
 
 export const Stores = Object.assign(
   async function Stores({ moduleId, categoryId, search }: StoresProps) {
-    const data = await getStoresByModule({
+    const result = await getStoresByModule({
       moduleId,
       categoryId,
       search,
       page: 1,
       pageSize: 20,
     });
-    // const data=MOCK_STORES;
-    if (!data.items.length) {
+    // const result=MOCK_STORES;
+    if (!result.success || result.data.items.length === 0) {
       return <StoresEmpty />;
     }
 
     return (
       <StoresClient
-        initialData={data}
+        initialData={result.data}
         moduleId={moduleId}
         categoryId={categoryId}
         search={search}

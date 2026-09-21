@@ -41,7 +41,7 @@ export function CategoriesClient({ categories, activeCategoryId }: CategoriesCli
       <div className="relative">
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-y-0 end-0 z-[1] w-8 bg-gradient-to-l from-background to-transparent rtl:bg-gradient-to-r"
+          className="pointer-events-none absolute inset-y-0 inset-e-0 z-1 w-8 bg-linear-to-l from-background to-transparent rtl:bg-linear-to-r"
         />
 
         <nav

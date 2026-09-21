@@ -29,7 +29,7 @@ export function StoreCard({ store }: StoreCardProps) {
     setIsFavorite(!previousFavorite);
 
     startTransition(async () => {
-      const result = await toggleFavoriteStore(store.id, previousFavorite);
+      const result = await toggleFavoriteStore({ storeId: store.id, isFavorite: previousFavorite });
       if (!result.success) {
         setIsFavorite(previousFavorite);
         setError(tAuth(result.error as Parameters<typeof tAuth>[0]));
@@ -46,7 +46,7 @@ export function StoreCard({ store }: StoreCardProps) {
         onClick={handleToggleFavorite}
         aria-pressed={isFavorite}
         aria-label={isFavorite ? t("removeFromFavorites") : t("addToFavorites")}
-        className="absolute end-2 top-2 z-10 rounded-full bg-background/90 p-1.5 shadow-sm backdrop-blur-sm transition-transform active:scale-90"
+        className="absolute inset-e-2 top-2 z-10 rounded-full bg-background/90 p-1.5 shadow-sm backdrop-blur-sm transition-transform active:scale-90"
       >
         <HeartIcon filled={isFavorite} />
       </button>
@@ -62,7 +62,7 @@ export function StoreCard({ store }: StoreCardProps) {
         href={`/stores/${store.id}`}
         className="flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-shadow hover:shadow-md active:scale-[0.98]"
       >
-        <div className="relative aspect-[4/3] w-full bg-muted">
+        <div className="relative aspect-4/3 w-full bg-muted">
           {store.logoUrl ? (
             <Image
               src={store.logoUrl}
@@ -76,7 +76,7 @@ export function StoreCard({ store }: StoreCardProps) {
             /* Deterministic gradient fallback */
             <span
               aria-hidden
-              className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/15 to-muted text-2xl font-bold text-muted-foreground"
+              className="flex h-full w-full items-center justify-center bg-linear-to-br from-primary/15 to-muted text-2xl font-bold text-muted-foreground"
             >
               {store.name.charAt(0)}
             </span>
