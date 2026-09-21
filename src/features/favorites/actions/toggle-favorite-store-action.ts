@@ -1,4 +1,6 @@
 
+"use server";
+
 import { updateTag } from "next/cache";
 import { fetchJson } from "@/shared/lib/http/fetch-json";
 import { fail, type Result } from "@/shared/lib/result";
