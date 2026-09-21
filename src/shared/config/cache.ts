@@ -12,6 +12,8 @@ export const CACHE_TAGS = {
   moduleDetail: (id: string) => `modules${id}`,
   moduleStores: (id: string) => `modules${id}stores`,
   supportConversations: "support-conversations",
+  favoriteProducts: "favorite-products",
+  favoriteStores: "favorite-stores",
   supportMessages: (conversationId: string) => `support-messages-${conversationId}`,
 } as const;
 

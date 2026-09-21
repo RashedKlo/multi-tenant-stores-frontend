@@ -36,7 +36,7 @@ export function Notification({
     variant === "success" ? "✓" : variant === "error" ? "!" : "i";
 
   return (
-    <div className="pointer-events-none fixed inset-x-3 top-3 z-[120] flex justify-center sm:inset-x-auto sm:right-4 sm:left-auto">
+    <div className="pointer-events-none fixed inset-x-3 top-3 z-120 flex justify-center sm:inset-x-auto sm:right-4 sm:left-auto">
       <div
         role={variant === "error" ? "alert" : "status"}
         aria-live={variant === "error" ? "assertive" : "polite"}
