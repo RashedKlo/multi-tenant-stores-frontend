@@ -1,13 +1,11 @@
-
-// src/features/profile/components/EditProfileForm.tsx
 "use client";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { FormField, SubmitButton, AlertBanner } from "@/shared/lib/ui/FormField";
-import { updateProfileAction } from "../../actions/update-profile-action";
-import type { CustomerProfile } from "../../types/profile.types";
+import { updateProfileAction } from "../../../actions/update-profile-action";
+import type { CustomerProfile } from "../../../types/profile.types";
 
 interface EditProfileFormProps {
   profile: CustomerProfile;
@@ -24,8 +22,8 @@ export function EditProfileForm({ profile }: EditProfileFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
     setError(null);
     setSuccess(false);
 
@@ -44,41 +42,12 @@ export function EditProfileForm({ profile }: EditProfileFormProps) {
     <form onSubmit={onSubmit} className="space-y-4" noValidate>
       {error && <AlertBanner message={error} />}
       {success && <AlertBanner message={t("profileUpdated")} variant="success" />}
-
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <FormField
-          name="firstName"
-          autoComplete="given-name"
-          label={tAuth("firstName")}
-          value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
-          required
-          disabled={pending}
-        />
-        <FormField
-          name="lastName"
-          autoComplete="family-name"
-          label={tAuth("lastName")}
-          value={lastName}
-          onChange={(e) => setLastName(e.target.value)}
-          required
-          disabled={pending}
-        />
+        <FormField name="firstName" autoComplete="given-name" label={tAuth("firstName")} value={firstName} onChange={(event) => setFirstName(event.target.value)} required disabled={pending} />
+        <FormField name="lastName" autoComplete="family-name" label={tAuth("lastName")} value={lastName} onChange={(event) => setLastName(event.target.value)} required disabled={pending} />
       </div>
-
-      <FormField
-        name="email"
-        type="email"
-        label={tAuth("email")}
-        value={profile.email}
-        disabled
-        readOnly
-        hint={t("emailReadOnlyHint")}
-      />
-
-      <SubmitButton pending={pending}>
-        {pending ? t("saving") : t("saveChanges")}
-      </SubmitButton>
+      <FormField name="email" type="email" label={tAuth("email")} value={profile.email} disabled readOnly hint={t("emailReadOnlyHint")} />
+      <SubmitButton pending={pending}>{pending ? t("saving") : t("saveChanges")}</SubmitButton>
     </form>
   );
 }

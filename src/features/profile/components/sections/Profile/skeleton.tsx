@@ -1,4 +1,3 @@
-// src/features/profile/components/sections/Profile/skeleton.tsx
 export function ProfileSkeleton() {
   return (
     <div className="mx-auto max-w-2xl space-y-6 py-6 md:py-10" aria-hidden>

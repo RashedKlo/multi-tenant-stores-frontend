@@ -1,5 +1,4 @@
-// src/features/profile/components/ProfileHeader.tsx
-import type { CustomerProfile } from "../../types/profile.types";
+import type { CustomerProfile } from "../../../types/profile.types";
 
 interface ProfileHeaderProps {
   profile: CustomerProfile;
@@ -38,15 +37,13 @@ export function ProfileHeader({
             {profile.email}
           </p>
         </div>
-        
       </div>
 
-      <div className="flex  flex-wrap md:flex-col items-center gap-2">
-         <span className="text-xs text-muted-foreground">
+      <div className="flex flex-wrap items-center gap-2 md:flex-col">
+        <span className="text-xs text-muted-foreground">
           {memberSinceLabel}: {memberSince}
         </span>
-        
-       <span
+        <span
           className={[
             "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium",
             profile.isEmailVerified
