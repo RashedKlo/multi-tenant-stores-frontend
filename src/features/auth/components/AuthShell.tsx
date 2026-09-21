@@ -1,6 +1,5 @@
 // features/auth/components/AuthShell.tsx
 import type { ReactNode } from "react";
-import Link from "next/link";
 
 interface AuthShellProps {
   children: ReactNode;

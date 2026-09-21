@@ -2,7 +2,7 @@
 "use server";
 
 import { fetchJson } from "@/shared/lib/http/fetch-json";
-import { fail, ok, type Result } from "@/shared/lib/result";
+import { fail,  type Result } from "@/shared/lib/result";
 import {
   forgotPasswordSchema,
   type ForgotPasswordInput,

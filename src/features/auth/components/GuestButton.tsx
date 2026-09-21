@@ -1,7 +1,7 @@
 // features/auth/components/GuestButton.tsx
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import {  useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 

@@ -34,7 +34,7 @@ export function VerifyEmailForm() {
     startTransition(async () => {
       const result = await verifyEmailAction({ email, code });
       if (!result.success) {
-        setError(t(result.error as Parameters<typeof t>[0]));
+        setError(t(result.error));
         return;
       }
       router.replace(AUTH_REDIRECT.afterVerify);

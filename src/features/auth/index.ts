@@ -6,7 +6,6 @@ export { VerifyEmailForm } from "./components/VerifyEmailForm";
 export { ForgotPasswordForm } from "./components/ForgotPasswordForm";
 export { ResetPasswordForm } from "./components/ResetPasswordForm";
 export { GoogleButton } from "./components/GoogleButton";
-export { GoogleOneTap } from "./components/GoogleOneTap";
 
 export * from "./actions";
 export type * from "./types";

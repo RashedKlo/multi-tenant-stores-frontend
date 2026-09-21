@@ -1,7 +1,7 @@
 // app/(auth)/login/page.tsx
 import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
-import { AuthShell, LoginForm, GoogleOneTap } from "@/features/auth";
+import { AuthShell, LoginForm } from "@/features/auth";
 
 export default async function LoginPage() {
   const t = await getTranslations("auth");
