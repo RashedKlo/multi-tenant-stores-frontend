@@ -1,7 +1,7 @@
 
 import { getAccessToken } from "@/shared/lib/http/token-storage";
 import { getOrder } from "../../api";
-import { OrderTrackingClient } from "../OrderTrackingClient";
+import { OrderTrackingClient } from "../OrderTracking/OrderTrackingClient";
 import { OrderTrackingEmpty } from "./empty";
 import { OrderTrackingSkeleton } from "./skeleton";
 
@@ -15,13 +15,13 @@ interface OrderTrackingProps {
  * 3. Client opens SignalR only after order is available.
  */
 export async function OrderTracking({ orderId }: OrderTrackingProps) {
-  const order = await getOrder(orderId);
+  const result = await getOrder(orderId);
 
-  if (!order) return <OrderTrackingEmpty />;
+  if (!result.success) return <OrderTrackingEmpty />;
 
   const accessToken = (await getAccessToken()) ?? null;
 
-  return <OrderTrackingClient order={order} accessToken={accessToken} />;
+  return <OrderTrackingClient order={result.data} accessToken={accessToken} />;
 }
 
 OrderTracking.Skeleton = OrderTrackingSkeleton;

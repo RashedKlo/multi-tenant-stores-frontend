@@ -1,9 +1,9 @@
 // features/orders/components/OrderCard.tsx
 import Link from "next/link";
-import type { OrderSummary } from "../types";
-import { OrderStatusBadge } from "./OrderStatusBadge";
-import { formatDateTime, formatMoney, shortOrderId } from "../lib/format";
-import { resolveStatusName, isTerminalStatus } from "../constants";
+import type { OrderSummary } from "../../types";
+import { OrderStatusBadge } from "../OrderStatusBadge";
+import { formatDateTime, formatMoney, shortOrderId } from "../../lib/format";
+import { resolveStatusName, isTerminalStatus } from "../../constants";
 
 interface OrderCardProps {
   order: OrderSummary;

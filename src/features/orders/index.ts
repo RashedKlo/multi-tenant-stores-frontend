@@ -2,12 +2,12 @@
 
 export { getOrders, getOrder } from "./api";
 export { OrdersShell } from "./components/OrdersShell";
-export { OrderCard } from "./components/OrderCard";
-export { OrdersEmpty } from "./components/OrdersEmpty";
-export { OrderDetailView } from "./components/OrderDetailView";
+export { OrderCard } from "./components/Orders/OrderCard";
+export { OrdersEmpty } from "./components/Orders/OrdersEmpty";
+export { OrderDetailView } from "./components/OrderDetail/OrderDetailView";
 export { OrderStatusBadge } from "./components/OrderStatusBadge";
-export { OrderTrackingClient } from "./components/OrderTrackingClient";
-export { OrderTrackingTimeline } from "./components/OrderTrackingTimeline";
+export { OrderTrackingClient } from "./components/OrderTracking/OrderTrackingClient";
+export { OrderTrackingTimeline } from "./components/OrderTracking/OrderTrackingTimeline";
 export { useOrderTracking } from "./hooks/use-order-tracking";
 export {
   resolveStatusName,

@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { OrdersEmpty } from "../OrdersEmpty";
+import { OrdersEmpty } from "../Orders/OrdersEmpty";
 
 export async function OrderDetailEmpty() {
   const t = await getTranslations("orders");

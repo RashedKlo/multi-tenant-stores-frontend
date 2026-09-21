@@ -4,12 +4,12 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import type { OrderDetail, OrderStatusChangedEvent } from "../types";
-import { useOrderTracking } from "../hooks/use-order-tracking";
-import { OrderTrackingTimeline } from "./OrderTrackingTimeline";
-import { OrderStatusBadge } from "./OrderStatusBadge";
-import { resolveStatusName, isTerminalStatus } from "../constants";
-import { formatDateTime, shortOrderId } from "../lib/format";
+import type { OrderDetail, OrderStatusChangedEvent } from "../../types";
+import { useOrderTracking } from "../../hooks/use-order-tracking";
+import { OrderTrackingTimeline } from "../OrderTracking/OrderTrackingTimeline";
+import { OrderStatusBadge } from "../OrderStatusBadge";
+import { resolveStatusName, isTerminalStatus } from "../../constants";
+import { formatDateTime, shortOrderId } from "../../lib/format";
 
 interface OrderTrackingClientProps {
   order: OrderDetail;

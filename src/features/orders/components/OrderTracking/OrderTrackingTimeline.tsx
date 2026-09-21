@@ -1,9 +1,9 @@
 "use client";
 
 // features/orders/components/OrderTrackingTimeline.tsx
-import { TRACKING_STEPS, resolveStatusName } from "../constants";
-import type { OrderStatusHistoryItem, OrderStatusName } from "../types";
-import { formatDateTime } from "../lib/format";
+import { TRACKING_STEPS, resolveStatusName } from "../../constants";
+import type { OrderStatusHistoryItem, OrderStatusName } from "../../types";
+import { formatDateTime } from "../../lib/format";
 
 interface OrderTrackingTimelineProps {
   currentStatus: number | string;
@@ -65,7 +65,7 @@ export function OrderTrackingTimeline({
           <li key={step} className="relative flex gap-4 pb-8 last:pb-0">
             {index < TRACKING_STEPS.length - 1 && (
               <span
-                className={`absolute start-3.5 top-8 h-[calc(100%-2rem)] w-0.5 ${
+                className={`absolute inset-s-3.5 top-8 h-[calc(100%-2rem)] w-0.5 ${
                   done ? "bg-primary" : "bg-border"
                 }`}
                 aria-hidden

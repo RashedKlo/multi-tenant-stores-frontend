@@ -2,7 +2,7 @@
 // Server Component — no "use client"
 import { getTranslations } from "next-intl/server";
 import { getOrder } from "../../api";
-import { OrderDetailView } from "../OrderDetailView";
+import { OrderDetailView } from "../OrderDetail/OrderDetailView";
 import { OrderDetailEmpty } from "./empty";
 import { OrderDetailSkeleton } from "./skeleton";
 
