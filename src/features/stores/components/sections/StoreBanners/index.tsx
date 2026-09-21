@@ -3,7 +3,6 @@ import { getStoreBanners } from "@/features/stores/api";
 import { StoreBannersClient } from "./StoreBannersClient";
 import StoreBannersEmpty from "./empty";
 import StoreBannersSkeleton from "./skeleton";
-import { MOCK_STORE_BANNERS } from "@/features/stores/constants/store-banners";
 
 interface StoreBannersProps {
   storeId: string;
@@ -12,15 +11,15 @@ interface StoreBannersProps {
 export const StoreBanners = Object.assign(
   async function StoreBanners({ storeId }: StoreBannersProps) {
     // const banners = MOCK_STORE_BANNERS;
-    const banners = await getStoreBanners(storeId);
+    const result = await getStoreBanners(storeId);
 
-    if (!banners.length) {
+    if (!result.success || result.data.length==0) {
       return <StoreBannersEmpty />;
     }
 
     return (
       <StoreBannersClient
-        banners={banners}
+        banners={result.data}
       />
     );
   },

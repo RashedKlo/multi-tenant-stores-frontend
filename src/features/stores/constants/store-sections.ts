@@ -1,5 +1,5 @@
 // features/stores/constants/store-sections.ts
-import type { PagedStoreSections, StoreSection } from "../types";
+import type { PagedStoreSections } from "../types";
 
 export const MOCK_STORE_SECTIONS: PagedStoreSections= {
   items:

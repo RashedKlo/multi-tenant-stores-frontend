@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import type { ProductSummary } from "@/features/stores/types";
+import { formatPrice } from "@/shared/lib/format";
 
 interface ProductCardProps {
   product: ProductSummary;
@@ -20,12 +21,7 @@ export function ProductCard({ product, storeId }: ProductCardProps) {
     ? Math.round(((comparePrice! - product.price) / comparePrice!) * 100)
     : 0;
 
-  // Intl.NumberFormat handles Arabic-Indic digits & SAR formatting per locale
-  const formatPrice = new Intl.NumberFormat(undefined, {
-    style: "currency",
-    currency: "SAR",
-    maximumFractionDigits: 2,
-  });
+
 
   return (
     <Link
@@ -47,7 +43,7 @@ export function ProductCard({ product, storeId }: ProductCardProps) {
         ) : (
           <span
             aria-hidden
-            className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/10 to-muted text-2xl font-bold text-muted-foreground"
+            className="flex h-full w-full items-center justify-center bg-linear-to-br from-primary/10 to-muted text-2xl font-bold text-muted-foreground"
  >
             {product.name.charAt(0)}
           </span>
@@ -55,7 +51,7 @@ export function ProductCard({ product, storeId }: ProductCardProps) {
 
         {/* Discount badge — end-side so it never covers RTL text flow */}
         {hasDiscount && (
-          <span className="absolute start-2 top-2 rounded-full bg-danger px-2 py-0.5 text-[10px] font-bold text-danger-foreground">
+          <span className="absolute inset-s-2 top-2 rounded-full bg-danger px-2 py-0.5 text-[10px] font-bold text-danger-foreground">
             -{discountPercent}%
           </span>
         )}
@@ -81,11 +77,11 @@ export function ProductCard({ product, storeId }: ProductCardProps) {
 
         <p className="mt-auto flex items-baseline gap-1.5">
           <span className="text-sm font-bold" dir="ltr">
-            {formatPrice.format(product.price)}
+            {formatPrice(product.price)}
           </span>
           {hasDiscount && (
             <s className="text-xs text-muted-foreground" dir="ltr">
-              {formatPrice.format(comparePrice!)}
+              {formatPrice(comparePrice!)}
             </s>
           )}
         </p>

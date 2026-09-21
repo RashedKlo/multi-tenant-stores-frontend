@@ -32,7 +32,7 @@ export function StoreSectionsClient({ initialData, storeId }: StoreSectionsClien
               href={`/stores/${storeId}/sections/${section.id}`}
               className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98] focus-visible:-translate-y-0.5"
             >
-              <div className="relative aspect-[4/3] w-full bg-muted">
+              <div className="relative aspect-4/3 w-full bg-muted">
                 {section.imageUrl ? (
                   <Image
                     src={section.imageUrl}
@@ -45,7 +45,7 @@ export function StoreSectionsClient({ initialData, storeId }: StoreSectionsClien
                 ) : (
                   <span
                     aria-hidden
-                    className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/10 to-muted text-2xl font-bold text-muted-foreground"
+                    className="flex h-full w-full items-center justify-center bg-linear-to-br from-primary/10 to-muted text-2xl font-bold text-muted-foreground"
                   >
                     {section.name.charAt(0)}
                   </span>

@@ -20,7 +20,7 @@ export const Products = Object.assign(
     minPrice,
     maxPrice,
   }: ProductsProps) {
-    const data = await getProductsBySection({
+    const result = await getProductsBySection({
       sectionId,
       inStockOnly,
       minPrice,
@@ -28,13 +28,13 @@ export const Products = Object.assign(
       page: 1,
       pageSize: 20,
     });
-    if (!data.items.length) {
+    if (!result.success  || result.data.totalCount==0) {
       return <ProductsEmpty />;
     }
 
     return (
       <ProductsClient
-        initialData={data}
+        initialData={result.data}
         sectionId={sectionId}
         storeId={storeId}
         inStockOnly={inStockOnly}

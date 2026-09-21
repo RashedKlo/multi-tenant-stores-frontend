@@ -12,9 +12,6 @@ interface StoreBannersClientProps {
 export function StoreBannersClient({ banners }: StoreBannersClientProps) {
   const t = useTranslations("storeBanners");
 
-  // Single banner → no marquee needed
-  if (banners.length === 0) return null;
-
   if (banners.length === 1) {
     return <BannerCard banner={banners[0]} priority alt={t("bannerImageAlt")} />;
   }
@@ -62,7 +59,7 @@ function BannerCard({
       tabIndex={tabIndex}
       target={isExternal ? "_blank" : undefined}
       rel={isExternal ? "noopener noreferrer" : undefined}
-      className="group relative block w-[85vw] max-w-[420px] shrink-0 overflow-hidden rounded-2xl ring-1 ring-border/60 shadow-sm transition-shadow hover:shadow-md sm:w-[70vw] md:w-[480px]"
+      className="group relative block w-[85vw] max-w-105 shrink-0 overflow-hidden rounded-2xl ring-1 ring-border/60 shadow-sm transition-shadow hover:shadow-md sm:w-[70vw] md:w-120"
     >
       <Image
         src={banner.imageUrl}
@@ -72,10 +69,10 @@ function BannerCard({
         priority={priority}
         quality={80}
         sizes="(max-width: 640px) 85vw, (max-width: 768px) 70vw, 480px"
-        className="aspect-[16/6] w-full object-cover"
+        className="aspect-16/6 w-full object-cover"
       />
       {banner.title && (
-        <p className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 to-transparent p-4 text-sm font-semibold text-white drop-shadow sm:text-base">
+        <p className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/75 to-transparent p-4 text-sm font-semibold text-white drop-shadow sm:text-base">
           {banner.title}
         </p>
       )}
