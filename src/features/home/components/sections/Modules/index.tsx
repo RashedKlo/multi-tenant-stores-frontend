@@ -2,7 +2,6 @@ import { getModules } from "@/features/home/api";
 import { ModulesClient } from "./ModulesClient";
 import ModulesEmpty from "./empty";
 import ModulesSkeleton from "./skeleton";
-import { MOCK_MODULES } from "@/features/home/constants/modules";
 
 /**
  * Server entry for home modules / categories.
@@ -10,15 +9,15 @@ import { MOCK_MODULES } from "@/features/home/constants/modules";
 export const Modules = Object.assign(
   async function Modules() {
     // fetch backend data 
-    const modules = await getModules();
+    const result = await getModules();
     
     // fetch mock data
     // const modules = MOCK_MODULES;
-    if (!modules.length) {
+    if (!result.success || result.data.length === 0) {
       return <ModulesEmpty />;
     }
 
-    return <ModulesClient modules={modules} />;
+    return <ModulesClient modules={result.data} />;
   },
   { skeleton: ModulesSkeleton, empty: ModulesEmpty }
 );

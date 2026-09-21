@@ -84,7 +84,7 @@ function BannerCard({
       className="group relative block w-full overflow-hidden rounded-2xl bg-card ring-1 ring-border/60 shadow-sm transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-lg focus-visible:-translate-y-0.5"
     >
       {/* Fixed mobile height → fluid aspect ratio on larger screens */}
-      <div className="relative h-44 w-full overflow-hidden sm:h-56 md:h-auto md:aspect-[16/9] lg:aspect-[21/9]">
+      <div className="relative h-44 w-full overflow-hidden sm:h-56 md:h-auto md:aspect-video lg:aspect-21/9">
         <Image
           src={banner.imageUrl}
           alt={imageAlt}
@@ -96,7 +96,7 @@ function BannerCard({
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent"
+          className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/75 via-black/25 to-transparent"
         />
       </div>
 

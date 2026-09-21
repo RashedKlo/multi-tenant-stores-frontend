@@ -2,7 +2,6 @@ import { getHomeBanners } from "@/features/home/api";
 import { BannersClient } from "./BannersClient";
 import BannerEmpty from "./empty";
 import BannerSkeleton from "./skeleton";
-import { MOCK_BANNERS } from "@/features/home/constants/banners";
 
 /**
  * Server entry for home banners.
@@ -11,17 +10,18 @@ import { MOCK_BANNERS } from "@/features/home/constants/banners";
 export const Banners = Object.assign(
   async function Banners() {
     //fetch Backend Data
-    const banners = await getHomeBanners();
+    const result = await getHomeBanners();
     
     //fetch Mock Data
     // const banners = MOCK_BANNERS;
 
 
-    if (!banners.length) {
+
+    if (!result.success || result.data.length === 0) {
       return <BannerEmpty />;
     }
 
-    return <BannersClient banners={banners} />
+    return <BannersClient banners={result.data} />
   },
   { skeleton: BannerSkeleton, empty: BannerEmpty }
 );
