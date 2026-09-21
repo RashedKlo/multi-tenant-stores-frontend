@@ -13,9 +13,9 @@ interface StoresClientProps {
   search?: string;
 }
 
-export function StoresClient({ initialData, moduleId, categoryId, search }: StoresClientProps) {
+export function StoresClient({ initialData }: StoresClientProps) {
   const t = useTranslations("stores");
-  const [data, setData] = useState<PagedStores>(initialData);
+  const [data] = useState<PagedStores>(initialData);
   const [isPending, startTransition] = useTransition();
 
   const hasNext = data.items.length < data.totalCount;

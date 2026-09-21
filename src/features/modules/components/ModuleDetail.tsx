@@ -6,7 +6,6 @@ import { CategoriesClient } from "./sections/Categories/CategoriesClient";
 import ModuleHeaderEmpty from "./sections/ModuleHeader/empty";
 import ModuleBannersEmpty from "./sections/ModuleBanners/empty";
 import CategoriesEmpty from "./sections/Categories/empty";
-import { MOCK_MODULE_DETAIL } from "../constants/module-detail";
 
 interface ModuleDetailProps {
   moduleId: string;
@@ -19,8 +18,7 @@ interface ModuleDetailProps {
  * to presentational sections. Empty states are handled per-section.
  */
 export async function ModuleDetail({ moduleId, categoryId }: ModuleDetailProps) {
-  const result = await getModuleDetail(moduleId); // returns null if not found
-  // const result=MOCK_MODULE_DETAIL;
+  const result = await getModuleDetail(moduleId);
 
   if (!result.success || !result.data) return <ModuleHeaderEmpty />;
 
