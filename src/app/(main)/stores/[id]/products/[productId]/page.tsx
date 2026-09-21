@@ -1,8 +1,10 @@
 // app/(main)/products/[storeId]/products/[productId]/page.tsx
 import { Suspense } from "react";
-import { ProductShell } from "@/features/products/components/ProductShell";
-import { ProductDetail } from "@/features/products/components/sections/index";
-import ProductDetailSkeleton from "@/features/products/components/sections/skeleton";
+import {
+  ProductShell,
+  ProductDetail,
+  ProductDetailSkeleton,
+} from "@/features/products";
 
 interface ProductPageProps {
   params: Promise<{ id: string; productId: string }>;

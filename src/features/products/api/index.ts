@@ -1,0 +1,1 @@
+export { getProductDetail } from "./get-product-detail";

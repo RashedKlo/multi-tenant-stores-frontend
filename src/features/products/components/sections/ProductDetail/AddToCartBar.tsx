@@ -28,7 +28,7 @@ export function AddToCartBar({
   const t = useTranslations("productDetail");
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/80">
+    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 backdrop-blur-md supports-backdrop-filter:bg-background/80">
       <div className="mx-auto flex max-w-3xl items-center gap-3 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
         {/* Quantity stepper */}
         <div
@@ -78,7 +78,7 @@ export function AddToCartBar({
               <span>{inStock ? t("addToCart") : t("outOfStock")}</span>
               {inStock && (
                 <span className="opacity-90" dir="ltr">
-                  · {formatPrice(price)}
+                  {formatPrice(price)}
                 </span>
               )}
             </>

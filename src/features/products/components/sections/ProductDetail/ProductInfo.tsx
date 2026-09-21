@@ -26,7 +26,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
     setIsFavorite(!previousFavorite);
 
     startTransition(async () => {
-      const result = await toggleFavoriteProduct(product.id, previousFavorite);
+      const result = await toggleFavoriteProduct({ productId: product.id, isFavorite: previousFavorite });
       if (!result.success) {
         setIsFavorite(previousFavorite);
         setError(tAuth(result.error as Parameters<typeof tAuth>[0]));

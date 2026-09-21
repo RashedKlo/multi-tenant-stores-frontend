@@ -17,7 +17,7 @@ export function ProductGallery({ images, name }: ProductGalleryProps) {
 
   if (images.length === 0) {
     return (
-      <div className="flex aspect-square w-full items-center justify-center rounded-2xl bg-gradient-to-br from-primary/10 to-muted text-4xl font-bold text-muted-foreground">
+      <div className="flex aspect-square w-full items-center justify-center rounded-2xl bg-linear-to-br from-primary/10 to-muted text-4xl font-bold text-muted-foreground">
         <span aria-hidden>{name.charAt(0)}</span>
       </div>
     );
@@ -48,7 +48,7 @@ export function ProductGallery({ images, name }: ProductGalleryProps) {
               onClick={prev}
               disabled={activeIndex === 0}
               aria-label={t("previousImage")}
-              className="absolute start-3 top-1/2 -translate-y-1/2 rounded-full bg-background/80 p-2 shadow-sm backdrop-blur transition-all hover:bg-background disabled:pointer-events-none disabled:opacity-30 sm:flex"
+              className="absolute inset-s-3 top-1/2 -translate-y-1/2 rounded-full bg-background/80 p-2 shadow-sm backdrop-blur transition-all hover:bg-background disabled:pointer-events-none disabled:opacity-30 sm:flex"
             >
               <ChevronIcon />
             </button>
@@ -57,7 +57,7 @@ export function ProductGallery({ images, name }: ProductGalleryProps) {
               onClick={next}
               disabled={activeIndex === images.length - 1}
               aria-label={t("nextImage")}
-              className="absolute end-3 top-1/2 -translate-y-1/2 rounded-full bg-background/80 p-2 shadow-sm backdrop-blur transition-all hover:bg-background disabled:pointer-events-none disabled:opacity-30 sm:flex"
+              className="absolute inset-e-3 top-1/2 -translate-y-1/2 rounded-full bg-background/80 p-2 shadow-sm backdrop-blur transition-all hover:bg-background disabled:pointer-events-none disabled:opacity-30 sm:flex"
             >
               <ChevronIcon flip />
             </button>
@@ -67,7 +67,7 @@ export function ProductGallery({ images, name }: ProductGalleryProps) {
         {/* Counter pill */}
         {images.length > 1 && (
           <span
-            className="absolute bottom-3 end-3 rounded-full bg-black/60 px-2.5 py-1 text-xs font-medium text-white backdrop-blur"
+            className="absolute bottom-3 inset-e-3 rounded-full bg-black/60 px-2.5 py-1 text-xs font-medium text-white backdrop-blur"
             dir="ltr"
           >
             {activeIndex + 1}/{images.length}

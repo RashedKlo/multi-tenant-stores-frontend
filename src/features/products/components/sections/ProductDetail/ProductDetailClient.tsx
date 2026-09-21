@@ -13,6 +13,7 @@ import { ProductInfo } from "./ProductInfo";
 import { ProductOptions } from "./ProductOptions";
 import { AddToCartBar } from "./AddToCartBar";
 import { Notification } from "@/shared/lib/ui";
+import { buildInitialSelection } from "../../../lib/selection";
 
 interface ProductDetailClientProps {
   product: ProductDetail;
@@ -85,7 +86,7 @@ export function ProductDetailClient({ product, storeId }: ProductDetailClientPro
       setSuccess(t("addedToCart"));
       setError(null);
       router.refresh();
-    } catch (e) {
+    } catch (error) {
       setError(t("addToCartError"));
       setSuccess(null);
     } finally {
@@ -151,15 +152,3 @@ export function ProductDetailClient({ product, storeId }: ProductDetailClientPro
   );
 }
 
-/* ---------- helpers ---------- */
-
-function buildInitialSelection(
-  groups: ProductDetail["optionGroups"],
-): Record<string, string[]> {
-  const map: Record<string, string[]> = {};
-  for (const group of groups) {
-    const defaults = group.options.filter((o) => o.isDefault).map((o) => o.id);
-    if (defaults.length > 0) map[group.id] = defaults;
-  }
-  return map;
-}

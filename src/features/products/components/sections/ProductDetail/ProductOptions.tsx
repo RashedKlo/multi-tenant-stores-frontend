@@ -5,7 +5,6 @@ import { useTranslations } from "next-intl";
 import type { ProductOptionGroup } from "@/features/products/types";
 import { formatPrice } from "@/shared/lib/format"; // shared helper, see below
 
-type Option = ProductOptionGroup["options"][number];
 
 interface ProductOptionsProps {
   groups: ProductOptionGroup[];
