@@ -35,10 +35,10 @@ export function Navbar({ isAuthenticated = false }: NavbarProps) {
     <>
       {/* ========== Mobile: fixed bottom tab bar ========== */}
       <nav
-        className="fixed inset-x-0 bottom-0 z-40 border-t border-border/70 bg-background/85 backdrop-blur-md supports-[backdrop-filter]:bg-background/70 md:hidden"
+        className="fixed inset-x-0 bottom-0 z-40 border-t border-border/70 bg-background/85 backdrop-blur-md supports-backdrop-filter:bg-background/70 md:hidden"
         aria-label={tLayout("mainNav")}
       >
-        <ul className="flex h-[var(--bottom-nav-height)] items-stretch justify-around px-1">
+        <ul className="flex h-(--bottom-nav-height) items-stretch justify-around px-1">
           {NAV_ITEMS.map((item) => {
             const active = isActive(item.href);
 
@@ -85,10 +85,10 @@ export function Navbar({ isAuthenticated = false }: NavbarProps) {
 
       {/* ========== Desktop: sticky top header ========== */}
       <header
-        className="sticky top-0 z-40 hidden border-b border-border/70 bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60 md:block"
+        className="sticky top-0 z-40 hidden border-b border-border/70 bg-background/80 backdrop-blur-md supports-backdrop-filter:bg-background/60 md:block"
         aria-label={tLayout("mainNav")}
       >
-        <div className="mx-auto flex h-[var(--desktop-nav-height)] max-w-[var(--container-max)] items-center gap-8 px-6">
+        <div className="mx-auto flex h-(--desktop-nav-height) max-w-(--container-max) items-center gap-8 px-6">
           <Logo />
 
           <ul className="flex flex-1 items-center justify-center gap-1">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import { MoonIcon, SunIcon } from "./icons";
 import { cn } from "@/shared/lib/utils";
 

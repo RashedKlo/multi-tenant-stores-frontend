@@ -23,8 +23,8 @@ export function Topbar({ title, actions }: TopbarProps) {
   const [searchOpen, setSearchOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-30 border-b border-border/70 bg-background/85 backdrop-blur-md supports-[backdrop-filter]:bg-background/70 md:hidden">
-      <div className="relative flex h-[var(--topbar-height)] items-center justify-between gap-3 px-4">
+    <header className="sticky top-0 z-30 border-b border-border/70 bg-background/85 backdrop-blur-md supports-backdrop-filter:bg-background/70 md:hidden">
+      <div className="relative flex h-(--topbar-height) items-center justify-between gap-3 px-4">
         {/* Hidden (not just covered) while search is open, so it drops out
             of the tab order and the overlay's background isn't fighting
             anything underneath it. */}
