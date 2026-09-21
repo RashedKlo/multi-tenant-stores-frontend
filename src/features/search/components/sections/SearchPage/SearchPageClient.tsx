@@ -15,7 +15,6 @@ interface SearchPageClientProps {
 
 export function SearchPageClient({
   modules,
-  defaultModuleId,
   selectedModuleId,
   initialSearch,
   initialStores,
