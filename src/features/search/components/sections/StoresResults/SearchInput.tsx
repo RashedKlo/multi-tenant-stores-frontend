@@ -1,5 +1,6 @@
-// features/search/components/SearchInput.tsx
 "use client";
+
+import { useTranslations } from "next-intl";
 
 interface SearchInputProps {
   value: string;
@@ -12,8 +13,10 @@ export function SearchInput({
   value,
   onChange,
   onSearch,
-  placeholder = "Search stores...",
+  placeholder,
 }: SearchInputProps) {
+  const t = useTranslations("search");
+
   return (
     <div className="flex gap-2">
       <div className="relative flex-1">
@@ -34,11 +37,11 @@ export function SearchInput({
         <input
           type="search"
           value={value}
-          onChange={(e) => onChange(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") onSearch();
+          onChange={(event) => onChange(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") onSearch();
           }}
-          placeholder={placeholder}
+          placeholder={placeholder ?? t("searchStoresPlaceholder")}
           className="w-full rounded-full border border-border bg-background py-3 pl-10 pr-4 text-sm outline-none transition-shadow focus:ring-2 focus:ring-primary/30"
         />
       </div>
@@ -48,7 +51,7 @@ export function SearchInput({
         onClick={onSearch}
         className="rounded-full bg-primary px-4 py-3 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
       >
-        Search
+        {t("searchButton")}
       </button>
     </div>
   );

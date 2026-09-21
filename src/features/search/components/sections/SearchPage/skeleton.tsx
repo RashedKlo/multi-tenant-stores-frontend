@@ -1,4 +1,3 @@
-// features/search/components/skeleton.tsx
 export default function SearchSkeleton() {
   return (
     <div className="space-y-5">
@@ -8,9 +7,9 @@ export default function SearchSkeleton() {
       </div>
 
       <div className="flex gap-2 overflow-hidden">
-        {Array.from({ length: 4 }).map((_, i) => (
+        {Array.from({ length: 4 }).map((_, index) => (
           <div
-            key={i}
+            key={index}
             className="h-10 w-28 shrink-0 animate-pulse rounded-full bg-muted"
           />
         ))}
@@ -19,9 +18,9 @@ export default function SearchSkeleton() {
       <div className="h-12 w-full animate-pulse rounded-full bg-muted" />
 
       <div className="space-y-2">
-        {Array.from({ length: 6 }).map((_, i) => (
+        {Array.from({ length: 6 }).map((_, index) => (
           <div
-            key={i}
+            key={index}
             className="flex items-center gap-3 rounded-2xl border border-border p-3"
           >
             <div className="h-14 w-14 animate-pulse rounded-xl bg-muted" />

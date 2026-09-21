@@ -1,4 +1,3 @@
-// features/search/components/ModuleTabs.tsx
 "use client";
 
 import Image from "next/image";
@@ -12,7 +11,11 @@ interface ModuleTabsProps {
   search?: string;
 }
 
-export function ModuleTabs({ modules, selectedId, search = "" }: ModuleTabsProps) {
+export function ModuleTabsClient({
+  modules,
+  selectedId,
+  search = "",
+}: ModuleTabsProps) {
   const pathname = usePathname();
   const current = useSearchParams();
 
@@ -50,9 +53,7 @@ export function ModuleTabs({ modules, selectedId, search = "" }: ModuleTabsProps
                 />
               </div>
             ) : (
-              <span className="text-xs font-bold">
-                {mod.name.charAt(0)}
-              </span>
+              <span className="text-xs font-bold">{mod.name.charAt(0)}</span>
             )}
             <span className="whitespace-nowrap">{mod.name}</span>
           </Link>

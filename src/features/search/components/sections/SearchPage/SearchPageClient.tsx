@@ -1,9 +1,9 @@
-// features/search/components/SearchPageClient.tsx
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { Module, PagedStores } from "@/features/search/types";
-import { ModuleTabs } from "./ModuleTabs";
-import { StoresResults } from "./StoresResults";
+import { ModuleTabsClient } from "../ModuleTabs/ModuleTabsClient";
+import { StoresResultsClient } from "../StoresResults/StoresResultsClient";
 
 interface SearchPageClientProps {
   modules: Module[];
@@ -20,22 +20,24 @@ export function SearchPageClient({
   initialSearch,
   initialStores,
 }: SearchPageClientProps) {
+  const t = useTranslations("search");
+
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="text-xl font-bold">Search</h1>
+        <h1 className="text-xl font-bold">{t("title")}</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Choose a category then search stores
+          {t("subtitle")}
         </p>
       </div>
 
-      <ModuleTabs
+      <ModuleTabsClient
         modules={modules}
         selectedId={selectedModuleId}
         search={initialSearch}
       />
 
-      <StoresResults
+      <StoresResultsClient
         key={selectedModuleId + "|" + initialSearch}
         moduleId={selectedModuleId}
         initialQuery={initialSearch}

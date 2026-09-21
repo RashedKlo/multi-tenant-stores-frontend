@@ -1,11 +1,12 @@
-// features/search/components/StoresResults.tsx
 "use client";
 
-import { useCallback, useEffect, useState, useTransition } from "react";
+import { useCallback, useState  } from "react";
+import { useTranslations } from "next-intl";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { PagedStores } from "@/features/search/types";
 import { StoreCard } from "./StoreCard";
 import { SearchInput } from "./SearchInput";
+import { StoresResultsEmpty } from "./empty";
 
 interface StoresResultsProps {
   moduleId: string;
@@ -13,11 +14,12 @@ interface StoresResultsProps {
   initialData: PagedStores;
 }
 
-export function StoresResults({
+export function StoresResultsClient({
   moduleId,
   initialQuery,
   initialData,
 }: StoresResultsProps) {
+  const t = useTranslations("search");
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -25,7 +27,6 @@ export function StoresResults({
   const [query, setQuery] = useState(initialQuery);
   const [data, setData] = useState(initialData);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [isPending, startTransition] = useTransition();
 
   const handleSearch = () => {
     const params = new URLSearchParams(searchParams.toString());
@@ -52,21 +53,21 @@ export function StoresResults({
       });
       if (query) params.set("search", query);
 
-      const res = await fetch(
-        `/api/modules/${moduleId}/stores?${params.toString()}`
+      const response = await fetch(
+        `/api/modules/${moduleId}/stores?${params.toString()}`,
       );
-      const nextPage: PagedStores = await res.json();
+      const nextPage: PagedStores = await response.json();
 
       setData((prev) => ({
         ...nextPage,
         items: [...prev.items, ...nextPage.items],
       }));
-    } catch (err) {
-      console.error("Load more failed", err);
+    } catch (error) {
+      console.error("Load more failed", error);
     } finally {
       setIsLoadingMore(false);
     }
-  }, [ ]);
+  }, [data, isLoadingMore, moduleId, query]);
 
   return (
     <div className="space-y-4">
@@ -78,27 +79,17 @@ export function StoresResults({
 
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">
-          {data.totalCount} stores found
+          {t("storesFound", { count: data.totalCount })}
         </p>
       </div>
 
       <div
-        className={`space-y-2 transition-opacity ${
-          isPending ? "opacity-50" : "opacity-100"
-        }`}
+        className={`space-y-2 transition-opacity `}
       >
         {data.items.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-muted-foreground/30 bg-muted/20 py-16 text-center">
-            <div className="mb-3 text-4xl">🔍</div>
-            <p className="text-sm font-medium">No stores found</p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Try a different search or module
-            </p>
-          </div>
+          <StoresResultsEmpty />
         ) : (
-          data.items.map((store) => (
-            <StoreCard key={store.id} store={store} />
-          ))
+          data.items.map((store) => <StoreCard key={store.id} store={store} />)
         )}
       </div>
 
@@ -109,7 +100,7 @@ export function StoresResults({
             disabled={isLoadingMore}
             className="rounded-full border border-border bg-background px-6 py-2.5 text-sm font-medium transition-colors hover:bg-muted disabled:opacity-50"
           >
-            {isLoadingMore ? "Loading..." : "Load more"}
+            {isLoadingMore ? t("loading") : t("loadMore")}
           </button>
         </div>
       )}

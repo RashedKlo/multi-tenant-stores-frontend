@@ -1,8 +1,8 @@
-// features/search/components/SearchPage.tsx
 import { getModules } from "@/features/home/api";
 import { getStoresByModule } from "@/features/modules/api";
 import { SearchPageClient } from "./SearchPageClient";
 import SearchEmpty from "./empty";
+import { StoresResultsEmpty } from "../StoresResults/empty";
 
 interface SearchPageProps {
   search?: string;
@@ -10,29 +10,33 @@ interface SearchPageProps {
 }
 
 export async function SearchPage({ search, moduleId }: SearchPageProps) {
-  const modules = await getModules();
+  const result = await getModules();
 
-  if (!modules.length) {
+  if (!result.success || result.data.length==0) {
     return <SearchEmpty />;
   }
 
-  const defaultModuleId = modules[0].id;
+  const defaultModuleId = result.data[0].id;
   const selectedModuleId = moduleId ?? defaultModuleId;
   const initialSearch = search ?? "";
 
-  const initialStores = await getStoresByModule({
+  const resultStores = await getStoresByModule({
     moduleId: selectedModuleId,
-    search: initialSearch ,
+    search: initialSearch,
     page: 1,
     pageSize: 20,
   });
+if(!resultStores.success || resultStores.data.items.length==0) {
+    return <StoresResultsEmpty />;
+  }
+
   return (
     <SearchPageClient
-      modules={modules}
+      modules={result.data}
       defaultModuleId={defaultModuleId}
       selectedModuleId={selectedModuleId}
       initialSearch={initialSearch}
-      initialStores={initialStores}
+      initialStores={resultStores.data}
     />
   );
 }
