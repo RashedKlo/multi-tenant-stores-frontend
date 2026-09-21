@@ -1,14 +1,12 @@
-import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { getAddresses } from "@/features/addresses";
-import { getCart } from "@/features/cart";
+import { AddressesEmpty, getAddresses } from "@/features/addresses";
+import { CartEmpty, getCart } from "@/features/cart";
 import { CheckoutAddressSelector } from "../../CheckoutAddressSelector";
 import { CheckoutCartSummary } from "../../CheckoutCartSummary";
 import { CheckoutEmptyCart } from "../../CheckoutEmptyCart";
 import { CheckoutNoAddress } from "../../CheckoutNoAddress";
 import { CheckoutShell } from "../../CheckoutShell";
-import { addAddressHref } from "../../../constants";
-import type { CheckoutCartLine } from "../../../types";
+
 
 interface CheckoutPageProps {
   storeId?: string;
@@ -23,15 +21,20 @@ export async function CheckoutPage({
     getAddresses(),
     getCart(),
   ]);
-
-  const sortedAddresses = [...addresses].sort(
+if(!cartItems.success) {
+ return <CartEmpty/>
+}
+if(!addresses.success) {
+  return <AddressesEmpty/>
+}
+  const sortedAddresses = [...addresses.data].sort(
     (first, second) => Number(second.isDefault) - Number(first.isDefault),
   );
-const storeId = cartItems[0]?.storeId ?? "";
+const storeId = cartItems.data[0]?.storeId ?? "";
   return (
     <CheckoutShell title={t("title")} subtitle={t("subtitle")}>
       <div className="space-y-6">
-        {cartItems.length === 0 ? (
+        {cartItems.data.length === 0 ? (
           <CheckoutEmptyCart
             title={t("emptyCartTitle")}
             description={t("emptyCartDescription")}
@@ -41,7 +44,7 @@ const storeId = cartItems[0]?.storeId ?? "";
         ) : (
           <>
             <CheckoutCartSummary
-              items={cartItems}
+              items={cartItems.data}
               title={t("orderSummary")}
               totalLabel={t("total")}
               itemsLabel={t("items")}
