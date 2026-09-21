@@ -1,20 +1,19 @@
-// src/features/support-chat/components/sections/Conversations/index.tsx
 // Server Component — no "use client"
 import { getTranslations } from "next-intl/server";
 import { getAccessToken } from "@/shared/lib/http/token-storage";
-import { getConversations } from "../api";
-import { ConversationsEmpty } from "./ConversationsEmpty";
-import { ConversationsLiveClient } from "./ConversationsLiveClient";
-import { ConversationsSkeleton } from "./ConversationsSkeleton";
+import { getConversations } from "../../../api";
+import { ConversationsEmpty } from "./empty";
+import { ConversationsClient } from "./ConversationsClient";
+import { ConversationsSkeleton } from "./skeleton";
 
 export async function Conversations() {
   const t = await getTranslations("supportChat");
-  const [accessToken, conversations] = await Promise.all([
+  const [accessToken, result] = await Promise.all([
     getAccessToken(),
     getConversations(),
   ]);
 
-  if (conversations.length === 0) {
+  if (!result.success || result.data.length === 0) {
     return (
       <ConversationsEmpty
         title={t("emptyTitle")}
@@ -26,7 +25,7 @@ export async function Conversations() {
   }
 
   return (
-    <ConversationsLiveClient initial={conversations} accessToken={accessToken} />
+    <ConversationsClient initial={result.data} accessToken={accessToken} />
   );
 }
 

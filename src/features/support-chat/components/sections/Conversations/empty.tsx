@@ -1,4 +1,3 @@
-// features/support-chat/components/ConversationsEmpty.tsx
 import Link from "next/link";
 
 interface ConversationsEmptyProps {

@@ -1,7 +1,5 @@
-// features/support-chat/components/MessageBubble.tsx
-import type { Message } from "../types";
-import { SENDER_CUSTOMER } from "../constants";
-import { formatMessageTime } from "../lib/format";
+import type { Message } from "../../../types";
+import { formatMessageTime } from "@/shared/lib/format";
 
 interface MessageBubbleProps {
   message: Message;
@@ -10,9 +8,7 @@ interface MessageBubbleProps {
 
 export function MessageBubble({ message, isOwn }: MessageBubbleProps) {
   return (
-    <div
-      className={`flex w-full ${isOwn ? "justify-end" : "justify-start"}`}
-    >
+    <div className={`flex w-full ${isOwn ? "justify-end" : "justify-start"}`}>
       <div
         className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 sm:max-w-[75%] ${
           isOwn
@@ -20,7 +16,7 @@ export function MessageBubble({ message, isOwn }: MessageBubbleProps) {
             : "rounded-bl-md border border-border bg-card text-foreground"
         }`}
       >
-        <p className="whitespace-pre-wrap break-words text-sm leading-5">
+        <p className="whitespace-pre-wrap wrap-break-word text-sm leading-5">
           {message.body}
         </p>
         <p
@@ -29,11 +25,11 @@ export function MessageBubble({ message, isOwn }: MessageBubbleProps) {
           }`}
         >
           {formatMessageTime(message.createdAt)}
-          {isOwn && message.senderType === SENDER_CUSTOMER
+          {isOwn 
             ? message.isRead
               ? " · ✓✓"
               : " · ✓"
-            : ""}
+            : " · ✓✓"}
         </p>
       </div>
     </div>

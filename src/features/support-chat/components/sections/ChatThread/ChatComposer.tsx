@@ -1,10 +1,9 @@
 "use client";
 
-// features/support-chat/components/ChatComposer.tsx
 import { useState, useTransition, useRef, useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { sendMessage } from "../actions/send-message.action";
-import type { Message } from "../types";
+import { sendMessage } from "../../../actions/send-message.action";
+import type { Message } from "../../../types";
 
 interface ChatComposerProps {
   conversationId: string;
@@ -27,10 +26,10 @@ export function ChatComposer({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    const el = textareaRef.current;
-    if (!el) return;
-    el.style.height = "auto";
-    el.style.height = `${Math.min(el.scrollHeight, 120)}px`;
+    const element = textareaRef.current;
+    if (!element) return;
+    element.style.height = "auto";
+    element.style.height = `${Math.min(element.scrollHeight, 120)}px`;
   }, [text]);
 
   function submit() {
@@ -50,7 +49,7 @@ export function ChatComposer({
     setText("");
 
     startTransition(async () => {
-      const result = await sendMessage  ({  conversationId, body });
+      const result = await sendMessage({ conversationId, body });
       if (!result.success) {
         onError?.(result.error);
         return;
@@ -59,9 +58,9 @@ export function ChatComposer({
     });
   }
 
-  function onKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
+  function onKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
       submit();
     }
   }
@@ -73,11 +72,11 @@ export function ChatComposer({
           ref={textareaRef}
           rows={1}
           value={text}
-          onChange={(e) => setText(e.target.value)}
+          onChange={(event) => setText(event.target.value)}
           onKeyDown={onKeyDown}
           placeholder={t("composerPlaceholder")}
           disabled={disabled || isPending}
-          className="max-h-30 min-h-11 flex-1 resize-none rounded-2xl border border-border bg-card px-4 py-2.5 text-sm text-foreground outline-none ring-primary/30 placeholder:text-muted-foreground focus:ring-2 disabled:opacity-50"
+          className="max-h-30min-h-11 flex-1 resize-none rounded-2xl border border-border bg-card px-4 py-2.5 text-sm text-foreground outline-none ring-primary/30 placeholder:text-muted-foreground focus:ring-2 disabled:opacity-50"
         />
         <button
           type="button"

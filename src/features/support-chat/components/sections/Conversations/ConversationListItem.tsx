@@ -1,7 +1,6 @@
-// features/support-chat/components/ConversationListItem.tsx
 import Link from "next/link";
-import type { ConversationSummary } from "../types";
-import { formatConversationTime } from "../lib/format";
+import type { ConversationSummary } from "../../../types";
+import { formatConversationTime } from "@/shared/lib/format";
 
 interface ConversationListItemProps {
   conversation: ConversationSummary;
@@ -25,7 +24,9 @@ export function ConversationListItem({
         <div className="flex items-baseline justify-between gap-2">
           <p
             className={`truncate text-sm ${
-              unread ? "font-bold text-foreground" : "font-semibold text-foreground"
+              unread
+                ? "font-bold text-foreground"
+                : "font-semibold text-foreground"
             }`}
           >
             {conversation.tenantName}

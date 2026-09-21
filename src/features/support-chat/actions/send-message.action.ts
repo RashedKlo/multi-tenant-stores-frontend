@@ -1,5 +1,3 @@
-// features/support-chat/actions/send-message.ts
-"use server";
 
 import { updateTag } from "next/cache";
 import { fetchJson } from "@/shared/lib/http/fetch-json";
