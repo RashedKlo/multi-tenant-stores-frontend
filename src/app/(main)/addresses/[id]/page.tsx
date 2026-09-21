@@ -9,9 +9,9 @@ interface EditAddressPageProps {
 
 export default async function EditAddressPage({ params }: EditAddressPageProps) {
   const { id } = await params;
-  const address = await getAddress(id);
+  const result = await getAddress(id);
 
-  if (!address) notFound();
+  if (!result.success) notFound();
 
-  return <AddressDetailClient address={address} />;
+  return <AddressDetailClient address={result.data} />;
 }
