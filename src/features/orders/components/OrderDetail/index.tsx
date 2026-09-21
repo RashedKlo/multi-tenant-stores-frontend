@@ -13,14 +13,13 @@ interface OrderDetailProps {
 export async function OrderDetail({ orderId }: OrderDetailProps) {
   const t = await getTranslations("orders");
 
-  const order = await getOrder(orderId);
+  const result = await getOrder(orderId);
 
-  if (!order) return <OrderDetailEmpty />;
-
+  if (!result.success) return <OrderDetailEmpty />;
 
   return (
     <OrderDetailView
-      order={order}
+      order={result.data}
       labels={{
         orderId: t("orderId"),
         placedAt: t("placedAt"),
