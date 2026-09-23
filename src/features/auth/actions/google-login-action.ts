@@ -25,6 +25,7 @@ export async function googleLoginAction(
   const result = await fetchJson<AuthTokens>("/api/auth/google", {
     method: "POST",
     authToken: null,
+    timeoutMs: 15000,
     body: { idToken: parsed.data.idToken },
   });
 
