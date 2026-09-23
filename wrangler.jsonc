@@ -17,6 +17,10 @@
   "images": {
     "binding": "IMAGES"
   },
+    "vars": {
+      "NEXT_PUBLIC_API_URL": "https://multi-tenant-stores-backend.onrender.com",
+    "NEXT_PUBLIC_GOOGLE_CLIENT_ID": "58541967072-avqbea3b4dl1nl9r4coe54l987fbkd0d.apps.googleusercontent.com"
+  },
   "kv_namespaces": [
     {
       "binding": "VINEXT_KV_CACHE",
