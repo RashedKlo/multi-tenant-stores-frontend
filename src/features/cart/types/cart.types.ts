@@ -1,11 +1,12 @@
 // src/features/cart/types/cart.types.ts
 
 export interface SelectedOption {
-  optionId: string;
-  groupName: string;
-  optionName: string;
-  priceAdjustment: number;
+  option_id: string;
+  group_name: string;
+  option_name: string;
+  price_adjustment: number;
 }
+
 
 
 export interface CartItem {

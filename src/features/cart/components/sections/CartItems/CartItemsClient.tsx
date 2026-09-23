@@ -38,7 +38,7 @@ export function CartItemsClient({ initialItems }: CartItemsClientProps) {
 								itemTotalPrice:
 									(item.basePrice +
 										item.selectedOptions.reduce(
-											(total, option) => total + option.priceAdjustment,
+											(total, option) => total + option.price_adjustment,
 											0,
 										)) * action.quantity,
 							}

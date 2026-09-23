@@ -21,9 +21,8 @@ export function CartItemCard({
 }: CartItemCardProps) {
 	const t = useTranslations("cart");
 	const locale = useLocale();
-	const productLink = item.storeId
-		? `/stores/${item.storeId}/products/${item.productId}`
-		: `/products/${item.productId}`;
+	const productLink = `/stores/${item.storeId}/products/${item.productId}`
+	
 
 	return (
 		<article className={["flex gap-3 rounded-2xl border border-border bg-card p-3 shadow-sm transition-all sm:gap-4 sm:p-4", pending ? "pointer-events-none opacity-60" : "hover:shadow-md"].join(" ")}>
@@ -35,7 +34,8 @@ export function CartItemCard({
 					<Link href={productLink} className="line-clamp-2 text-sm font-semibold leading-snug transition-colors hover:text-primary">{item.productName}</Link>
 					<button type="button" onClick={onRemove} disabled={pending} aria-label={t("removeItem", { name: item.productName })} className="shrink-0 rounded-full p-1.5 text-muted-foreground transition-colors hover:bg-danger/10 hover:text-danger active:scale-90 disabled:opacity-50"><TrashIcon /></button>
 				</div>
-				{item.selectedOptions.length > 0 && <ul role="list" className="space-y-0.5 text-xs text-muted-foreground">{item.selectedOptions.map((option) => <li key={option.optionId || `${option.groupName}-${option.optionName}`} className="truncate"><span className="font-medium">{option.groupName}:</span>{" "}{option.optionName}{option.priceAdjustment !== 0 && <span dir="ltr" className="ms-1 opacity-75">({option.priceAdjustment > 0 ? "+" : ""}{formatPrice(option.priceAdjustment, locale)})</span>}</li>)}</ul>}
+				{item.selectedOptions.length > 0 && <ul role="list" className="space-y-0.5 text-xs text-muted-foreground">{item.selectedOptions.map((option) => <li key={option.option_id || `${option.group_name}-${option.option_name}`} className="truncate">
+{" "}{option.option_name}{option.price_adjustment !== 0 && <span dir="ltr" className="ms-1 opacity-75">({option.price_adjustment > 0 ? "+" : ""}{formatPrice(option.price_adjustment, locale)})</span>}</li>)}</ul>}
 				{item.notes && <p className="text-xs italic text-muted-foreground">“{item.notes}”</p>}
 				<div className="mt-auto flex items-center justify-between pt-1">
 					<div role="group" aria-label={t("quantityLabel")} className="flex items-center rounded-full border border-border">
