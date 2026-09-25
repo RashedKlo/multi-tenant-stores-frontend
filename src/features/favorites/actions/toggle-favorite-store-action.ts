@@ -27,6 +27,7 @@ export async function toggleFavoriteStore(
 
   if (result.success) {
     updateTag(CACHE_TAGS.favoriteStores);
+    updateTag(CACHE_TAGS.storeDetail(storeId));
   }
 
   return result;

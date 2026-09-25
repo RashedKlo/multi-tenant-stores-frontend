@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Shellafood",
-    template: "%s · Shellafood",
+    default: "MarketPlace",
+    template: "%s · MarketPlace",
   },
   description: "Order from restaurants, markets and pharmacies near you.",
 };
@@ -40,7 +40,6 @@ export default async function RootLayout({
 
   const theme = cookieStore.get("theme")?.value ?? "light";
   const locale = cookieStore.get("locale")?.value ?? "en";
-
   const direction = locale === "ar" ? "rtl" : "ltr";
 
   return (

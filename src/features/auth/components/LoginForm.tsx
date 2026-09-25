@@ -23,8 +23,8 @@ export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const redirectTo =
-    searchParams.get("redirect") || AUTH_REDIRECT.afterLogin;
+  const redirectTo =searchParams.get("redirect") 
+
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,7 +36,7 @@ export function LoginForm() {
         setError(t(result.error as Parameters<typeof t>[0]));
         return;
       }
-      router.replace(redirectTo);
+      router.replace(redirectTo?? AUTH_REDIRECT.afterLogin);
       router.refresh();
     });
   };
@@ -98,12 +98,14 @@ export function LoginForm() {
       <Divider label={t("or")} />
 
       <GoogleButton disabled={pending} />
+      {/* keep the GuestButton only if the redirect is not valid */}
+      {!redirectTo && (
       <GuestButton disabled={pending} />
-
+      )}
       <p className="text-center text-sm text-muted-foreground">
         {t("noAccount")}{" "}
         <Link
-          href="/register"
+          href={`/register?redirect=${encodeURIComponent(redirectTo?? AUTH_REDIRECT.afterLogin)}`}
           className="font-medium text-primary hover:underline"
         >
           {t("signUp")}

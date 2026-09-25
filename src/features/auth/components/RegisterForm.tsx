@@ -3,7 +3,7 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 
 import { registerAction } from "../actions";
@@ -23,7 +23,10 @@ export function RegisterForm() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
+    const searchParams = useSearchParams();
+  
+  const redirectTo =searchParams.get("redirect") ;
+ 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -123,11 +126,14 @@ export function RegisterForm() {
       </div>
 
       <GoogleButton disabled={pending} />
+         {/* keep the GuestButton only if the redirect is not valid */}
+      {!redirectTo && (
       <GuestButton disabled={pending} />
+      )}
 
       <p className="text-center text-sm text-muted-foreground">
         {t("hasAccount")}{" "}
-        <Link href="/login" className="font-medium text-primary hover:underline">
+        <Link href={`/login?redirect=${encodeURIComponent(redirectTo?? AUTH_REDIRECT.afterRegister)}`} className="font-medium text-primary hover:underline">
           {t("signIn")}
         </Link>
       </p>
