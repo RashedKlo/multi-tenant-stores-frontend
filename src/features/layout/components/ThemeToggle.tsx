@@ -22,7 +22,7 @@ interface ThemeToggleProps {
  * crossfade instead of an abrupt color swap.
  */
 export function ThemeToggle({ labels, className }: ThemeToggleProps) {
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(document.documentElement.classList.contains("dark"));
  
 
   const toggle = () => {

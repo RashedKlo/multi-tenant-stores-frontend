@@ -5,6 +5,7 @@ import { Logo } from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
 import Link from "next/link";
 import { SearchIcon } from "./icons";
+import { LocaleSwitcher } from "./LocaleSwitcher";
 
 interface TopbarProps {
   /** Overrides the brand label shown on mobile. */
@@ -33,7 +34,9 @@ export function Topbar({ title, actions }: TopbarProps) {
            <Link href="/search" className="flex md:hidden">
               <SearchIcon />
             </Link>
-              <ThemeToggle
+            
+             <LocaleSwitcher ariaLabelPrefix={t("actions.switchLanguage")} />
+                <ThemeToggle
                 labels={{
                   toLight: t("actions.toLight"),
                   toDark: t("actions.toDark"),
