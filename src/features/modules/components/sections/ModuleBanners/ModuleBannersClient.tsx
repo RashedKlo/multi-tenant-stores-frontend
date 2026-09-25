@@ -22,12 +22,7 @@ export function ModuleBannersClient({ banners }: ModuleBannersClientProps) {
 
   return (
     <section aria-label={t("ariaLabel")} className="marquee w-full overflow-hidden">
-      {/* Two identical tracks = seamless infinite loop, GPU-composited */}
-      <div className="marquee__track flex w-max gap-4 will-change-transform" aria-hidden>
-        {banners.map((b, i) => (
-          <MarqueeCard key={b.id} banner={b} priority={i === 0} tabIndex={-1} />
-        ))}
-      </div>
+  
       <div className="marquee__track flex w-max gap-4 will-change-transform">
         {banners.map((b) => (
           <MarqueeCard key={b.id} banner={b} tabIndex={-1} />

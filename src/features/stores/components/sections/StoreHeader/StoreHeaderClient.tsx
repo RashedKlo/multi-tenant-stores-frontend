@@ -100,7 +100,6 @@ export function StoreHeaderClient({ store }: StoreHeaderClientProps) {
             {store.phone && (
               <a
                 href={`tel:${store.phone}`}
-                dir="ltr" /* phone numbers stay LTR in Arabic too */
                 className="flex items-center gap-1 transition-colors hover:text-foreground focus-visible:text-foreground"
               >
                 <PhoneIcon />

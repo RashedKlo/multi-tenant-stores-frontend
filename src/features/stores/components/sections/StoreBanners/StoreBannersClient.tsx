@@ -12,30 +12,25 @@ interface StoreBannersClientProps {
 export function StoreBannersClient({ banners }: StoreBannersClientProps) {
   const t = useTranslations("storeBanners");
 
-  if (banners.length === 1) {
-    return <BannerCard banner={banners[0]} priority alt={t("bannerImageAlt")} />;
-  }
+  // if (banners.length === 1) {
+  //   return <BannerCard banner={banners[0]} priority alt={t("bannerImageAlt")} />;
+  // }
 
   return (
     <section aria-label={t("ariaLabel")} className="marquee w-full overflow-hidden">
-      {/* Two identical tracks = seamless infinite loop */}
-      {[0].map((trackIndex) => (
+    
         <div
-          key={trackIndex}
           className="marquee__track flex w-max gap-3 will-change-transform"
-          aria-hidden={trackIndex === 1 || undefined}
         >
           {banners.map((banner, i) => (
             <BannerCard
-              key={`banner.id−{banner.id}-banner.id−{trackIndex}`}
+              key={`banner-${i}`}
               banner={banner}
-              priority={trackIndex === 0 && i === 0}
               tabIndex={-1}
               alt={t("bannerImageAlt")}
             />
           ))}
         </div>
-      ))}
     </section>
   );
 }

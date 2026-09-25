@@ -203,7 +203,7 @@ body {
 }
 
 .marquee .marquee__track {
-  animation: marquee-scroll var(--marquee-duration, 30s) linear infinite;
+  animation: marquee-scroll var(--marquee-duration, 10s) linear infinite;
 }
 
 /* RTL: scroll the opposite direction */
