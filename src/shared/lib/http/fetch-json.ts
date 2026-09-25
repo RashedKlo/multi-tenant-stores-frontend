@@ -60,7 +60,7 @@ export async function fetchJson<T>(
     locale,
     authToken,
     guestToken,
-    timeoutMs = 8000,
+    timeoutMs = 15000,
     cache,
     next,
     headers: extraHeaders,
