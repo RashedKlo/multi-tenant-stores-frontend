@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { FormField, ToggleChip } from "@/shared/lib/ui";
 import { useDebouncedCallback } from "@/shared/hooks/use-debounced-callback";
 
 interface ProductFiltersProps {
@@ -53,14 +54,6 @@ export function ProductFilters({
     commitPrice(draftMin, value);
   };
 
-  const chip = (active: boolean) =>
-    [
-      "rounded-full border px-3.5 py-1.5 text-xs font-medium whitespace-nowrap transition-all duration-200 active:scale-95",
-      active
-        ? "border-transparent bg-primary text-primary-foreground shadow-sm"
-        : "border-border bg-card hover:border-primary/40 hover:bg-muted",
-    ].join(" ");
-
   const hasActiveFilters =
     inStockOnly || minPrice !== undefined || maxPrice !== undefined;
 
@@ -68,38 +61,38 @@ export function ProductFilters({
     <div
       role="group"
       aria-label={t("ariaLabel")}
-      className="scrollbar-hide -mx-4 flex items-center gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0"
+      className="scrollbar-hide -mx-4 flex flex-col items-stretch gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-row sm:flex-wrap sm:items-center sm:overflow-visible sm:px-0"
     >
-      <button
-        type="button"
+      <ToggleChip
+        active={inStockOnly}
         onClick={() => onInStockChange(!inStockOnly)}
         aria-pressed={inStockOnly}
-        className={chip(inStockOnly)}
+        className="w-full justify-center sm:w-auto"
       >
         {t("inStockOnly")}
-      </button>
+      </ToggleChip>
 
-      <div className="flex shrink-0 items-center gap-1.5">
-        <input
+      <div className="flex shrink-0 items-center gap-2 self-stretch sm:self-auto">
+        <FormField
+        label=""
           type="number"
           inputMode="decimal"
-          dir="ltr"
           placeholder={t("price.min")}
           aria-label={t("price.minLabel")}
           value={draftMin}
           onChange={(e) => handleMinChange(e.target.value)}
-          className="w-20 rounded-full border border-border bg-card px-3 py-1.5 text-xs tabular-nums"
+          className="w-full min-w-0 flex-1 rounded-full border border-border bg-card px-2 py-1.5 text-xs tabular-nums shadow-none sm:w-16 sm:flex-none"
         />
         <span className="text-xs text-muted-foreground">–</span>
-        <input
+        <FormField
+        label=""
           type="number"
           inputMode="decimal"
-          dir="ltr"
           placeholder={t("price.max")}
           aria-label={t("price.maxLabel")}
           value={draftMax}
           onChange={(e) => handleMaxChange(e.target.value)}
-          className="w-20 rounded-full border border-border bg-card px-3 py-1.5 text-xs tabular-nums"
+          className="w-full min-w-0 flex-1 rounded-full border border-border bg-card px-2 py-1.5 text-xs tabular-nums shadow-none sm:w-16 sm:flex-none"
         />
       </div>
 
