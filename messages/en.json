@@ -105,9 +105,8 @@
     "inStockOnly": "In stock only",
     "reset": "Reset",
     "price": {
-      "under20": "Under 20",
-      "range20_50": "20 – 50",
-      "over50": "50+"
+   "min": "Min price",
+   "max": "Max price"
     }
   },
   "productOptions": {
