@@ -12,6 +12,7 @@ const baseCookie = {
   secure: isProd,
   sameSite: "lax" as const,
   path: "/",
+  maxAge: 60 * 60 * 24 * 7
 };
 
 /**
@@ -69,4 +70,18 @@ export async function getGuestToken(): Promise<string | undefined> {
 export async function clearGuestCookie() {
   const store = await cookies();
   store.delete(AUTH_COOKIE.guestToken);
+}
+
+export async function getUserLocation(): Promise<{ lat: number; lng: number } | null> {
+  const store = await cookies();
+  const value = store.get("user_location")?.value??"";
+    const parsed = JSON.parse(value) as { lat: number; lng: number };
+    return { lat: parsed.lat, lng: parsed.lng };
+}
+
+export async function setUserLocationAction(lat: number, lng: number) {
+  const store = await cookies();
+  store.set("user_location", JSON.stringify({ lat, lng }), {
+    ...baseCookie,
+  });
 }
