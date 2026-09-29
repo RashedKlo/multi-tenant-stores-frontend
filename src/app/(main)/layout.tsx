@@ -1,12 +1,12 @@
 // src/app/(main)/layout.tsx
-import { getAccessToken } from "@/shared/lib/http/token-storage";
+import { getAccessToken, getGuestToken } from "@/shared/lib/http/token-storage";
 import { Topbar } from "@/features/layout/components/Topbar";
 import { Navbar } from "@/features/layout/components/Navbar";
 import { redirect } from "next/navigation";
 
 export default async function MainLayout({ children }: { children: React.ReactNode }) {
   const token = await getAccessToken();
-  const guestToken = await getAccessToken();
+  const guestToken = await getGuestToken();
   if(!token && !guestToken) {
     redirect("/login");
   } 
