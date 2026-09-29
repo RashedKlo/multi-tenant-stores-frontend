@@ -1,4 +1,25 @@
 {
+  "home": {
+    "newStores": {
+      "title": "New stores",
+      "emptyTitle": "No new stores yet",
+      "emptyDescription": "Fresh stores will show up here soon."
+    },
+    "discountedStores": {
+      "title": "Deals near you",
+      "emptyTitle": "No deals right now",
+      "emptyDescription": "Check back later for limited-time offers."
+    },
+    "nearbyStores": {
+      "title": "Stores near you",
+      "emptyTitle": "No stores nearby",
+      "emptyDescription": "Try enabling your location to discover nearby stores.",
+      "locationPrompt": "Enable your location to see stores near you.",
+      "locationDenied": "Location access was denied. Please enable it to view nearby stores.",
+      "enableLocation": "Enable location",
+      "locating": "Locating..."
+    }
+  },
   "nav": {
     "home": "Home",
     "cart": "Cart",
