@@ -3,10 +3,16 @@ import { Suspense } from "react";
 import { StoreShell } from "@/features/stores/components/StoreShell";
 import { StoreHeader } from "@/features/stores/components/sections/StoreHeader";
 import { StoreBanners } from "@/features/stores/components/sections/StoreBanners";
+import { StoreCoupons } from "@/features/stores/components/sections/StoreCoupons";
+import { DiscountedSections } from "@/features/stores/components/sections/DiscountedSections";
+import { DiscountedProducts } from "@/features/stores/components/sections/DiscountedProducts";
 import { StoreSections } from "@/features/stores/components/sections/StoreSections";
 
 import StoreHeaderSkeleton from "@/features/stores/components/sections/StoreHeader/skeleton";
 import StoreBannersSkeleton from "@/features/stores/components/sections/StoreBanners/skeleton";
+import StoreCouponsSkeleton from "@/features/stores/components/sections/StoreCoupons/skeleton";
+import DiscountedSectionsSkeleton from "@/features/stores/components/sections/DiscountedSections/skeleton";
+import DiscountedProductsSkeleton from "@/features/stores/components/sections/DiscountedProducts/skeleton";
 import StoreSectionsSkeleton from "@/features/stores/components/sections/StoreSections/skeleton";
 
 interface StorePageProps {
@@ -23,6 +29,15 @@ export default async function StorePage({ params }: StorePageProps) {
       </Suspense>
        <Suspense fallback={<StoreBannersSkeleton/>}>
         <StoreBanners storeId={id}/>
+      </Suspense>
+      <Suspense fallback={<StoreCouponsSkeleton />}>
+        <StoreCoupons storeId={id} />
+      </Suspense>
+      <Suspense fallback={<DiscountedSectionsSkeleton />}>
+        <DiscountedSections storeId={id} />
+      </Suspense>
+      <Suspense fallback={<DiscountedProductsSkeleton />}>
+        <DiscountedProducts storeId={id} />
       </Suspense>
 
       <Suspense fallback={<StoreSectionsSkeleton />}>
