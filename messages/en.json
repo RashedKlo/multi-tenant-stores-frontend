@@ -109,6 +109,26 @@
     "title": "Menu & Sections",
     "count": "{count} sections",
     "noSections": "No sections available"
+  },
+  "storeCoupons": {
+    "title": "Coupons",
+    "count": "{count} coupons",
+    "codeLabel": "Coupon code",
+    "discount": "{value} off",
+    "minimumOrder": "Minimum order",
+    "maximumDiscount": "Maximum discount",
+    "startsAt": "Starts {date}",
+    "expiresAt": "Expires {date}"
+  },
+  "discountedSections": {
+    "title": "Discounted sections",
+    "count": "{count} sections",
+    "discount": "{value} off"
+  },
+  "discountedProducts": {
+    "title": "Discounted products",
+    "count": "{count} products",
+    "outOfStock": "Out of stock"
   }, "products": {
   "title": "Products",
   "count": "{count} products",

@@ -110,6 +110,26 @@
     "title": "الأقسام",
     "count": "{count} قسم",
     "noSections": "لا توجد أقسام متاحة"
+  },
+  "storeCoupons": {
+    "title": "القسائم",
+    "count": "{count} قسائم",
+    "codeLabel": "رمز القسيمة",
+    "discount": "خصم {value}",
+    "minimumOrder": "الحد الأدنى للطلب",
+    "maximumDiscount": "الحد الأقصى للخصم",
+    "startsAt": "تبدأ {date}",
+    "expiresAt": "تنتهي {date}"
+  },
+  "discountedSections": {
+    "title": "الأقسام المخفضة",
+    "count": "{count} قسم",
+    "discount": "خصم {value}"
+  },
+  "discountedProducts": {
+    "title": "المنتجات المخفضة",
+    "count": "{count} منتج",
+    "outOfStock": "غير متوفر"
   }, "products": {
   "title": "المنتجات",
   "count": "{count} منتج",
